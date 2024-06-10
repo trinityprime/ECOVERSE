@@ -1,3 +1,0 @@
-print("hyyh")
-
-print("TESITNG")
