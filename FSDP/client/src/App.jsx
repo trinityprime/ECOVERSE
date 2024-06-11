@@ -39,23 +39,46 @@ function App() {
             <Container>
               <Toolbar disableGutters={true}>
                 <Link to="/">
-                  <Typography variant="h6" component="div">
-                    Learning
-                  </Typography>
+                  <Container style={{ display: 'flex', alignItems: 'center' }}>
+                    <img src="../ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '30px', display: 'flex' }} />
+                    <Typography variant="h6" component="div" style={{ display: 'flex', alignItems: 'center' }}>
+                      ECOVERSE
+                    </Typography>
+                  </Container>
                 </Link>
-                <Link to="/tutorials" ><Typography>Tutorials</Typography></Link>
                 <Box sx={{ flexGrow: 1 }}></Box>
+                <Link to="/tutorials" style={{ marginLeft: 'auto' }}>
+                  <Typography>Tutorials</Typography>
+                </Link>
+                <Link to="/events" style={{ marginLeft: '15px' }}>
+                  <Typography>Events</Typography>
+                </Link>
+                <Link to="/courses" style={{ marginLeft: '15px' }}>
+                  <Typography>Courses</Typography>
+                </Link>
+                <Link to="/incident_report" style={{ marginLeft: '15px' }}>
+                  <Typography>Incident Report</Typography>
+                </Link>
+                <Link to="/about_us" style={{ marginLeft: '15px' }}>
+                  <Typography>About Us</Typography>
+                </Link>
+                <Link to="/contact_us" style={{ marginLeft: '15px' }}>
+                  <Typography>Contact Us</Typography>
+                </Link>
                 {user && (
                   <>
                     <Typography>{user.name}</Typography>
                     <Button onClick={logout}>Logout</Button>
                   </>
-                )
-                }
+                )}
                 {!user && (
                   <>
-                    <Link to="/register" ><Typography>Register</Typography></Link>
-                    <Link to="/login" ><Typography>Login</Typography></Link>
+                    <Link to="/register">
+                      <Typography>Register</Typography>
+                    </Link>
+                    <Link to="/login">
+                      <Typography>Login</Typography>
+                    </Link>
                   </>
                 )}
               </Toolbar>
