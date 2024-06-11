@@ -8,3 +8,19 @@
   color: inherit;
   margin-left: 12px;
 }
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+.AppBar a,
+.AppBar button {
+  font-family: 'Roboto', sans-serif;
+  color: inherit;
+  margin-right: 16px;
+  text-decoration: none;
+}
+
+.AppBar button {
+  margin-left: 12px;
+}
