@@ -12,6 +12,7 @@ import MyForm from './pages/MyForm';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import http from './http';
+import Profile from './pages/Profile';
 
 
 function App() {
@@ -67,7 +68,9 @@ function App() {
                 </Link>
                 {user && (
                   <>
-                    <Typography>{user.name}</Typography>
+                    <Link to="/profile" style={{ marginLeft: '15px' }}>
+                      <Typography>{user.name}</Typography>
+                    </Link>
                     <Button onClick={logout}>Logout</Button>
                   </>
                 )}
@@ -94,6 +97,7 @@ function App() {
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
+              <Route path={"/profile"} element={<Profile />} />
             </Routes>
           </Container>
         </ThemeProvider>

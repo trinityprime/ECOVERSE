@@ -22,6 +22,9 @@ app.use("/tutorial", tutorialRoute);
 const userRoute = require('./routes/user');
 app.use("/user", userRoute);
 
+const profileRoute = require('./routes/profile')
+app.use('/profile', profileRoute)
+
 const db = require('./models');
 db.sequelize.sync({ alter: true })
     .then(() => {
@@ -33,3 +36,4 @@ db.sequelize.sync({ alter: true })
     .catch((err) => {
         console.log(err);
     });
+
