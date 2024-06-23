@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import UserContext from '../contexts/UserContext';
 
 function Login() {
-
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
 
@@ -37,10 +36,9 @@ function Login() {
         .then((res) => {
           localStorage.setItem("accessToken", res.data.accessToken);
           setUser(res.data.user);
-          navigate("/");
-          window.location.reload();
+          navigate("/profile");
         })
-        .catch(function (err) {
+        .catch((err) => {
           toast.error(`${err.response.data.message}`);
         });
     }
@@ -52,7 +50,6 @@ function Login() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
-
     }}>
       <Typography variant="h5" sx={{ my: 2 }}>
         Login
@@ -88,4 +85,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Login;

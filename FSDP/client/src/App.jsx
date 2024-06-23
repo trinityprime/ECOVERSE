@@ -13,7 +13,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import http from './http';
 import Profile from './pages/Profile';
-
+import AdminLogin from './pages/AdminLogin';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -91,6 +91,7 @@ function App() {
           <Container>
             <Routes>
               <Route path={"/"} element={<Tutorials />} />
+              <Route path="/s3cr3t-4dm1n-l0g1n" element={<AdminLogin />} />
               <Route path={"/tutorials"} element={<Tutorials />} />
               <Route path={"/addtutorial"} element={<AddTutorial />} />
               <Route path={"/edittutorial/:id"} element={<EditTutorial />} />

@@ -1,43 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import UserContext from '../contexts/UserContext';
+import http from '../http';
 
-const Profile = () => {
-    const [user, setUser] = useState(null);
+function Profile() {
+    const { user } = useContext(UserContext);
+    const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem('accessToken');
-                const response = await axios.get('http://localhost:3000/api/profile', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                console.log('Response data:', response.data); // Log the response data
-                setUser(response.data);
-                console.log('User data:', response.data); // Log the user data after setting it
-            } catch (error) {
-                console.error('Error fetching profile data', error);
-            }
-        };
-
-        fetchUser();
+        fetchUserRole();
     }, []);
 
-    if (!user) {
-        return <div>Loading...</div>;
-    }
+    const fetchUserRole = async () => {
+        try {
+            const response = await http.get("/user/auth");
+            setUserRole(response.data.user.role);
+        } catch (error) {
+            console.error("Error fetching user role:", error);
+        }
+    };
 
     return (
-        <div className="profile">
-            <h1>{user.name}</h1>
-            <p>Email: {user.email}</p>
-            <div className="profile-picture">
-                <img src={user.profilePicture} alt="Profile" />
-            </div>
-            <button>Edit Profile</button>
-        </div>
+        <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography variant="h5" sx={{ my: 2 }}>
+                Profile
+            </Typography>
+            <Typography variant="body1">
+                Name: {user.name}
+            </Typography>
+            <Typography variant="body1">
+                Email: {user.email}
+            </Typography>
+            <Typography variant="body1">
+                Role: {userRole}
+            </Typography>
+        </Box>
     );
-};
+}
 
 export default Profile;
