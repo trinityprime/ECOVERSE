@@ -7,6 +7,8 @@ import http from '../http';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import InputMask from 'react-input-mask';
+import dayjs from 'dayjs';
 
 function Register() {
     const navigate = useNavigate();
@@ -18,7 +20,9 @@ function Register() {
             name: "",
             email: "",
             password: "",
-            confirmPassword: ""
+            confirmPassword: "",
+            phoneNumber: "",
+            dob: "",
         },
         validationSchema: yup.object({
             name: yup.string().trim()
@@ -37,7 +41,13 @@ function Register() {
                 .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/, "Password must contain at least 1 letter and 1 number"),
             confirmPassword: yup.string().trim()
                 .required('Confirm password is required')
-                .oneOf([yup.ref('password')], 'Passwords must match')
+                .oneOf([yup.ref('password')], 'Passwords must match'),
+            phoneNumber: yup.string().trim()
+                .required()
+                .matches(/^\d{8}$/, "Phone number must be 8 digits"),
+            dob: yup.string().trim()
+                .required("Date of birth is required")
+                .matches(/^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Invalid date format (dd/mm/yyyy)'),
         }),
         onSubmit: async (values) => {
             try {
@@ -45,11 +55,13 @@ function Register() {
                     name: values.name.trim(),
                     email: values.email.trim().toLowerCase(),
                     password: values.password.trim(),
-                    role: selectedRole 
+                    phoneNumber: values.phoneNumber.replace(/\s/g, ''),
+                    dob: dayjs(values.dob, 'DD/MM/YYYY').toISOString(),
+                    role: selectedRole,
                 };
                 const response = await http.post("/user/register", data);
                 toast.success(response.data.message);
-                console.log(response.data); 
+                console.log(response.data);
                 navigate("/login");
             } catch (err) {
                 toast.error(err.response.data.message || 'Registration failed');
@@ -75,6 +87,7 @@ function Register() {
             <Typography variant="h5" sx={{ my: 2 }}>
                 Register
             </Typography>
+
             <Box component="form" sx={{ maxWidth: '500px' }} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth margin="dense" autoComplete="off"
@@ -86,6 +99,7 @@ function Register() {
                     error={formik.touched.name && Boolean(formik.errors.name)}
                     helperText={formik.touched.name && formik.errors.name}
                 />
+
                 <TextField
                     fullWidth margin="dense" autoComplete="off"
                     label="Email"
@@ -96,6 +110,7 @@ function Register() {
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                 />
+
                 <TextField
                     fullWidth margin="dense" autoComplete="off"
                     label="Password"
@@ -115,6 +130,7 @@ function Register() {
                         )
                     }}
                 />
+
                 <TextField
                     fullWidth margin="dense" autoComplete="off"
                     label="Confirm Password"
@@ -125,6 +141,35 @@ function Register() {
                     error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
                     helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                 />
+
+                <TextField
+                    fullWidth margin="dense" autoComplete="off"
+                    label="Phone Number"
+                    name="phoneNumber"
+                    value={formik.values.phoneNumber}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                    helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
+                />
+
+                <InputMask
+                    mask="99/99/9999"
+                    value={formik.values.dob}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                >
+                    {() => (
+                        <TextField
+                            fullWidth margin="dense" autoComplete="off"
+                            label="Date of Birth (dd/mm/yyyy)"
+                            name="dob"
+                            error={formik.touched.dob && Boolean(formik.errors.dob)}
+                            helperText={formik.touched.dob && formik.errors.dob}
+                        />
+                    )}
+                </InputMask>
+
                 <FormControl fullWidth sx={{ my: 1 }}>
                     <InputLabel id="role-label">Role</InputLabel>
                     <Select
@@ -139,6 +184,7 @@ function Register() {
                         <MenuItem value="organization">Organization</MenuItem>
                     </Select>
                 </FormControl>
+
                 <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
                     Register
                 </Button>

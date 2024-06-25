@@ -4,9 +4,11 @@ const { User } = require('./models');
 const initializeAdminAccount = async () => {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminPhoneNumber = process.env.ADMIN_PHONE_NUMBER;
+    const adminDOB = process.env.ADMIN_DOB;
 
-    if (!adminEmail || !adminPassword) {
-        console.error('Admin email or password is not set in environment variables.');
+    if (!adminEmail || !adminPassword || !adminPhoneNumber || !adminDOB) {
+        console.error('Admin email, password, phone number, or date of birth is not set in environment variables.');
         return;
     }
 
@@ -23,6 +25,8 @@ const initializeAdminAccount = async () => {
                 name: 'Admin',
                 email: adminEmail,
                 password: hashedPassword,
+                phoneNumber: adminPhoneNumber,
+                dob: new Date(adminDOB),
                 role: 'admin'
             });
             console.log(`Admin user created: ${adminEmail}`);

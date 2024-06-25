@@ -14,12 +14,30 @@ router.post("/register", async (req, res) => {
 
     // Validate request body
     let validationSchema = yup.object({
-        name: yup.string().trim().min(3).max(50).required()
+        name: yup.string().trim()
+            .min(3).max(50)
+            .required()
             .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces and characters: ' - , ."),
-        email: yup.string().trim().lowercase().email().max(50).required(),
-        password: yup.string().trim().min(8).max(50).required()
+        email: yup.string().trim()
+            .lowercase()
+            .email()
+            .max(50)
+            .required(),
+        password: yup.string().trim()
+            .min(8)
+            .max(50)
+            .required()
             .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/, "Password must contain at least 1 letter and 1 number"),
-        role: yup.string().trim().oneOf(['volunteer', 'organization']).required()
+        role: yup.string().trim()
+            .oneOf(['volunteer', 'organization'])
+            .required(),
+        phoneNumber: yup.string().trim()
+            .required()
+            .matches(/^\d{8}$/, "Phone number must be 8 digits"),
+        dob: yup.date()
+            .nullable()
+            .required("Date of birth is required")
+            .typeError("Invalid Date."),
     });
 
     try {
@@ -70,7 +88,9 @@ router.post("/login", async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        phoneNumber: user.phoneNumber,
+        dob: user.dob,
+        role: user.role,
     };
     let accessToken = sign(userInfo, process.env.APP_SECRET,
         { expiresIn: process.env.TOKEN_EXPIRES_IN });
@@ -85,6 +105,8 @@ router.get("/auth", validateToken, (req, res) => {
         id: req.user.id,
         email: req.user.email,
         name: req.user.name,
+        phoneNumber: req.user.phoneNumber,
+        dob: req.user.dob,
         role: req.user.role
     };
     res.json({

@@ -8,6 +8,7 @@ import MyTheme from './themes/MyTheme';
 import Tutorials from './pages/Tutorials';
 import AddTutorial from './pages/AddTutorial';
 import EditTutorial from './pages/EditTutorial';
+import EditProfile from './pages/EditProfile';
 import MyForm from './pages/MyForm';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -95,6 +96,7 @@ function App() {
               <Route path={"/tutorials"} element={<Tutorials />} />
               <Route path={"/addtutorial"} element={<AddTutorial />} />
               <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/editprofile/:id"} element={<EditProfile/>} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
