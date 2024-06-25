@@ -8,13 +8,11 @@ import MyTheme from './themes/MyTheme';
 import Tutorials from './pages/Tutorials';
 import AddTutorial from './pages/AddTutorial';
 import EditTutorial from './pages/EditTutorial';
-import EditProfile from './pages/EditProfile';
 import MyForm from './pages/MyForm';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import http from './http';
 import Profile from './pages/Profile';
-import AdminLogin from './pages/AdminLogin';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -92,11 +90,9 @@ function App() {
           <Container>
             <Routes>
               <Route path={"/"} element={<Tutorials />} />
-              <Route path="/s3cr3t-4dm1n-l0g1n" element={<AdminLogin />} />
               <Route path={"/tutorials"} element={<Tutorials />} />
               <Route path={"/addtutorial"} element={<AddTutorial />} />
               <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
-              <Route path={"/editprofile/:id"} element={<EditProfile/>} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />

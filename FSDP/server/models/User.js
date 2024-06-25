@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         phoneNumber: {
-            type: DataTypes.STRING(8), 
+            type: DataTypes.STRING(8),
             allowNull: false
         },
         dob: {
@@ -22,10 +22,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.ENUM('volunteer', 'organization', 'admin'),
-            defaultValue: 'volunteer' // Default role
+            defaultValue: 'volunteer'
         }
     }, {
-        tableName: 'users'
+        tableName: 'users',
+        hooks: {
+            beforeDestroy: async (user) => {
+                const Tutorial = sequelize.models.Tutorial;
+                await Tutorial.update({ title: '[DELETED USER]' }, {
+                    where: { userId: user.id }
+                });
+            }
+        }
     });
 
     User.associate = (models) => {

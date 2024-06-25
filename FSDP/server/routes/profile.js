@@ -1,75 +1,77 @@
 const express = require('express');
 const router = express.Router();
+const { User } = require('../models');
 const { validateToken } = require('../middlewares/auth');
-const db = require('../models'); // Ensure this path is correct
+const yup = require('yup');
 
-router.get('/profile', validateToken, async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
+    let userId = req.user.id;
+    let user = await User.findByPk(userId, {
+        attributes: ["id", "name", "email", "phoneNumber", "dob", "role", "createdAt", "updatedAt"]
+    });
+
+    if (!user) {
+        res.sendStatus(404);
+        return;
+    }
+    res.json(user);
+});
+
+router.put("/", validateToken, async (req, res) => {
+    let userId = req.user.id;
+    let data = req.body;
+
+    let validationSchema = yup.object({
+        name: yup.string().trim()
+        .min(3)
+        .max(100)
+        .required(),
+        email: yup.string().trim()
+        .email()
+        .required(),
+        phoneNumber: yup.string().trim()
+        .matches(/^\d{8}$/, "Phone number must be 8 digits"),
+        dob: yup.date()
+        .nullable()
+    });
+
     try {
-        // Ensure req.user.id is set by validateToken middleware
-        const user = await db.User.findByPk(req.user.id); // Use findByPk for Sequelize
-        if (user) {
-            res.json(user);
+        data = await validationSchema.validate(data, { abortEarly: false });
+
+        let num = await User.update(data, {
+            where: { id: userId }
+        });
+
+        if (num == 1) {
+            res.json({
+                message: "Profile was updated successfully."
+            });
         } else {
-            res.status(404).json({ error: 'User not found' });
+            res.status(400).json({
+                message: `Cannot update profile with id ${userId}.`
+            });
         }
     } catch (err) {
-        console.error('Error fetching user:', err); // Add logging for debugging
-        res.status(500).json({ error: err.message });
+        res.status(400).json({ errors: err.errors });
     }
 });
 
-router.put('/profile', async (req, res) => {
-    const userId = req.user.id; 
-    const { name, email, phoneNumber, dob, password } = req.body;
+router.delete("/", validateToken, async (req, res) => {
+    let userId = req.user.id;
 
-    try {
-        const user = await User.findByPk(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+    let num = await User.destroy({
+        where: { id: userId }
+    });
 
-        // Update user properties
-        user.name = name;
-        user.email = email;
-        user.phone = phoneNumber;
-        user.dob = dob;
-
-        // Update password if provided
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            user.password = hashedPassword;
-        }
-
-        // Save updated user
-        await user.save();
-
-        res.json({ message: 'User updated successfully', user });
-    } catch (err) {
-        console.error('Error updating user:', err);
-        res.status(500).json({ message: 'Failed to update user' });
+    if (num == 1) {
+        res.json({
+            message: "User account was deleted successfully."
+        });
+    } else {
+        res.status(400).json({
+            message: `Cannot delete user account with id ${userId}.`
+        });
     }
 });
-
-router.delete('/profile', async (req, res) => {
-    const userId = req.user.id;
-
-    try {
-        const user = await User.findByPk(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Delete user
-        await user.destroy();
-
-        res.json({ message: 'User deleted successfully' });
-    } catch (err) {
-        console.error('Error deleting user:', err);
-        res.status(500).json({ message: 'Failed to delete user' });
-    }
-});
-
 
 module.exports = router;
-
-

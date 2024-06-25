@@ -45,8 +45,6 @@ router.post("/register", async (req, res) => {
 
         // Additional logic for admin registration if needed
         if (data.role === 'admin') {
-            // Handle admin registration (should have appropriate checks and security measures)
-            // Example: check admin secret code or additional security steps
             res.status(403).json({ message: "Admin registration not allowed." });
             return;
         }
