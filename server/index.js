@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { Sequelize, Op } = require("sequelize");
-const db = require("./models"); 
+const db = require("./models");
 require("dotenv").config();
 
 const app = express();
@@ -106,15 +106,15 @@ app.delete('/events/:id', async (req, res) => {
 app.get('/event/export/:id', async (req, res) => {
   const eventId = req.params.id;
   try {
-      const event = await db.Event.findByPk(eventId);
-      if (!event) {
-          return res.status(404).json({ message: 'Event not found' });
-      }
-      // Assuming you want to export the event data in JSON format
-      res.json(event);
+    const event = await db.Event.findByPk(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    // Assuming you want to export the event data in JSON format
+    res.json(event);
   } catch (error) {
-      console.error('Error exporting event:', error);
-      res.status(500).json({ message: 'Failed to export event' });
+    console.error('Error exporting event:', error);
+    res.status(500).json({ message: 'Failed to export event' });
   }
 });
 
@@ -201,10 +201,6 @@ app.delete('/courses/:id', async (req, res) => {
 
 
 // Routes for other resources
-const tutorialRoute = require("./routes/tutorial");
-app.use("/tutorial", tutorialRoute);
-const userRoute = require("./routes/user");
-app.use("/user", userRoute);
 const fileRoute = require("./routes/file");
 app.use("/file", fileRoute);
 const eventRoute = require("./routes/event");

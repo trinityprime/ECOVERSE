@@ -8,13 +8,11 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import UserContext from '../contexts/UserContext';
 
 function Courses() {
     const [courses, setCourses] = useState([]);
     const [search, setSearch] = useState('');
     const [filteredCourses, setFilteredCourses] = useState([]);
-    const { user } = useContext(UserContext);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [categories, setCategories] = useState({});

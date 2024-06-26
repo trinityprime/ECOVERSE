@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { Event, User } = require('../models');
+const { Event  } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
 const { validateToken } = require('../middlewares/auth');
@@ -10,7 +10,6 @@ const { validateToken } = require('../middlewares/auth');
 // POST /events endpoint to create a new event
 router.post("/", validateToken, async (req, res) => {
     let data = req.body;
-    data.userId = req.user.id;
     
     // Capitalize eventStatus field if present and valid
     if (data.eventStatus) {
@@ -54,9 +53,9 @@ router.put("/:id", validateToken, async (req, res) => {
             return;
         }
         
-        let userId = req.user.id;
+        let Id = req.id;
         
-        if (event.userId != userId) {
+        if (event.Id != Id) {
             res.sendStatus(403);
             return;
         }
@@ -134,8 +133,8 @@ router.delete("/:id", validateToken, async (req, res) => {
             res.sendStatus(404);
             return;
         }
-        let userId = req.user.id;
-        if (event.userId != userId) {
+        let Id = req.id;
+        if (event.Id != Id) {
             res.sendStatus(403);
             return;
         }

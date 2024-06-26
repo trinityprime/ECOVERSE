@@ -28,13 +28,11 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import dayjs from "dayjs";
-import UserContext from "../contexts/UserContext";
 
 function Events() {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState("");
-  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState({});

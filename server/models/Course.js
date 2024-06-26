@@ -58,12 +58,6 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'courses'
     });
 
-    Course.associate = (models) => {
-        Course.belongsTo(models.User, {
-            foreignKey: "userId",
-            as: 'user'
-        });
-    };
 
     return Course;
 };

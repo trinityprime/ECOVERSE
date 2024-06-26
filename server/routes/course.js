@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Course, User } = require('../models');
+const { Course } = require('../models');
 const yup = require("yup");
 const { validateToken } = require('../middlewares/auth');
 
@@ -8,7 +8,7 @@ const { validateToken } = require('../middlewares/auth');
 router.post("/", validateToken, async (req, res) => {
     try {
         let data = req.body;
-        data.userId = req.user.id;
+        data.Id = req.id;
         
         // Capitalize courseStatus field if present and valid
         if (data.courseStatus) {
@@ -45,7 +45,7 @@ router.post("/", validateToken, async (req, res) => {
 router.put("/:id", validateToken, async (req, res) => {
     try {
         let id = req.params.id;
-        let userId = req.user.id;
+        let Id = req.id;
         let data = req.body;
         
         // Capitalize courseStatus field if present and valid
@@ -72,7 +72,7 @@ router.put("/:id", validateToken, async (req, res) => {
 
         data = await validationSchema.validate(data, { abortEarly: false });
         
-        let [num] = await Course.update(data, { where: { id: id, userId: userId } });
+        let [num] = await Course.update(data, { where: { id: id, Id: Id } });
         
         if (num === 1) {
             res.json({ message: "Course was updated successfully." });
@@ -119,8 +119,8 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", validateToken, async (req, res) => {
     try {
         let id = req.params.id;
-        let userId = req.user.id;
-        const course = await Course.findOne({ where: { id: id, userId: userId } });
+        let Id = req.id;
+        const course = await Course.findOne({ where: { id: id, Id: Id } });
         
         if (!course) {
             console.error(`Course with id ${id} not found`);
