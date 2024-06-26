@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Box, Typography, IconButton, Table, TableHead, TableBody, TableRow, TableCell, Button, TextField } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Typography, IconButton, CircularProgress, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserContext from '../contexts/UserContext';
 import http from '../http';
 import dayjs from 'dayjs';
-import UserContext from '../contexts/UserContext';
+import * as Yup from 'yup';
+import { Formik, Form, Field } from 'formik';
+import TextField from '@mui/material/TextField';
 
 function Profile() {
     const { user, setUser } = useContext(UserContext);
@@ -14,13 +17,13 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [users, setUsers] = useState([]);
+    const [setEditingUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) {
-            fetchUserRole();
-            if (user.role === 'admin') {
-                fetchUsers();
-            }
+        fetchUserRole();
+        if (user?.role === 'admin') {
+            fetchAllUsers();
         }
     }, [user]);
 
@@ -35,22 +38,43 @@ function Profile() {
         }
     };
 
-    const fetchUsers = async () => {
+    const fetchAllUsers = async () => {
         try {
-            const response = await http.get('/users');
+            const response = await http.get('/user');
             setUsers(response.data);
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error("Error fetching users:", error);
         }
     };
 
-    const handleDelete = async (userId) => {
-        if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    const handleDeleteUser = async (userId) => {
+        if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                await http.delete(`/users/${userId}`);
-                fetchUsers();
+                await http.delete(`/user/${userId}`);
+                alert("User deleted successfully!");
+                setUsers(users.filter(u => u.id !== userId));
             } catch (error) {
-                console.error(`Error deleting user with ID ${userId}:`, error);
+                console.error("Error deleting user:", error);
+                alert("An error occurred while deleting the user.");
+            }
+        }
+    };
+
+    const handleStartEditingUser = (user) => {
+        setEditingUser(user); // Set the user to be edited in state
+
+    };
+
+    const handleDeleteProfile = async () => {
+        if (window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) {
+            try {
+                await http.delete('/profile');
+                alert("Profile deleted successfully!");
+                setUser(null);
+                navigate('/login');
+            } catch (error) {
+                console.error("Error deleting profile:", error);
+                alert("An error occurred while deleting the profile.");
             }
         }
     };
@@ -65,30 +89,34 @@ function Profile() {
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
             await http.put('/profile', values);
-            alert("Profile updated successfully!");
-            setEditMode(false); // Exit edit mode
-            setUser({ ...user, ...values }); // Update user context with new values
+            toast.success("Profile updated successfully!");
+            setEditMode(false);
+            setUser({ ...user, ...values });
         } catch (error) {
             console.error("Error updating profile:", error);
-            alert("An error occurred while updating the profile.");
+            toast.error("An error occurred while updating the profile.");
         } finally {
             setSubmitting(false);
         }
     };
 
+
+
     if (loading) {
-        return <Typography variant="h5">Loading...</Typography>;
+        return <CircularProgress />;
     }
 
+    // ---------------------------------------------------------------------------------------------//
+
     return (
-        <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ mt: 12, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <ToastContainer />
             <Typography variant="h5" sx={{ mb: 2 }}>
                 Profile
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', maxWidth: '800px' }}>
                 <Box sx={{ width: '50%', p: 3, bgcolor: 'background.paper', boxShadow: 1, borderRadius: 8, mr: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                        Profile Information
                     </Typography>
                     {editMode ? (
                         <Formik
@@ -148,7 +176,7 @@ function Profile() {
                                             InputLabelProps={{ shrink: true }}
                                         />
                                     </Box>
-                                    <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+                                    <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} >
                                         {isSubmitting ? 'Updating...' : 'Update Profile'}
                                     </Button>
                                 </Form>
@@ -156,20 +184,25 @@ function Profile() {
                         </Formik>
                     ) : (
                         <>
-                            <Typography variant="body1" sx={{ mb: 1 }} align='center' fontSize={20}>
+                            <Typography variant="body1" sx={{ mb: 1 }} align='center' fontSize={30}>
                                 {user.name}
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 1 }} align='center' fontSize={18}>
+                            <Typography variant="body1" sx={{ mb: 1 }} align='center' fontSize={25}>
                                 {userRole}
                             </Typography>
+
+                            <div align='center'>
+                                {user.role === 'admin' && (
+                                    <Button variant="contained" onClick={() => navigate('/adduser')}>
+                                        Add User
+                                    </Button>
+
+                                )}
+                            </div>
                         </>
+
                     )}
-                    <IconButton color="primary" sx={{ padding: '20px' }} onClick={() => setEditMode(!editMode)}>
-                        <Edit />
-                    </IconButton>
-                    <IconButton color="secondary" sx={{ padding: '20px' }} onClick={() => handleDelete(user.id)}>
-                        <Delete />
-                    </IconButton>
+
                 </Box>
                 <Box sx={{ width: '50%', p: 3, bgcolor: 'background.paper', boxShadow: 1, borderRadius: 8, ml: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -184,39 +217,55 @@ function Profile() {
                     <Typography variant="body1" sx={{ mb: 1 }}>
                         <strong>DATE OF BIRTH:</strong> {dayjs(user.dob).format('DD-MM-YYYY')}
                     </Typography>
+                    <div align='center'>
+                        <IconButton color="primary" sx={{ padding: '20px' }} onClick={() => setEditMode(!editMode)}>
+                            <Edit />
+                        </IconButton>
+                        <IconButton color="secondary" sx={{ padding: '20px' }} onClick={handleDeleteProfile}>
+                            <Delete />
+                        </IconButton>
+                    </div>
                 </Box>
-            </Box>
 
-            {/* User Management Table (Admin only) */}
-            {user.role === 'admin' && (
-                <Box sx={{ mt: 4, maxWidth: '800px' }}>
+            </Box>
+            {userRole === 'admin' && (
+                <Box sx={{ mt: 4, width: '100%', maxWidth: '800px' }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                        User Management
+                        All Users
                     </Typography>
                     <Table>
                         <TableHead>
                             <TableRow>
+                                <TableCell>ID</TableCell>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Phone Number</TableCell>
+                                <TableCell>Role</TableCell>
+                                <TableCell>Date of Birth</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {users.map((user) => (
                                 <TableRow key={user.id}>
+                                    <TableCell>{user.id}</TableCell>
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.phoneNumber}</TableCell>
+                                    <TableCell>{user.role}</TableCell>
+                                    <TableCell>{dayjs(user.dob).format('DD-MM-YYYY')}</TableCell>
                                     <TableCell>
-                                        <Link to={`/edituser/${user.id}`} style={{ textDecoration: 'none' }}>
-                                            <IconButton color="primary">
+                                        <IconButton
+                                            color="secondary"
+                                            onClick={() => handleDeleteUser(user.id)}
+                                        >
+                                            <Delete />
+                                        </IconButton>
+                                        <Link to={`/edituser/${user.id}`}>
+                                            <IconButton color="primary" sx={{ padding: '4px' }}>
                                                 <Edit />
                                             </IconButton>
                                         </Link>
-                                        <IconButton color="error" onClick={() => handleDelete(user.id)}>
-                                            <Delete />
-                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}

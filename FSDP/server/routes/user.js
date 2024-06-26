@@ -9,6 +9,13 @@ require('dotenv').config();
 
 const yup = require("yup");
 
+const isAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+    }
+    next();
+};
+
 router.post("/register", async (req, res) => {
     let data = req.body;
 
@@ -64,7 +71,6 @@ router.post("/register", async (req, res) => {
     }
 });
 
-
 router.post("/login", async (req, res) => {
     let data = req.body;
     // Check email and password
@@ -81,7 +87,7 @@ router.post("/login", async (req, res) => {
         res.status(400).json({ message: errorMsg });
         return;
     }
-    // Return user info
+
     let userInfo = {
         id: user.id,
         email: user.email,
@@ -98,6 +104,19 @@ router.post("/login", async (req, res) => {
     });
 });
 
+router.post('/', validateToken, isAdmin, async (req, res) => {
+    const { name, email, password, phoneNumber, dob, role } = req.body;
+
+    try {
+        const newUser = await User.create({ name, email, password, phoneNumber, dob, role });
+
+        res.json({ message: 'User created successfully', user: newUser });
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ error: 'Failed to create user' });
+    }
+});
+
 router.get("/auth", validateToken, (req, res) => {
     let userInfo = {
         id: req.user.id,
@@ -110,6 +129,69 @@ router.get("/auth", validateToken, (req, res) => {
     res.json({
         user: userInfo
     });
+});
+
+router.get("/", validateToken, isAdmin, async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        await user.destroy();
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
+router.get('/:userId', validateToken, isAdmin, async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+});
+
+router.put('/:userId', validateToken, isAdmin, async (req, res) => {
+    const userId = req.params.userId;
+    const updatedUserData = req.body;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Update user data
+        await user.update(updatedUserData);
+
+        res.json({ message: 'User updated successfully', user: user });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
 });
 
 module.exports = router;

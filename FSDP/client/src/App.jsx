@@ -6,8 +6,10 @@ import { useState, useEffect } from 'react';
 import UserContext from './contexts/UserContext';
 import MyTheme from './themes/MyTheme';
 import Tutorials from './pages/Tutorials';
+import AddUser from './pages/AddUser';
 import AddTutorial from './pages/AddTutorial';
 import EditTutorial from './pages/EditTutorial';
+import EditUser from './pages/EditUser';
 import MyForm from './pages/MyForm';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -92,7 +94,9 @@ function App() {
               <Route path={"/"} element={<Tutorials />} />
               <Route path={"/tutorials"} element={<Tutorials />} />
               <Route path={"/addtutorial"} element={<AddTutorial />} />
+              <Route path={"/adduser"} element={<AddUser />} />
               <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/edituser/:id"} element={<EditUser />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
