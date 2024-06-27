@@ -52,21 +52,6 @@ function App() {
                 <Link to="/tutorials" style={{ marginLeft: 'auto' }}>
                   <Typography>Tutorials</Typography>
                 </Link>
-                <Link to="/events" style={{ marginLeft: '15px' }}>
-                  <Typography>Events</Typography>
-                </Link>
-                <Link to="/courses" style={{ marginLeft: '15px' }}>
-                  <Typography>Courses</Typography>
-                </Link>
-                <Link to="/incident_report" style={{ marginLeft: '15px' }}>
-                  <Typography>Incident Report</Typography>
-                </Link>
-                <Link to="/about_us" style={{ marginLeft: '15px' }}>
-                  <Typography>About Us</Typography>
-                </Link>
-                <Link to="/contact_us" style={{ marginLeft: '15px' }}>
-                  <Typography>Contact Us</Typography>
-                </Link>
                 {user && (
                   <>
                     <Link to="/profile" style={{ marginLeft: '15px' }}>
