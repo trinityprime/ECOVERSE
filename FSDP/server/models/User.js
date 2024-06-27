@@ -26,14 +26,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'users',
-        hooks: {
-            beforeDestroy: async (user) => {
-                const Tutorial = sequelize.models.Tutorial;
-                await Tutorial.update({ title: '[DELETED USER]' }, {
-                    where: { userId: user.id }
-                });
-            }
-        }
     });
 
     User.associate = (models) => {

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, IconButton, CircularProgress, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Typography, IconButton, CircularProgress, Button, Table, TableBody, TableCell, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,8 +17,9 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [users, setUsers] = useState([]);
-    const [setEditingUser] = useState(null);
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchUserRole();
@@ -26,8 +27,15 @@ function Profile() {
             fetchAllUsers();
         }
     }, [user]);
-    
 
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().trim().min(3).max(100).required('Name is required'),
+        email: Yup.string().trim().email('Invalid email format').required('Email is required'),
+        phoneNumber: Yup.string().trim().matches(/^\d{8}$/, 'Phone number must be 8 digits').required('Phone number is required'),
+        dob: Yup.date().nullable()
+    });
+
+    // get role to check if admin using useEffect
     const fetchUserRole = async () => {
         try {
             const response = await http.get("/user/auth");
@@ -39,6 +47,7 @@ function Profile() {
         }
     };
 
+    // for admin user table info
     const fetchAllUsers = async () => {
         try {
             const response = await http.get('/user');
@@ -48,40 +57,42 @@ function Profile() {
         }
     };
 
+    // for admin user table delete
     const handleDeleteUser = async (userId) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
                 await http.delete(`/user/${userId}`);
-                alert("User deleted successfully!");
+                toast.success("User deleted successfully!");
                 setUsers(users.filter(u => u.id !== userId));
             } catch (error) {
                 console.error("Error deleting user:", error);
-                alert("An error occurred while deleting the user.");
+                toast.success("An error occurred while deleting the user.");
             }
         }
     };
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // for current profile delete
     const handleDeleteProfile = async () => {
-        if (window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) {
-            try {
-                await http.delete('/profile');
-                alert("Profile deleted successfully!");
-                setUser(null);
-                navigate('/login');
-            } catch (error) {
-                console.error("Error deleting profile:", error);
-                alert("An error occurred while deleting the profile.");
-            }
+        try {
+            await http.delete('/profile');
+            toast.success("Profile deleted successfully!");
+            setUser(null);
+            navigate('/login');
+        } catch (error) {
+            console.error("Error deleting profile:", error);
+            toast.error("An error occurred while deleting the profile.");
         }
     };
 
-    const validationSchema = Yup.object().shape({
-        name: Yup.string().trim().min(3).max(100).required('Name is required'),
-        email: Yup.string().trim().email('Invalid email format').required('Email is required'),
-        phoneNumber: Yup.string().trim().matches(/^\d{8}$/, 'Phone number must be 8 digits').required('Phone number is required'),
-        dob: Yup.date().nullable()
-    });
-
+    // for current profile update
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
             await http.put('/profile', values);
@@ -95,7 +106,6 @@ function Profile() {
             setSubmitting(false);
         }
     };
-
 
 
     if (loading) {
@@ -217,10 +227,28 @@ function Profile() {
                         <IconButton color="primary" sx={{ padding: '20px' }} onClick={() => setEditMode(!editMode)}>
                             <Edit />
                         </IconButton>
-                        <IconButton color="secondary" sx={{ padding: '20px' }} onClick={handleDeleteProfile}>
+                        <IconButton color="secondary" sx={{ padding: '20px' }} onClick={handleClickOpen}>
                             <Delete />
                         </IconButton>
+
+                        <Dialog open={open} onClose={handleClose}>
+                            <DialogTitle>Delete Profile</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Are you sure you want to delete your profile? This action cannot be undone.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose} color="inherit" variant="contained">
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleDeleteProfile} color="error" variant="contained">
+                                    Delete
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </div>
+                    <ToastContainer />
                 </Box>
 
             </Box>
@@ -267,6 +295,7 @@ function Profile() {
                             ))}
                         </TableBody>
                     </Table>
+                    <ToastContainer />
                 </Box>
             )}
         </Box>

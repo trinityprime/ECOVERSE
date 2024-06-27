@@ -4,6 +4,7 @@ const { User } = require('../models');
 const { validateToken } = require('../middlewares/auth');
 const yup = require('yup');
 
+// gets profile info 
 router.get("/", validateToken, async (req, res) => {
     let userId = req.user.id;
     let user = await User.findByPk(userId, {
@@ -17,6 +18,7 @@ router.get("/", validateToken, async (req, res) => {
     res.json(user);
 });
 
+// updates profile info
 router.put("/", validateToken, async (req, res) => {
     let userId = req.user.id;
     let data = req.body;
@@ -56,6 +58,8 @@ router.put("/", validateToken, async (req, res) => {
     }
 });
 
+
+// deletes profile 
 router.delete("/", validateToken, async (req, res) => {
     let userId = req.user.id;
 

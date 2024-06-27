@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, TextField, Button } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import http from '../http';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -40,14 +42,20 @@ function EditUser() {
             dob: yup.date()
                 .required('Date of birth is required')
         }),
+
         onSubmit: (data) => {
             http.put(`/user/${id}`, data)
                 .then((res) => {
-                    console.log(res.data);
+                    toast.success("User updated successfully!");
+                    console.log(res.data)
                     navigate("/profile");
+                })
+                .catch((err) => {
+                    toast.error("Failed to update user.");
                 });
         }
     });
+
 
     return (
         <Box>
@@ -107,6 +115,7 @@ function EditUser() {
                     </Box>
                 )
             }
+            <ToastContainer />
         </Box>
     );
 }

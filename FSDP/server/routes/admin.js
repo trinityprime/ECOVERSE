@@ -5,6 +5,7 @@ const { User } = require('../models');
 const { sign } = require('jsonwebtoken');
 require('dotenv').config();
 
+// login to admin acc 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email, role: 'admin' } });

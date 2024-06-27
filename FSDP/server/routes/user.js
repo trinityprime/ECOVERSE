@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const yup = require("yup");
 
+// check if admin
 const isAdmin = (req, res, next) => {
     if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Admin access required' });
@@ -16,6 +17,7 @@ const isAdmin = (req, res, next) => {
     next();
 };
 
+// register user acc
 router.post("/register", async (req, res) => {
     let data = req.body;
 
@@ -50,16 +52,13 @@ router.post("/register", async (req, res) => {
     try {
         data = await validationSchema.validate(data, { abortEarly: false });
 
-        // Additional logic for admin registration if needed
         if (data.role === 'admin') {
             res.status(403).json({ message: "Admin registration not allowed." });
             return;
         }
 
-        // Hash password
         data.password = await bcrypt.hash(data.password, 10);
 
-        // Create user
         let result = await User.create(data);
         res.status(201).json({
             message: `User registered successfully.`,
@@ -71,9 +70,10 @@ router.post("/register", async (req, res) => {
     }
 });
 
+
+// login to user acc
 router.post("/login", async (req, res) => {
     let data = req.body;
-    // Check email and password
     let errorMsg = "Email or password is not correct.";
     let user = await User.findOne({
         where: { email: data.email }
@@ -104,7 +104,7 @@ router.post("/login", async (req, res) => {
     });
 });
 
-//add user in admin acc
+//add user from admin acc
 router.post('/', validateToken, isAdmin, async (req, res) => {
     try {
         const { name, email, password, phoneNumber, dob, role } = req.body;
@@ -143,7 +143,7 @@ router.get("/auth", validateToken, (req, res) => {
     });
 });
 
-// list in admin acc
+// list users in admin acc
 router.get("/", validateToken, isAdmin, async (req, res) => {
     try {
         const users = await User.findAll();
@@ -172,7 +172,7 @@ router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
     }
 });
 
-
+// get user info for update in admin acc
 router.get('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
 
@@ -189,7 +189,7 @@ router.get('/:userId', validateToken, isAdmin, async (req, res) => {
     }
 });
 
-// edit in admin acc
+// editing user info in admin acc
 router.put('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
     const updatedUserData = req.body;
