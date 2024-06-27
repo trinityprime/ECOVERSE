@@ -104,18 +104,30 @@ router.post("/login", async (req, res) => {
     });
 });
 
+//add user in admin acc
 router.post('/', validateToken, isAdmin, async (req, res) => {
-    const { name, email, password, phoneNumber, dob, role } = req.body;
-
     try {
-        const newUser = await User.create({ name, email, password, phoneNumber, dob, role });
+        const { name, email, password, phoneNumber, dob, role } = req.body;
 
-        res.json({ message: 'User created successfully', user: newUser });
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            phoneNumber,
+            dob,
+            role
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: 'user added!!!!!!!!!!!!!!!' });
     } catch (error) {
         console.error('Error creating user:', error);
-        res.status(500).json({ error: 'Failed to create user' });
+        res.status(500).json({ message: 'Error creating user', error });
     }
 });
+  
 
 router.get("/auth", validateToken, (req, res) => {
     let userInfo = {
@@ -131,6 +143,7 @@ router.get("/auth", validateToken, (req, res) => {
     });
 });
 
+// list in admin acc
 router.get("/", validateToken, isAdmin, async (req, res) => {
     try {
         const users = await User.findAll();
@@ -141,6 +154,7 @@ router.get("/", validateToken, isAdmin, async (req, res) => {
     }
 });
 
+// delete in admin acc
 router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
 
@@ -158,6 +172,7 @@ router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
     }
 });
 
+
 router.get('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
 
@@ -174,6 +189,7 @@ router.get('/:userId', validateToken, isAdmin, async (req, res) => {
     }
 });
 
+// edit in admin acc
 router.put('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
     const updatedUserData = req.body;

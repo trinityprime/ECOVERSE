@@ -182,6 +182,7 @@ function AddUser() {
                         <MenuItem value="">Select role</MenuItem>
                         <MenuItem value="volunteer">Volunteer</MenuItem>
                         <MenuItem value="organization">Organization</MenuItem>
+                        <MenuItem value="admin">Admin</MenuItem> 
                     </Select>
                 </FormControl>
 
