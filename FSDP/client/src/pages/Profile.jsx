@@ -26,6 +26,7 @@ function Profile() {
             fetchAllUsers();
         }
     }, [user]);
+    
 
     const fetchUserRole = async () => {
         try {
@@ -58,11 +59,6 @@ function Profile() {
                 alert("An error occurred while deleting the user.");
             }
         }
-    };
-
-    const handleStartEditingUser = (user) => {
-        setEditingUser(user); // Set the user to be edited in state
-
     };
 
     const handleDeleteProfile = async () => {

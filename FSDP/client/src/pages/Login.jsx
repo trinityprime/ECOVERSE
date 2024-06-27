@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, TextField, Button, Link } from '@mui/material';
+import { useNavigate} from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../http';
@@ -79,6 +79,12 @@ function Login() {
           type="submit">
           Login
         </Button>
+
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
+          <Typography variant="body3">
+            Don't have an account? <Link href="/register">Register here</Link>
+          </Typography>
+        </Box>
       </Box>
       <ToastContainer />
     </Box>
