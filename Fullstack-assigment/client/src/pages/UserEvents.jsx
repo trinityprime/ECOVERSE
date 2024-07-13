@@ -15,15 +15,33 @@ function Events() {
     };
 
     const getEvent = () => {
-        http.get('/userEvent').then((res) => {
-            setEventList(res.data);
-        });
+        http.get('/userEvent')
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setEventList(res.data);
+                } else {
+                    setEventList([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching events:', error);
+                setEventList([]);
+            });
     };
 
     const searchEvent = () => {
-        http.get(`/userEvent?search=${search}`).then((res) => {
-            setEventList(res.data);
-        });
+        http.get(`/userEvent?search=${search}`)
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setEventList(res.data);
+                } else {
+                    setEventList([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error searching events:', error);
+                setEventList([]);
+            });
     };
 
     useEffect(() => {
