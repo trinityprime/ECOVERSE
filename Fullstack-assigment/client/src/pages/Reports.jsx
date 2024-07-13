@@ -5,39 +5,43 @@ import { Edit } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
-import { toast } from 'react-toastify';// importing the toast component from the react-toastify library so the import statement can be written.
+import { toast } from 'react-toastify';
 import NavigationBox from './NavigationBox';
 
 function Reports() {
-    const [reportList, setReportList] = useState([]);//stores the list of reports
-    const [visibleReports, setVisibleReports] = useState(5);//number of reports to display 
-    const [hasMore, setHasMore] = useState(true);//indicates if they are more reports to load
-    const [searchTerm, setSearchTerm] = useState('');//stores search term
-    const navigate = useNavigate();//hook for programmatic navigation
-    const location = useLocation();//hook to access the current location
+    const [reportList, setReportList] = useState([]);
+    const [visibleReports, setVisibleReports] = useState(5);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const showToast = (message, type = 'success') => {
         toast.dismiss();
         toast[type](message, {
-            position: "top-right",//specifies the position of the notification on the screen
-            autoClose: 3000,//will not automatically close after a certain time
-            hideProgressBar: false,//hides the progress bar in the notification.
-            closeOnClick: true,// allows the user to close the notification by clicking the cross
-            pauseOnHover: true,//ONLY ONE NOTIFICATION AT A TIME
-            draggable: true,//drag the notification around the screen
-            progress: undefined,//progress bar will not be displayed
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
         });
     };
 
     const getReports = () => {
         http.get('/report')
-            .then((res) => {//is used to handle the response from the server
-                console.log('Reports fetched:', res.data);
-                setReportList(res.data);
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setReportList(res.data);
+                } else {
+                    setReportList([]);
+                }
             })
-            .catch((err) => {//method is used to handle any errors that may occur.
+            .catch((err) => {
                 console.error('Error fetching reports:', err);
                 showToast('Error fetching reports', 'error');
+                setReportList([]);
             });
     };
 
@@ -133,7 +137,7 @@ function Reports() {
                         <TableBody>
                             {filteredReports.slice(0, visibleReports).map((report) => (
                                 <TableRow key={report.id}>
-                                    <TableCell> {dayjs(report.updatedAt || report.createdAt).format(global.datetimeFormat)}</TableCell>
+                                    <TableCell>{dayjs(report.updatedAt || report.createdAt).format(global.datetimeFormat)}</TableCell>
                                     <TableCell>{report.title}</TableCell>
                                     <TableCell>{renderIncidentType(report.incidentType)}</TableCell>
                                     <TableCell>{report.description}</TableCell>

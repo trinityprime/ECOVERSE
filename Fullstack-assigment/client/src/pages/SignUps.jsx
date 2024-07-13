@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Input, IconButton, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { AccessTime, Search, Clear, Edit } from '@mui/icons-material';
+import { Search, Clear, Edit } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import http from '../http';
-import dayjs from 'dayjs';
 
 function SignUps() {
     const [signUpList, setSignUpList] = useState([]);
@@ -14,15 +13,33 @@ function SignUps() {
     };
 
     const getSignUp = () => {
-        http.get('/signup').then((res) => {
-            setSignUpList(res.data);
-        });
+        http.get('/signup')
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setSignUpList(res.data);
+                } else {
+                    setSignUpList([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching sign ups:', error);
+                setSignUpList([]);
+            });
     };
 
     const searchSignUp = () => {
-        http.get(`/signup?search=${search}`).then((res) => {
-            setSignUpList(res.data);
-        });
+        http.get(`/signup?search=${search}`)
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setSignUpList(res.data);
+                } else {
+                    setSignUpList([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error searching sign ups:', error);
+                setSignUpList([]);
+            });
     };
 
     useEffect(() => {
