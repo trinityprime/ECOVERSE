@@ -1,21 +1,18 @@
-const jwt = require('jsonwebtoken');
-const { APP_SECRET } = process.env;
+const { verify } = require('jsonwebtoken');
+require('dotenv').config();
 
 const validateToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Assuming token is in format "Bearer <token>"
-
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided.' });
-    }
-
     try {
-        const decoded = jwt.verify(token, APP_SECRET);
-        req.user = decoded; // Attach user information to the request object
-        next(); // Proceed to the next middleware or route handler
-    } catch (err) {
-        console.error('Token Verification Error:', err);
-        return res.status(401).json({ message: 'Unauthorized: Invalid token.' });
+        const accessToken = req.header("Authorization").split(" ")[1];
+        if (!accessToken) {
+            return res.sendStatus(401);
+        }
+        const payload = verify(accessToken, process.env.APP_SECRET);
+        req.user = payload;
+        return next();
     }
-};
-
+    catch (err) {
+        return res.sendStatus(401);
+    }
+}
 module.exports = { validateToken };
