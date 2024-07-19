@@ -139,6 +139,7 @@ function Reports() {
                             {filteredReports.slice(0, visibleReports).map((report) => (
                                 <TableRow key={report.id}>
                                     <TableCell>{dayjs(report.updatedAt || report.createdAt).format(global.datetimeFormat)}</TableCell>
+                                    <TableCell>{report.name}</TableCell>
                                     <TableCell>{report.title}</TableCell>
                                     <TableCell>{renderIncidentType(report.incidentType)}</TableCell>
                                     <TableCell>{report.description}</TableCell>
