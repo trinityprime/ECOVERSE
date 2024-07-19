@@ -1,9 +1,8 @@
 import React from "react";
-import '/Users/sunhaotian/Desktop/full_stack_assigment/FSDP-PROJECT-GROUP2/Fullstack-assigment/client/src/footer.css';
-import fb from '/Users/sunhaotian/Desktop/full_stack_assigment/FSDP-PROJECT-GROUP2/Fullstack-assigment/client/src/assets/facebook.png';
-import twitter from '/Users/sunhaotian/Desktop/full_stack_assigment/FSDP-PROJECT-GROUP2/Fullstack-assigment/client/src/assets/twitter.png';
-import insta from '/Users/sunhaotian/Desktop/full_stack_assigment/FSDP-PROJECT-GROUP2/Fullstack-assigment/client/src/assets/instagram.png';
-
+import './footer.css';
+import fb from './assets/facebook.png';
+import twitter from './assets/twitter.png';
+import insta from './assets/instagram.png';
 const Footer =()=>{
     return(
         <div className="footer">
