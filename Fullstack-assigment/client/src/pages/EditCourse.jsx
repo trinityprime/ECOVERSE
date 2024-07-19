@@ -69,28 +69,51 @@ function EditCourse() {
         initialValues: course,
         enableReinitialize: true,
         validationSchema: yup.object({
-            courseName: yup
-                .string()
-                .trim()
-                .min(3, "Course Name must be at least 3 characters")
-                .max(100, "Course Name must be at most 100 characters")
-                .required("Course Name is required"),
-            courseStartDate: yup.string().trim()
+            courseName: yup.string().trim()
+                .min(3, 'Course Name must be at least 3 characters')
+                .max(100, 'Course Name must be at most 100 characters')
+                .required('Course Name is required'),
+            courseType: yup.string().trim()
+                .required('Please select a course type'),
+            courseDescription: yup.string().trim()
+                .test(
+                    'min-words',
+                    'Course Description must be at least 5 words',
+                    value => value && value.split(' ').filter(word => word.length > 0).length >= 5
+                )
+                .max(500, 'Course Description must be at most 500 characters')
+                .required('Course Description is required'),
+            courseStartDate: yup.date()
+                .typeError('Incorrect format for Start Date')
+                .min(new Date(2024, 0, 1), 'Start Date must be in the year 2024 or later')
+                .max(new Date(2099, 12, 31), 'Start Date must be in the year 2099 or earlier')
                 .required('Start Date is required'),
-            courseEndDate: yup.string().trim()
-                .required('End Date is required'),
-            courseTimeFrom: yup.string().trim().required("Course Start Time is required"),
-            courseTimeTo: yup.string().trim().required("Course End Time is required"),
-            location: yup.string().trim().required("Location is required"),
-            organizerDetails: yup.string().trim().required("Organizer Details are required"),
-            maxParticipants: yup
-                .number()
-                .integer()
-                .min(1, "Must be at least 1 participant")
-                .required("Maximum Participants are required"),
-            courseDescription: yup.string().trim().required("Course Description is required"),
-            termsAndConditions: yup.string().trim().required("Terms and Conditions are required"),
-            courseStatus: yup.string().trim().required("Course Status is required"),
+            courseEndDate: yup.date()
+                .typeError('Incorrect format for End Date')
+                .min(new Date(2024, 0, 1), 'End Date must be in the year 2024 or later')
+                .max(new Date(2099, 11, 31), 'End Date must be in the year 2099 or earlier'),
+            courseTimeFrom: yup.string().trim()
+                .required('Start Time is required'),
+            courseTimeTo: yup.string().trim()
+                .required('End Time is required'),
+            location: yup.string().trim()
+                .min(3, 'Location must be at least 3 characters')
+                .max(100, 'Location must be at most 100 characters')
+                .required('Location is required'),
+            maxParticipants: yup.number()
+                .integer('Max Participants must be an integer')
+                .positive('Max Participants must be positive')
+                .required('Max Participants is required'),
+            organizerDetails: yup.string().trim()
+                .min(3, 'Organizer Details must be at least 3 characters')
+                .max(500, 'Organizer Details must be at most 500 characters')
+                .required('Organizer Details are required'),
+            termsAndConditions: yup.string().trim()
+                .min(3, 'Terms and Conditions must be at least 3 characters')
+                .max(1000, 'Terms and Conditions must be at most 1000 characters')
+                .required('Terms and Conditions are required'),
+            courseStatus: yup.string().trim()
+                .required('Course Status is required'),
             courseImage: "",
         }),
         onSubmit: (data) => {

@@ -67,9 +67,13 @@ function AddCourse() {
                 .required('Course Description is required'),
             courseStartDate: yup.date()
                 .typeError('Incorrect format for Start Date')
+                .min(new Date(2024, 0, 1), 'Start Date must be in the year 2024 or later')
+                .max(new Date(2099, 12, 31), 'Start Date must be in the year 2099 or earlier')
                 .required('Start Date is required'),
             courseEndDate: yup.date()
                 .typeError('Incorrect format for End Date')
+                .min(new Date(2024, 0, 1), 'End Date must be in the year 2024 or later')
+                .max(new Date(2099, 11, 31), 'End Date must be in the year 2099 or earlier')
                 .required('End Date is required'),
             courseTimeFrom: yup.string().trim()
                 .required('Start Time is required'),
