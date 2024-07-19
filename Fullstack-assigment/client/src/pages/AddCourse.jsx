@@ -56,14 +56,20 @@ function AddCourse() {
                 .max(100, 'Course Name must be at most 100 characters')
                 .required('Course Name is required'),
             courseType: yup.string().trim()
-                .required('Course Type is required'),
+                .required('Please select a course type'),
             courseDescription: yup.string().trim()
-                .min(3, 'Course Description must be at least 3 characters')
+                .test(
+                    'min-words',
+                    'Course Description must be at least 5 words',
+                    value => value && value.split(' ').filter(word => word.length > 0).length >= 5
+                )
                 .max(500, 'Course Description must be at most 500 characters')
                 .required('Course Description is required'),
-            courseStartDate: yup.string().trim()
+            courseStartDate: yup.date()
+                .typeError('Incorrect format for Start Date')
                 .required('Start Date is required'),
-            courseEndDate: yup.string().trim()
+            courseEndDate: yup.date()
+                .typeError('Incorrect format for End Date')
                 .required('End Date is required'),
             courseTimeFrom: yup.string().trim()
                 .required('Start Time is required'),

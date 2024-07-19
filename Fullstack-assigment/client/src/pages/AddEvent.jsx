@@ -59,10 +59,15 @@ function AddEvent() {
                 .max(50, 'Event Type must be at most 50 characters')
                 .required('Event Type is required'),
             eventDescription: yup.string().trim()
-                .min(3, 'Event Description must be at least 3 characters')
+                .test(
+                    'min-words',
+                    'Event Description must be at least 5 words',
+                    value => value && value.split(' ').filter(word => word.length > 0).length >= 5
+                )
                 .max(500, 'Event Description must be at most 500 characters')
                 .required('Event Description is required'),
             eventDate: yup.date()
+                .typeError('Incorrect format for Event Date')
                 .required('Event Date is required'),
             eventTimeFrom: yup.string().trim()
                 .required('Start Time is required'),
