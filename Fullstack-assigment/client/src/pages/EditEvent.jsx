@@ -112,7 +112,10 @@ function EditEvent() {
         .min(3, "Event Name must be at least 3 characters")
         .max(100, "Event Name must be at most 100 characters")
         .required("Event Name is required"),
-      eventDate: yup.date().required("Event Date is required"),
+      eventDate: yup.typeError('Incorrect format for Event Date')
+        .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
+        .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
+        .required('Event Date is required'),
       eventTimeFrom: yup.string().trim().required("Start Time is required"),
       eventTimeTo: yup.string().trim().required("End Time is required"),
       location: yup.string().trim().required("Location is required"),

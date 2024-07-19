@@ -69,7 +69,7 @@ function AddEvent() {
             eventStartDate: yup.date()
                 .typeError('Incorrect format for Event Date')
                 .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
-                .max(new Date(2099, 12, 31), 'Event Date must be in the year 2099 or earlier')
+                .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
                 .required('Event Date is required'),
             eventTimeFrom: yup.string().trim()
                 .required('Start Time is required'),
