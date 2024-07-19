@@ -30,19 +30,27 @@ app.use("/event", eventRoute);
 const reportRoute = require('./routes/report');
 app.use("/report", reportRoute);
 
+const userRoute = require('./routes/user');
+app.use("/user", userRoute);
 
+const profileRoute = require('./routes/profile')
+app.use('/profile', profileRoute)
 
+const adminRoute = require('./routes/admin')
+app.use('/admin', adminRoute)
+
+const initializeAdminAccount = require('./initializeAdmin'); 
 
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
 
-
 const db = require('./models');
 db.sequelize.sync({ alter: true })
-    .then(() => {
+    .then(async () => {
+        await initializeAdminAccount();
         let port = process.env.APP_PORT;
         app.listen(port, () => {
-            console.log(`Sever running on http://localhost:${port}`);
+            console.log(`⚡ Sever running on http://localhost:${port}`);
         });
     })
     .catch((err) => {
