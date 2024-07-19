@@ -33,6 +33,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import http from './http';
 import Profile from './pages/Profile';
+import Footer from './footer.jsx';
 
 function App() {
   const [userAnchorEl, setUserAnchorEl] = useState(null);
@@ -226,6 +227,7 @@ function App() {
               <Route path={"/profile"} element={<Profile />} />
             </Routes>
           </Container>
+          <Footer />
         </ThemeProvider>
       </Router>
     </UserContext.Provider>
