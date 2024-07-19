@@ -128,6 +128,7 @@ function Reports() {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Date</TableCell>
+                                <TableCell>Name</TableCell>
                                 <TableCell>Title</TableCell>
                                 <TableCell>Type of Incident</TableCell>
                                 <TableCell>Description</TableCell>

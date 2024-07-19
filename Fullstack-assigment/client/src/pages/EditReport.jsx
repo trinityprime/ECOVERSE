@@ -81,7 +81,7 @@ function EditReport() {
         http.delete(`/report/${id}`)
             .then(() => {
                 setOpenDelete(false);
-                toast.success('Report delete successfully');
+                toast.success('Report deleted successfully');
                 setTimeout(() => {
                     navigate("/reports");
                 }, 2000); // Adjust the timeout duration as needed
