@@ -86,7 +86,7 @@ function EditCourse() {
             courseStartDate: yup.date()
                 .typeError('Incorrect format for Start Date')
                 .min(new Date(2024, 0, 1), 'Start Date must be in the year 2024 or later')
-                .max(new Date(2099, 12, 31), 'Start Date must be in the year 2099 or earlier')
+                .max(new Date(2099, 11, 31), 'Start Date must be in the year 2099 or earlier')
                 .required('Start Date is required'),
             courseEndDate: yup.date()
                 .typeError('Incorrect format for End Date')
