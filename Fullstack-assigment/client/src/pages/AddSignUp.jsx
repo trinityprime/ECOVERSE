@@ -84,6 +84,9 @@ function AddSignUp() {
                         onBlur={formik.handleBlur}
                         error={formik.touched.eventCourseName && Boolean(formik.errors.eventCourseName)}
                         helperText={formik.touched.eventCourseName && formik.errors.eventCourseName}
+                        InputProps={{
+                            readOnly: true
+                        }}
                     />
                     <TextField
                         fullWidth
