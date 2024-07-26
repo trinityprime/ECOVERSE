@@ -25,7 +25,7 @@ import AdminECManagement from './pages/AdminECManagement';
 import { ThemeProvider } from '@mui/material/styles';
 import MyTheme from './themes/MyTheme';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import UserContext from './contexts/UserContext';
 import AddUser from './pages/AddUser';
 import EditUser from './pages/EditUser';
@@ -36,9 +36,9 @@ import Profile from './pages/Profile';
 import Footer from './footer.jsx';
 
 function App() {
+  const [user, setUser] = useState(null);
   const [userAnchorEl, setUserAnchorEl] = useState(null);
   const [adminAnchorEl, setAdminAnchorEl] = useState(null);
-  const [user, setUser] = useState(null);
 
   const handleUserMenuClick = (event) => {
     setUserAnchorEl(event.currentTarget);
@@ -86,101 +86,111 @@ function App() {
                 </Link>
                 <Box sx={{ flexGrow: 1 }}></Box>
 
-                {/* User Dropdown */}
-                <Button
-                  aria-controls="user-menu"
-                  aria-haspopup="true"
-                  onClick={handleUserMenuClick}
-                  style={{ marginLeft: 'auto' }}
-                >
-                  User
-                </Button>
-                <Menu
-                  id="user-menu"
-                  anchorEl={userAnchorEl}
-                  open={Boolean(userAnchorEl)}
-                  onClose={handleUserMenuClose}
-                >
-                  <MenuItem onClick={handleUserMenuClose}>
-                    <Link to="/AddUserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      Add Your Own Event
-                    </Link>
-                  </MenuItem>
-
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/Courses" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      All Courses
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/events" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      All Events
-                    </Link>
-                  </MenuItem>
-
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/AddReport" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      Add Report
-                    </Link>
-                  </MenuItem>
-                </Menu>
-
-                {/* Admin Dropdown */}
-                <Button
-                  aria-controls="admin-menu"
-                  aria-haspopup="true"
-                  onClick={handleAdminMenuClick}
-                  style={{ marginLeft: '15px' }}
-                >
-                  Admin
-                </Button>
-                <Menu
-                  id="admin-menu"
-                  anchorEl={adminAnchorEl}
-                  open={Boolean(adminAnchorEl)}
-                  onClose={handleAdminMenuClose}
-                >
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      All user added event
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/SignUps" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      View all user signups
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/AddCourse" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      Add Course
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/AddEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      Add Event
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/AdminECManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      Admin Management
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleAdminMenuClose}>
-                    <Link to="/Reports" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      View all reports
-                    </Link>
-                  </MenuItem>
-                </Menu>
-
-                {user && (
+                {user && user.role === 'admin' ? (
                   <>
-                    <Link to="/profile" style={{ marginLeft: '15px' }}>
-                      <Typography>{user.name}</Typography>
-                    </Link>
+                    {/* Admin Dropdown */}
+                    <Button
+                      aria-controls="admin-menu"
+                      aria-haspopup="true"
+                      onClick={handleAdminMenuClick}
+                      style={{ marginLeft: '15px' }}
+                    >
+                      Admin
+                    </Button>
+                    <Menu
+                      id="admin-menu"
+                      anchorEl={adminAnchorEl}
+                      open={Boolean(adminAnchorEl)}
+                      onClose={handleAdminMenuClose}
+                    >
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          All user added event
+                        </Link>
+                      </MenuItem>
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/SignUps" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          View all user signups
+                        </Link>
+                      </MenuItem>
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/AddCourse" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          Add Course
+                        </Link>
+                      </MenuItem>
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/AddEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          Add Event
+                        </Link>
+                      </MenuItem>
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/AdminECManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          Admin Management
+                        </Link>
+                      </MenuItem>
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/Reports" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          View all reports
+                        </Link>
+                      </MenuItem>
+                    </Menu>
+
                     <Button onClick={logout}>Logout</Button>
                   </>
+                ) : (
+
+                  user && (
+                    <>
+                      {/* User Dropdown */}
+                      <Button
+                        aria-controls="user-menu"
+                        aria-haspopup="true"
+                        onClick={handleUserMenuClick}
+                        style={{ marginLeft: 'auto' }}
+                      >
+                        <Typography>{user.name}</Typography>
+                      </Button>
+                      <Menu
+                        id="user-menu"
+                        anchorEl={userAnchorEl}
+                        open={Boolean(userAnchorEl)}
+                        onClose={handleUserMenuClose}
+                      >
+                        <MenuItem onClick={handleUserMenuClose}>
+                          <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Profile
+                          </Link>
+                        </MenuItem>
+
+                        <MenuItem onClick={handleUserMenuClose}>
+                          <Link to="/AddUserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Add Your Own Event
+                          </Link>
+                        </MenuItem>
+
+                        <MenuItem onClick={handleAdminMenuClose}>
+                          <Link to="/Courses" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            All Courses
+                          </Link>
+                        </MenuItem>
+                        <MenuItem onClick={handleAdminMenuClose}>
+                          <Link to="/events" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            All Events
+                          </Link>
+                        </MenuItem>
+
+                        <MenuItem onClick={handleAdminMenuClose}>
+                          <Link to="/AddReport" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Add Report
+                          </Link>
+                        </MenuItem>
+                      </Menu>
+
+                      <Button onClick={logout}>Logout</Button>
+                    </>
+                  )
                 )}
-                
+
                 {!user && (
                   <>
                     <Link to="/register">

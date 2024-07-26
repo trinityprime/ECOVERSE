@@ -38,7 +38,17 @@ function Login() {
         .then((res) => {
           localStorage.setItem("accessToken", res.data.accessToken);
           setUser(res.data.user);
-          navigate("/AdminECManagement");
+
+          const userRole = res.data.user.role;
+          if (userRole === 'admin') {
+            navigate("/AdminECManagement");
+          } else if (userRole === 'volunteer' || userRole === 'organization') {
+            navigate("/profile");
+          } else {
+            console.error('Unknown user role:', userRole);
+            navigate("/default");
+          }
+
         })
         .catch((err) => {
           toast.error(`${err.response.data.message}`);

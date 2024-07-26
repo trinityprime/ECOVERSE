@@ -5,12 +5,13 @@
 .footer{
     
     background-color: black;
-    margin-top: 3rem;
+    margin-top: 17rem;
 }
 
 .sb__footer{
     display: flex;
     flex-direction: column;
+
 }
 
 .sb__footer-links{

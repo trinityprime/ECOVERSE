@@ -206,7 +206,6 @@ function Profile() {
                                 )}
                             </div>
                         </>
-
                     )}
 
                 </Box>
