@@ -185,110 +185,110 @@ function AdminECManagement() {
             {/* Main Content Section */}
             <Box sx={{ ml: '300px', p: 2, width: 'calc(100% - 240px)' }}>
                 {/* User List */}
-            <Box sx={{ ml: '-15px', p: 2, width: 'calc(100% - 0px)' }}>
-                {/* User List */}
-                <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
-                <Box sx={{ mb: 3 }}>
-                    {/* Header Row */}
-                    <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1.5 }}>
-                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
+                <Box sx={{ ml: '-15px', p: 2, width: 'calc(100% - 0px)' }}>
+                    {/* User List */}
+                    <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
+                    <Box sx={{ mb: 3 }}>
+                        {/* Header Row */}
+                        <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1.5 }}>
+                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone Number</Typography>
+                            </Grid>
+                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date of Birth</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone Number</Typography>
-                        </Grid>
-                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date of Birth</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
-                        </Grid>
-                    </Grid>
 
-                    {/* Data Rows */}
-                    {currentUsers.map((user) => (
-                        <Card key={user.id} sx={{ mb: 2 }}>
-                            <CardContent>
-                                <Grid container spacing={0} alignItems="center">
-                                    <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                                        <Typography>{user.id}</Typography>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{user.name}</Typography>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{user.email}</Typography>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{user.phoneNumber}</Typography>
-                                    </Grid>
-                                    <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                                        <Typography>{user.role}</Typography>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <IconButton
-                                            color="secondary"
-                                            onClick={() => handleDeleteUser(user.id)}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                        <Link to={`/edituser/${user.id}`}>
-                                            <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                <Edit />
+                        {/* Data Rows */}
+                        {currentUsers.map((user) => (
+                            <Card key={user.id} sx={{ mb: 2 }}>
+                                <CardContent>
+                                    <Grid container spacing={0} alignItems="center">
+                                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                            <Typography>{user.id}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{user.name}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{user.email}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{user.phoneNumber}</Typography>
+                                        </Grid>
+                                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                            <Typography>{user.role}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <IconButton
+                                                color="secondary"
+                                                onClick={() => handleDeleteUser(user.id)}
+                                            >
+                                                <Delete />
                                             </IconButton>
-                                        </Link>
+                                            <Link to={`/edituser/${user.id}`}>
+                                                <IconButton color="primary" sx={{ padding: '4px' }}>
+                                                    <Edit />
+                                                </IconButton>
+                                            </Link>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                            </CardContent>
-                        </Card>
-                    ))}
-                    {/* Pagination Controls for Users */}
-                    <Box mt={2} sx={{ textAlign: 'center' }}>
-                        {/* Previous page button */}
-                        <Button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            sx={{ mr: 1 }}
-                        >
-                            Previous
-                        </Button>
-
-                        {/* Page indicators or numbers */}
-                        {Array.from({ length: totalUserPages }).map((_, index) => (
-                            <Button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                variant={currentPage === index + 1 ? 'contained' : 'outlined'}
-                                sx={{ mx: 1 }}
-                            >
-                                {index + 1}
-                            </Button>
+                                </CardContent>
+                            </Card>
                         ))}
+                        {/* Pagination Controls for Users */}
+                        <Box mt={2} sx={{ textAlign: 'center' }}>
+                            {/* Previous page button */}
+                            <Button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                sx={{ mr: 1 }}
+                            >
+                                Previous
+                            </Button>
 
-                        {/* Next page button */}
-                        <Button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalUserPages}
-                            sx={{ ml: 1 }}
-                        >
-                            Next
-                        </Button>
+                            {/* Page indicators or numbers */}
+                            {Array.from({ length: totalUserPages }).map((_, index) => (
+                                <Button
+                                    key={index}
+                                    onClick={() => paginate(index + 1)}
+                                    variant={currentPage === index + 1 ? 'contained' : 'outlined'}
+                                    sx={{ mx: 1 }}
+                                >
+                                    {index + 1}
+                                </Button>
+                            ))}
+
+                            {/* Next page button */}
+                            <Button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalUserPages}
+                                sx={{ ml: 1 }}
+                            >
+                                Next
+                            </Button>
+                        </Box>
                     </Box>
+                    <ToastContainer />
                 </Box>
-                <ToastContainer />
-            </Box>
 
                 {/* Event List */}
                 <Typography variant="h5" align="left" gutterBottom>Event List</Typography>
@@ -456,9 +456,9 @@ function AdminECManagement() {
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     textAlign: 'center' // Center align content inside the Box
                 }}>
-                    <Typography variant="h5" gutterBottom>Welcome to the Event and Course Creation Form Section</Typography>
+                    <Typography variant="h5" gutterBottom>Welcome to the User, Event and Course Creation Form Section</Typography>
                     <Typography variant="body1" gutterBottom>
-                        Click on the buttons below to start creating new events or courses.
+                        Click on the buttons below to start registering new users, events or courses.
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                         <Button>
@@ -469,6 +469,11 @@ function AdminECManagement() {
                         <Button>
                             <Link to={`/addcourse`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 Create New Course
+                            </Link>
+                        </Button>
+                        <Button>
+                            <Link to={`/adduser`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                Create New User
                             </Link>
                         </Button>
                     </Box>

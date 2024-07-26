@@ -62,7 +62,7 @@ function AddUser() {
                 const response = await http.post("/user", data);
                 toast.success(response.data.message);
                 console.log(response.data);
-                navigate("/profile"); 
+                navigate("/AdminECManagement"); 
             } catch (err) {
                 toast.error(err.response.data.message || 'Failed to add user');
             }
