@@ -16,12 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'reports'
     });
 
-    // Report.associate = (models) => {
-    //     Report.belongsTo(models.User, {
-    //         foreignKey: "userId",
-    //         as: 'user'
-    //     });
-    // };
+    Report.associate = (models) => {
+        Report.belongsTo(models.User, {
+            foreignKey: "userId",
+            as: 'user'
+        });
+    };
 
     return Report;
 }

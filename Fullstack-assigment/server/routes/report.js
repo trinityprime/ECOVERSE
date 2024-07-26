@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const {  Report } = require('../models');
+const { User , Report } = require('../models');
 const { Op } = require("sequelize");
 const yup = require("yup");
+const { validateToken } = require('../middlewares/auth');
 
-router.post("/", async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
     let data = req.body;
+    // console.log(req);
+    data.userId = req.user.id;
     // Validate request body
     let validationSchema = yup.object({
         title: yup.string().trim().min(3).max(100).required(),
@@ -35,7 +38,7 @@ router.get("/", async (req, res) => {
     let list = await Report.findAll({
         where: condition,
         order: [['createdAt', 'DESC']],
-        // include: { model: User, as: "user", attributes: ['name'] }
+        include: { model: User, as: "user", attributes: ['name'] }
     });
     res.json(list);
 });
