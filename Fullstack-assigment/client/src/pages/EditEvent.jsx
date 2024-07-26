@@ -17,6 +17,7 @@ function EditEvent() {
   const [imageFile, setImageFile] = useState(null);
   const [event, setEvent] = useState({
     eventName: "",
+    eventType: "",
     eventDate: "",
     eventTimeFrom: "",
     eventTimeTo: "",
@@ -112,7 +113,8 @@ function EditEvent() {
         .min(3, "Event Name must be at least 3 characters")
         .max(100, "Event Name must be at most 100 characters")
         .required("Event Name is required"),
-      eventDate: yup.typeError('Incorrect format for Event Date')
+      eventDate: yup.date()
+        .typeError('Incorrect format for Event Date')
         .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
         .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
         .required('Event Date is required'),

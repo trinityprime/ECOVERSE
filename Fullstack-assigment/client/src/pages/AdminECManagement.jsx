@@ -310,30 +310,39 @@ function AdminECManagement() {
                     </Grid>
 
                     {/* Data Rows */}
-                    {currentEvents.map((event) => (
-                        <Card key={event.id} sx={{ mb: 2 }}>
-                            <CardContent>
-                                <Grid container spacing={0} alignItems="center">
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{event.id}</Typography>
+                    {currentEvents.length === 0 ? (
+                        <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                <Typography variant="body1">No events available</Typography>
+                            </Grid>
+                        </Grid>
+                    ) : (
+                        currentEvents.map((event) => (
+                            <Card key={event.id} sx={{ mb: 2 }}>
+                                <CardContent>
+                                    <Grid container spacing={0} alignItems="center">
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{event.id}</Typography>
+                                        </Grid>
+                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                            <Typography>{dayjs(event.eventDate).format('DD MMMM YYYY')}</Typography>
+                                        </Grid>
+                                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                                            <Typography>{event.eventName}</Typography>
+                                        </Grid>
+                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                    View Details
+                                                </Link>
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                        <Typography>{dayjs(event.eventDate).format('DD MMMM YYYY')}</Typography>
-                                    </Grid>
-                                    <Grid item xs={4} sx={{ textAlign: 'center' }}>
-                                        <Typography>{event.eventName}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                        <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                View Details
-                                            </Link>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
+
 
                     {/* Pagination Controls for Events */}
                     <Box mt={2} sx={{ textAlign: 'center' }}>
@@ -366,7 +375,9 @@ function AdminECManagement() {
                         >
                             Next
                         </Button>
+                        
                     </Box>
+                    
                 </Box>
 
                 {/* Course List */}
@@ -389,30 +400,39 @@ function AdminECManagement() {
                     </Grid>
 
                     {/* Data Rows */}
-                    {currentCourses.map((course) => (
-                        <Card key={course.id} sx={{ mb: 2 }}>
-                            <CardContent>
-                                <Grid container spacing={0} alignItems="center">
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        <Typography>{course.id}</Typography>
+                    {currentCourses.length === 0 ? (
+                        <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                <Typography variant="body1">No courses available</Typography>
+                            </Grid>
+                        </Grid>
+                    ) : (
+                        currentCourses.map((course) => (
+                            <Card key={course.id} sx={{ mb: 2 }}>
+                                <CardContent>
+                                    <Grid container spacing={0} alignItems="center">
+                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                            <Typography>{course.id}</Typography>
+                                        </Grid>
+                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                            <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
+                                        </Grid>
+                                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                                            <Typography>{course.courseName}</Typography>
+                                        </Grid>
+                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                    View Details
+                                                </Link>
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                        <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
-                                    </Grid>
-                                    <Grid item xs={4} sx={{ textAlign: 'center' }}>
-                                        <Typography>{course.courseName}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                        <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                View Details
-                                            </Link>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
+
 
                     {/* Pagination Controls for Courses */}
                     <Box mt={2} sx={{ textAlign: 'center' }}>

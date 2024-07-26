@@ -66,7 +66,7 @@ function AddEvent() {
                 )
                 .max(500, 'Event Description must be at most 500 characters')
                 .required('Event Description is required'),
-            eventStartDate: yup.date()
+            eventDate: yup.date()
                 .typeError('Incorrect format for Event Date')
                 .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
                 .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
@@ -93,6 +93,7 @@ function AddEvent() {
                 .required('Event Status is required!')
         }),
         onSubmit: (data) => {
+            console.log("button is working");
             if (imageFile) {
                 data.imageFile = imageFile;
             }
@@ -103,9 +104,16 @@ function AddEvent() {
             data.organizerDetails = data.organizerDetails.trim();
             data.termsAndConditions = data.termsAndConditions.trim();
 
+            console.log("Submitting form with data:", data);
+            if (imageFile) {
+                data.imageFile = imageFile;
+            }
+            console.log("Submitting with imageFile:", data.imageFile);
+
             http.post("/event", data)
                 .then((res) => {
                     console.log(res.data);
+                    console.log("Response from server:", res.data);
                     toast.success('Event created successfully!');
                     setTimeout(() => {
                         navigate('/AdminECManagement');
@@ -255,7 +263,7 @@ function AddEvent() {
                                 ))}
                             </Select>
                         </FormControl>
-                        
+
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
                             type="number"

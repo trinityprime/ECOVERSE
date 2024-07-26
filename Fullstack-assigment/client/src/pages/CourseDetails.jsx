@@ -190,6 +190,11 @@ function CourseDetails() {
                                         <img
                                             alt="course"
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${course.imageFile}`}
+                                            style={{
+                                                maxWidth: "100%", // ensures the image scales down to fit the container
+                                                maxHeight: "400px", // adjust the height as needed
+                                                objectFit: "contain" // maintains aspect ratio
+                                            }}
                                         />
                                     </Box>
                                 ) : (

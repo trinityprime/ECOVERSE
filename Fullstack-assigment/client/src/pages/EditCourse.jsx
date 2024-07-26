@@ -13,6 +13,7 @@ function EditCourse() {
 
     const [course, setCourse] = useState({
         courseName: "",
+        courseType: "",
         courseStartDate: '',
         courseEndDate: '',
         courseTimeFrom: "",
