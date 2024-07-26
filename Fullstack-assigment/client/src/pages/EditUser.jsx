@@ -48,7 +48,7 @@ function EditUser() {
                 .then((res) => {
                     toast.success("User updated successfully!");
                     console.log(res.data)
-                    navigate("/profile");
+                    navigate("/AdminECManagement");
                 })
                 .catch((err) => {
                     toast.error("Failed to update user.");

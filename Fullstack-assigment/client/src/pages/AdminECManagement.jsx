@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Box, Typography, Grid, Card, CardContent, Divider, Button } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Typography, Grid, Card, CardContent, Divider, Button, IconButton } from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserContext from '../contexts/UserContext';
+import http from '../http';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -12,7 +17,73 @@ function AdminECManagement() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const perPage = 5; // Number of items per page
+    const { user, setUser } = useContext(UserContext);
+    const [userRole, setUserRole] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [editMode, setEditMode] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
 
+    // Get role to check if admin
+    const fetchUserRole = async () => {
+        try {
+            const response = await http.get("/user/auth");
+            setUserRole(response.data.user.role);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching user role:", error);
+            setLoading(false);
+        }
+    };
+
+    // Fetch all users for admin
+    const fetchAllUsers = async () => {
+        try {
+            const response = await http.get('/user');
+            setUsers(response.data);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    // Handle user deletion
+    const handleDeleteUser = async (userId) => {
+        if (window.confirm("Are you sure you want to delete this user?")) {
+            try {
+                await http.delete(`/user/${userId}`);
+                toast.success("User deleted successfully!");
+                setUsers(users.filter(u => u.id !== userId));
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                toast.success("An error occurred while deleting the user.");
+            }
+        }
+    };
+
+    // Handle dialog open/close
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // Handle profile deletion
+    const handleDeleteProfile = async () => {
+        try {
+            await http.delete('/profile');
+            toast.success("Profile deleted successfully!");
+            setUser(null);
+            navigate('/login');
+        } catch (error) {
+            console.error("Error deleting profile:", error);
+            toast.error("An error occurred while deleting the profile.");
+        }
+    };
+
+    // Fetch events and courses
     useEffect(() => {
         const fetchEvents = async () => {
             try {
@@ -40,17 +111,24 @@ function AdminECManagement() {
 
         fetchEvents();
         fetchCourses();
-    }, []);
+        fetchUserRole();
+
+        if (user?.role === 'admin') {
+            fetchAllUsers();
+        }
+    }, [user]);
 
     // Calculate total number of pages for events and courses
     const totalEventPages = Math.ceil(events.length / perPage);
     const totalCoursePages = Math.ceil(courses.length / perPage);
+    const totalUserPages = Math.ceil(users.length / perPage);
 
     // Filter events and courses to display based on current page
     const indexOfLastEvent = currentPage * perPage;
     const indexOfFirstEvent = indexOfLastEvent - perPage;
     const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
     const currentCourses = courses.slice(indexOfFirstEvent, indexOfLastEvent);
+    const currentUsers = users.slice(indexOfFirstEvent, indexOfLastEvent);
 
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -106,6 +184,112 @@ function AdminECManagement() {
 
             {/* Main Content Section */}
             <Box sx={{ ml: '300px', p: 2, width: 'calc(100% - 240px)' }}>
+                {/* User List */}
+            <Box sx={{ ml: '-15px', p: 2, width: 'calc(100% - 0px)' }}>
+                {/* User List */}
+                <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
+                <Box sx={{ mb: 3 }}>
+                    {/* Header Row */}
+                    <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1.5 }}>
+                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone Number</Typography>
+                        </Grid>
+                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date of Birth</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
+                        </Grid>
+                    </Grid>
+
+                    {/* Data Rows */}
+                    {currentUsers.map((user) => (
+                        <Card key={user.id} sx={{ mb: 2 }}>
+                            <CardContent>
+                                <Grid container spacing={0} alignItems="center">
+                                    <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                        <Typography>{user.id}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        <Typography>{user.name}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        <Typography>{user.email}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        <Typography>{user.phoneNumber}</Typography>
+                                    </Grid>
+                                    <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                        <Typography>{user.role}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        <IconButton
+                                            color="secondary"
+                                            onClick={() => handleDeleteUser(user.id)}
+                                        >
+                                            <Delete />
+                                        </IconButton>
+                                        <Link to={`/edituser/${user.id}`}>
+                                            <IconButton color="primary" sx={{ padding: '4px' }}>
+                                                <Edit />
+                                            </IconButton>
+                                        </Link>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    ))}
+                    {/* Pagination Controls for Users */}
+                    <Box mt={2} sx={{ textAlign: 'center' }}>
+                        {/* Previous page button */}
+                        <Button
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            sx={{ mr: 1 }}
+                        >
+                            Previous
+                        </Button>
+
+                        {/* Page indicators or numbers */}
+                        {Array.from({ length: totalUserPages }).map((_, index) => (
+                            <Button
+                                key={index}
+                                onClick={() => paginate(index + 1)}
+                                variant={currentPage === index + 1 ? 'contained' : 'outlined'}
+                                sx={{ mx: 1 }}
+                            >
+                                {index + 1}
+                            </Button>
+                        ))}
+
+                        {/* Next page button */}
+                        <Button
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={currentPage === totalUserPages}
+                            sx={{ ml: 1 }}
+                        >
+                            Next
+                        </Button>
+                    </Box>
+                </Box>
+                <ToastContainer />
+            </Box>
+
                 {/* Event List */}
                 <Typography variant="h5" align="left" gutterBottom>Event List</Typography>
                 <Box sx={{ mb: 5 }}>
