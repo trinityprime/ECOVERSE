@@ -315,8 +315,12 @@ function Events() {
                                                 >
                                                     <img
                                                         alt="event"
-                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile
-                                                            }`}
+                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
+                                                        style={{
+                                                            maxWidth: "100%", // ensures the image scales down to fit the container
+                                                            maxHeight: "400px", // adjust the height as needed
+                                                            objectFit: "contain" // maintains aspect ratio
+                                                        }}
                                                     />
                                                 </Box>
                                             ) : (
