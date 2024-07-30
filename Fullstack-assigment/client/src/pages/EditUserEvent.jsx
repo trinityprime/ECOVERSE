@@ -1,17 +1,12 @@
-import { Box, Typography, TextField, Button } from '@mui/material';
-import {
-    Dialog, DialogTitle, DialogContent, DialogContentText,
-    DialogActions
-} from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Box, Typography, TextField, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { useParams, Link } from 'react-router-dom';
 import http from '../http';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
 
 function EditEvent() {
-    const navigate = useNavigate();
     const { id } = useParams();
     const [event, setEvent] = useState({
         eventName: "",
@@ -148,13 +143,20 @@ function EditEvent() {
                             error={formik.touched.eventDescription && Boolean(formik.errors.eventDescription)}
                             helperText={formik.touched.eventDescription && formik.errors.eventDescription}
                         />
-                        <Box sx={{ mt: 2 }}>
+                        <Box sx={{ mt: 3 }}>
                             <Button variant="contained" type="submit">
                                 Update
                             </Button>
-                            <Button variant="contained" sx={{ ml: 2 }} color="error"
-                                onClick={handleOpen}>
+                            <Button variant="contained" sx={{ ml: 2 }} color="error" onClick={handleOpen}>
                                 Delete
+                            </Button>
+                            <Button variant="contained" sx={{ ml: 2 }} color="success">
+                                <Link
+                                    to={`/AddEvent?eventName=${encodeURIComponent(event.eventName)}&maxParticipants=${encodeURIComponent(event.maxParticipants)}&eventDate=${encodeURIComponent(event.eventDate)}&eventDescription=${encodeURIComponent(event.eventDescription)}`}
+                                    style={{ textDecoration: 'none', color: 'inherit' }}
+                                >
+                                    Approve
+                                </Link>
                             </Button>
                         </Box>
                     </Box>
@@ -170,18 +172,16 @@ function EditEvent() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="inherit"
-                        onClick={handleClose}>
+                    <Button variant="contained" color="inherit" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="error"
-                        onClick={deleteEvent}>
+                    <Button variant="contained" color="error" onClick={deleteEvent}>
                         Delete
                     </Button>
                 </DialogActions>
             </Dialog>
         </Box>
-    )
+    );
 }
 
 export default EditEvent;

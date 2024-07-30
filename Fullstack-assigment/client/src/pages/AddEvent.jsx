@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -9,7 +9,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function AddEvent() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [imageFile, setImageFile] = useState(null);
+
+    // Extract parameters from query string
+    const query = new URLSearchParams(location.search);
+    const initialEventName = query.get('eventName') || '';
+    const initialMaxParticipants = query.get('maxParticipants') || '';
+    const initialEventDate = query.get('eventDate') || '';
+    const initialEventDescription = query.get('eventDescription') || '';
 
     // Define options for location and event type
     const locationOptions = [
@@ -34,17 +42,16 @@ function AddEvent() {
         { value: "Others", label: "Other" },
     ];
 
-
     const formik = useFormik({
         initialValues: {
-            eventName: '',
+            eventName: initialEventName,
             eventType: '',
-            eventDescription: '',
-            eventDate: '',
+            eventDescription: initialEventDescription,
+            eventDate: initialEventDate,
             eventTimeFrom: '',
             eventTimeTo: '',
             location: '',
-            maxParticipants: '',
+            maxParticipants: initialMaxParticipants,
             organizerDetails: '',
             termsAndConditions: '',
             eventStatus: ''
@@ -93,7 +100,6 @@ function AddEvent() {
                 .required('Event Status is required!')
         }),
         onSubmit: (data) => {
-            console.log("button is working");
             if (imageFile) {
                 data.imageFile = imageFile;
             }
@@ -104,23 +110,18 @@ function AddEvent() {
             data.organizerDetails = data.organizerDetails.trim();
             data.termsAndConditions = data.termsAndConditions.trim();
 
-            console.log("Submitting form with data:", data);
             if (imageFile) {
                 data.imageFile = imageFile;
             }
-            console.log("Submitting with imageFile:", data.imageFile);
 
             http.post("/event", data)
                 .then((res) => {
-                    console.log(res.data);
-                    console.log("Response from server:", res.data);
                     toast.success('Event created successfully!');
                     setTimeout(() => {
                         navigate('/AdminECManagement');
                     }, 1400);
                 })
                 .catch((error) => {
-                    console.error('Error creating event:', error);
                     toast.error('Failed to create event. Please try again later.');
                 });
         }
@@ -146,7 +147,6 @@ function AddEvent() {
                     setImageFile(res.data.filename);
                 })
                 .catch((error) => {
-                    console.error('Error uploading file:', error);
                     toast.error('Failed to upload file. Please try again later.');
                 });
         }
@@ -197,7 +197,6 @@ function AddEvent() {
                             )}
                         </FormControl>
 
-
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
                             multiline minRows={2}
@@ -209,9 +208,11 @@ function AddEvent() {
                             error={formik.touched.eventDescription && Boolean(formik.errors.eventDescription)}
                             helperText={formik.touched.eventDescription && formik.errors.eventDescription}
                         />
+
                         <TextField
-                            fullWidth margin="dense" autoComplete="off"
+                            fullWidth margin="dense"
                             type="date"
+                            InputLabelProps={{ shrink: true }}
                             label="Event Date"
                             name="eventDate"
                             value={formik.values.eventDate}
@@ -219,10 +220,9 @@ function AddEvent() {
                             onBlur={formik.handleBlur}
                             error={formik.touched.eventDate && Boolean(formik.errors.eventDate)}
                             helperText={formik.touched.eventDate && formik.errors.eventDate}
-                            InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                            fullWidth margin="dense" autoComplete="off"
+                            fullWidth margin="dense"
                             type="time"
                             label="Start Time"
                             name="eventTimeFrom"
@@ -234,7 +234,7 @@ function AddEvent() {
                             InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                            fullWidth margin="dense" autoComplete="off"
+                            fullWidth margin="dense"
                             type="time"
                             label="End Time"
                             name="eventTimeTo"
@@ -259,11 +259,17 @@ function AddEvent() {
                             >
                                 <MenuItem value="">Select Location</MenuItem>
                                 {locationOptions.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
                                 ))}
                             </Select>
+                            {formik.touched.location && formik.errors.location && (
+                                <Typography variant="caption" color="error">
+                                    {formik.errors.location}
+                                </Typography>
+                            )}
                         </FormControl>
-
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
                             type="number"
@@ -277,6 +283,7 @@ function AddEvent() {
                         />
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
+                            multiline minRows={2}
                             label="Organizer Details"
                             name="organizerDetails"
                             value={formik.values.organizerDetails}
@@ -297,47 +304,61 @@ function AddEvent() {
                             helperText={formik.touched.termsAndConditions && formik.errors.termsAndConditions}
                         />
                         <FormControl fullWidth margin="dense">
-                            <InputLabel id="event-status-label">Event Status</InputLabel>
-                            <Select
-                                labelId="event-status-label"
-                                id="event-status"
-                                name="eventStatus"
-                                value={formik.values.eventStatus}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                error={formik.touched.eventStatus && Boolean(formik.errors.eventStatus)}
-                                label="Event Status"
-                            >
-                                <MenuItem value="">Select Event Status</MenuItem>
-                                <MenuItem value="Ongoing">Ongoing</MenuItem>
-                                <MenuItem value="Scheduled">Scheduled</MenuItem>
-                                <MenuItem value="Cancelled">Cancelled</MenuItem>
-                                <MenuItem value="Completed">Completed</MenuItem>
-                                <MenuItem value="Postponed">Postponed</MenuItem>
-                            </Select>
-                        </FormControl>
+    <InputLabel id="event-status-label">Event Status</InputLabel>
+    <Select
+        labelId="event-status-label"
+        id="event-status"
+        name="eventStatus"
+        value={formik.values.eventStatus}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.eventStatus && Boolean(formik.errors.eventStatus)}
+        label="Event Status"
+    >
+        <MenuItem value="">Select Event Status</MenuItem>
+        <MenuItem value="Scheduled">Scheduled</MenuItem>
+        <MenuItem value="Ongoing">Ongoing</MenuItem>
+        <MenuItem value="Completed">Completed</MenuItem>
+        <MenuItem value="Cancelled">Cancelled</MenuItem>
+        <MenuItem value="Postponed">Postponed</MenuItem>
+    </Select>
+    {formik.touched.eventStatus && formik.errors.eventStatus && (
+        <Typography variant="caption" color="error">
+            {formik.errors.eventStatus}
+        </Typography>
+    )}
+</FormControl>
+
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            fullWidth
+                            type="submit"
+                            sx={{ mt: 2 }}
+                        >
+                            Add Event
+                        </Button>
                     </Grid>
                     <Grid item xs={12} md={6} lg={4}>
-                        <Box sx={{ textAlign: 'center', mt: 2 }}>
-                            <Button variant="contained" component="label">
-                                Upload Image
-                                <input hidden accept="image/*" multiple type="file" onChange={onFileChange} />
+                        <input
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            id="image-file"
+                            type="file"
+                            onChange={onFileChange}
+                        />
+                        <label htmlFor="image-file">
+                            <Button
+                                variant="contained"
+                                component="span"
+                                sx={{ width: '100%' }}
+                            >
+                                Upload Event Image
                             </Button>
-                            {imageFile && (
-                                <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                    <img alt="event" src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`} />
-                                </Box>
-                            )}
-                        </Box>
+                        </label>
                     </Grid>
                 </Grid>
-                <Box sx={{ mt: 2 }}>
-                    <Button variant="contained" type="submit">
-                        Add Event
-                    </Button>
-                </Box>
             </Box>
-
             <ToastContainer />
         </Box>
     );
