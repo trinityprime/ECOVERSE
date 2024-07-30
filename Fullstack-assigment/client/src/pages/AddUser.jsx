@@ -10,10 +10,12 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import InputMask from 'react-input-mask';
 import dayjs from 'dayjs';
 
+
 function AddUser() {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [roleError, setRoleError] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -29,7 +31,7 @@ function AddUser() {
                 .min(3, 'Name must be at least 3 characters')
                 .max(50, 'Name must be at most 50 characters')
                 .required('Name is required')
-                .matches(/^[a-zA-Z '-,.]+$/, "Name only allow letters, spaces and characters: ' - , ."),
+                .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces, and characters: ' - , ."),
             email: yup.string().trim()
                 .email('Enter a valid email')
                 .max(50, 'Email must be at most 50 characters')
@@ -43,26 +45,28 @@ function AddUser() {
                 .required('Confirm password is required')
                 .oneOf([yup.ref('password')], 'Passwords must match'),
             phoneNumber: yup.string().trim()
-                .required()
+                .required('Phone number is required')
                 .matches(/^\d{8}$/, "Phone number must be 8 digits"),
             dob: yup.string().trim()
                 .required("Date of birth is required")
                 .matches(/^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Invalid date format (dd/mm/yyyy)'),
         }),
         onSubmit: async (values) => {
+            if (!selectedRole) {
+                setRoleError(true);
+                toast.error('Role is required');
+                return;
+            }
+
             try {
                 const data = {
-                    name: values.name.trim(),
-                    email: values.email.trim().toLowerCase(),
-                    password: values.password.trim(),
-                    phoneNumber: values.phoneNumber.replace(/\s/g, ''),
+                    ...values,
                     dob: dayjs(values.dob, 'DD/MM/YYYY').toISOString(),
                     role: selectedRole,
                 };
                 const response = await http.post("/user", data);
                 toast.success(response.data.message);
-                console.log(response.data);
-                navigate("/AdminECManagement"); 
+                navigate("/AdminECManagement");
             } catch (err) {
                 toast.error(err.response.data.message || 'Failed to add user');
             }
@@ -71,6 +75,7 @@ function AddUser() {
 
     const handleRoleChange = (event) => {
         setSelectedRole(event.target.value);
+        setRoleError(!event.target.value);
     };
 
     const handlePasswordVisibility = () => {
@@ -170,7 +175,7 @@ function AddUser() {
                     )}
                 </InputMask>
 
-                <FormControl fullWidth sx={{ my: 1 }}>
+                <FormControl fullWidth sx={{ my: 1 }} error={roleError}>
                     <InputLabel id="role-label">Role</InputLabel>
                     <Select
                         labelId="role-label"
@@ -182,8 +187,9 @@ function AddUser() {
                         <MenuItem value="">Select role</MenuItem>
                         <MenuItem value="volunteer">Volunteer</MenuItem>
                         <MenuItem value="organization">Organization</MenuItem>
-                        <MenuItem value="admin">Admin</MenuItem> 
+                        <MenuItem value="admin">Admin</MenuItem>
                     </Select>
+                    {roleError && <Typography color="error" variant="body2">Role is required</Typography>}
                 </FormControl>
 
                 <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">

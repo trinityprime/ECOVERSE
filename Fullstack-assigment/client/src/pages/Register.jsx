@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, InputAdornment } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import http from '../http';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import InputMask from 'react-input-mask';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import http from '../http'; 
 
 function Register() {
     const navigate = useNavigate();
-    const [selectedRole, setSelectedRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
     const formik = useFormik({
@@ -23,13 +22,14 @@ function Register() {
             confirmPassword: "",
             phoneNumber: "",
             dob: "",
+            role: "", 
         },
         validationSchema: yup.object({
             name: yup.string().trim()
                 .min(3, 'Name must be at least 3 characters')
                 .max(50, 'Name must be at most 50 characters')
                 .required('Name is required')
-                .matches(/^[a-zA-Z '-,.]+$/, "Name only allow letters, spaces and characters: ' - , ."),
+                .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces, and characters: ' - , ."),
             email: yup.string().trim()
                 .email('Enter a valid email')
                 .max(50, 'Email must be at most 50 characters')
@@ -43,11 +43,14 @@ function Register() {
                 .required('Confirm password is required')
                 .oneOf([yup.ref('password')], 'Passwords must match'),
             phoneNumber: yup.string().trim()
-                .required()
+                .required('Phone number is required')
                 .matches(/^\d{8}$/, "Phone number must be 8 digits"),
             dob: yup.string().trim()
                 .required("Date of birth is required")
                 .matches(/^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Invalid date format (dd/mm/yyyy)'),
+            role: yup.string()
+                .required('Role is required')
+                .notOneOf([''], 'Please select a role')
         }),
         onSubmit: async (values) => {
             try {
@@ -57,7 +60,7 @@ function Register() {
                     password: values.password.trim(),
                     phoneNumber: values.phoneNumber.replace(/\s/g, ''),
                     dob: dayjs(values.dob, 'DD/MM/YYYY').toISOString(),
-                    role: selectedRole,
+                    role: values.role,
                 };
                 const response = await http.post("/user/register", data);
                 toast.success(response.data.message);
@@ -68,10 +71,6 @@ function Register() {
             }
         }
     });
-
-    const handleRoleChange = (event) => {
-        setSelectedRole(event.target.value);
-    };
 
     const handlePasswordVisibility = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -170,19 +169,26 @@ function Register() {
                     )}
                 </InputMask>
 
-                <FormControl fullWidth sx={{ my: 1 }}>
+                <FormControl fullWidth sx={{ my: 1 }} error={formik.touched.role && Boolean(formik.errors.role)}>
                     <InputLabel id="role-label">Role</InputLabel>
                     <Select
                         labelId="role-label"
                         id="role"
-                        value={selectedRole}
-                        onChange={handleRoleChange}
+                        name="role"
+                        value={formik.values.role}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         label="Role"
                     >
                         <MenuItem value="">Select role</MenuItem>
                         <MenuItem value="volunteer">Volunteer</MenuItem>
                         <MenuItem value="organization">Organization</MenuItem>
                     </Select>
+                    {formik.touched.role && formik.errors.role && (
+                        <Typography color="error" variant="body2">
+                            {formik.errors.role}
+                        </Typography>
+                    )}
                 </FormControl>
 
                 <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">

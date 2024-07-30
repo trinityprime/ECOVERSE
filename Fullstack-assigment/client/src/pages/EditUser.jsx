@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import http from '../http';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import dayjs from 'dayjs';
+
 
 function EditUser() {
     const { id } = useParams();
@@ -21,7 +23,10 @@ function EditUser() {
 
     useEffect(() => {
         http.get(`/user/${id}`).then((res) => {
-            setUser(res.data);
+            setUser({
+                ...res.data,
+                dob: dayjs(res.data.dob).format('YYYY-MM-DD') 
+            });
             setLoading(false);
         });
     }, [id]);
@@ -33,12 +38,15 @@ function EditUser() {
             name: yup.string().trim()
                 .min(3, 'Name must be at least 3 characters')
                 .max(100, 'Name must be at most 100 characters')
-                .required('Name is required'),
+                .required('Name is required')
+                .matches(/^[a-zA-Z '-,.]+$/, "Name only allows letters, spaces, and characters: ' - , ."),
             email: yup.string().trim()
                 .email('Invalid email address')
+                .max(50, 'Email must be at most 50 characters')
                 .required('Email is required'),
             phoneNumber: yup.string().trim()
-                .required('Phone number is required'),
+                .required('Phone number is required')
+                .matches(/^\d{8}$/, "Phone number must be 8 digits"),
             dob: yup.date()
                 .required('Date of birth is required')
         }),
