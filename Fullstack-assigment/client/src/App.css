@@ -1,5 +1,3 @@
-
-
 .AppBar {
   width: 100%; /* Ensure it spans the full width of the viewport */
   position: fixed; /* Optional: to keep it fixed at the top */
@@ -34,3 +32,19 @@
   .AppBar button {
     margin-left: 12px;
   }
+
+  .hero-container {
+    background: url('./assets/home_page.jpeg') center center/cover no-repeat;
+    height: 100vh; 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers the text vertically */
+    align-items: center; /* Centers the text horizontally */
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2); /* Dark overlay */
+}
+
+.hero-container h1, .hero-container p {
+    color: white; /* Text color for better visibility */
+    margin: 0;
+}

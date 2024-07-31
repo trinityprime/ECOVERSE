@@ -207,6 +207,14 @@ function App() {
               </Toolbar>
             </Container>
           </AppBar>
+
+          <div className='hero-container'>
+            <h1>This is just for testing</h1>
+            <p>Testing</p>
+          </div>
+
+
+
           <Container>
             <Routes>
               <Route path={"/"} element={<Home />} />
