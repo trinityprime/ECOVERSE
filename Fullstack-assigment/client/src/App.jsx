@@ -34,6 +34,8 @@ import Login from './pages/Login';
 import http from './http';
 import Profile from './pages/Profile';
 import Footer from './footer.jsx';
+import Home from './pages/Home.jsx';
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -77,8 +79,8 @@ function App() {
             <Container>
               <Toolbar disableGutters={true}>
                 <Link to="/">
-                  <Container style={{ display: 'flex', alignItems: 'center' }}>
-                    <img src="../ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '30px', display: 'flex' }} />
+                  <Container style={{ display: 'flex', alignItems: 'center' }} maxWidth>
+                    <img src="../ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '50px', display: 'flex' }} />
                     <Typography variant="h6" component="div" style={{ display: 'flex', alignItems: 'center' }}>
                       ECOVERSE
                     </Typography>
@@ -207,7 +209,7 @@ function App() {
           </AppBar>
           <Container>
             <Routes>
-              <Route path={"/"} element={<UserEvents />} />
+              <Route path={"/"} element={<Home />} />
               <Route path={"/UserEvent"} element={<UserEvents />} />
               <Route path={"/SignUps"} element={<SignUps />} />
               <Route path={"/AddSignUpEvent"} element={<AddSignUpEvent />} />
