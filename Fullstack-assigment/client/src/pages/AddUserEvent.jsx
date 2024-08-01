@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, TextField, Button, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -7,6 +7,16 @@ import http from '../http';
 
 function AddEvent() {
     const navigate = useNavigate();
+    const [termsOpen, setTermsOpen] = useState(false);
+
+    const handleTermsOpen = () => {
+        setTermsOpen(true);
+    };
+
+    const handleTermsClose = () => {
+        setTermsOpen(false);
+    };
+
     const formik = useFormik({
         initialValues: {
             eventName: "",
@@ -17,12 +27,37 @@ function AddEvent() {
             agreeTerms: false
         },
         validationSchema: yup.object({
-            eventName: yup.string().trim().min(3, 'Must be at least 3 characters').max(100, 'Must be 100 characters or less').required('Event name is required'),
-            eventPax: yup.number().min(1, 'Must be at least 1').required('Number of participants is required'),
-            eventAddress: yup.string().trim().min(3, 'Must be at least 3 characters').max(100, 'Must be 100 characters or less').required('Event address is required'),
-            eventDate: yup.date().required('Event date is required'),
-            eventDescription: yup.string().trim().min(3, 'Must be at least 3 characters').max(500, 'Must be 500 characters or less').required('Event description is required'),
-            agreeTerms: yup.boolean().oneOf([true], 'You must accept the terms and conditions').required('You must accept the terms and conditions')
+            eventName: yup
+                .string()
+                .trim()
+                .matches(/^[A-Za-z\s]+$/, 'Event name can only contain letters and spaces')
+                .min(3, 'Must be at least 3 characters')
+                .max(100, 'Must be 100 characters or less')
+                .required('Event name is required'),
+            eventPax: yup
+                .number()
+                .min(1, 'Must be at least 1')
+                .max(1000, 'Cannot be more than 1000')
+                .required('Number of participants is required'),
+            eventAddress: yup
+                .string()
+                .trim()
+                .min(3, 'Must be at least 3 characters')
+                .max(100, 'Must be 100 characters or less')
+                .required('Event address is required'),
+            eventDate: yup
+                .date()
+                .required('Event date is required'),
+            eventDescription: yup
+                .string()
+                .trim()
+                .min(3, 'Must be at least 3 characters')
+                .max(500, 'Must be 500 characters or less')
+                .required('Event description is required'),
+            agreeTerms: yup
+                .boolean()
+                .oneOf([true], 'You must accept the terms and conditions')
+                .required('You must accept the terms and conditions')
         }),
         onSubmit: (data) => {
             data.eventName = data.eventName.trim();
@@ -52,7 +87,13 @@ function AddEvent() {
                                 color="primary"
                             />
                         }
-                        label="I have read and agree to the Terms of Service and Privacy Policy."
+                        label={
+                            <span>
+                                I have read and agree to the{' '}
+                                <Button onClick={handleTermsOpen} color="primary">Terms of Service</Button> and{' '}
+                                <Button onClick={handleTermsOpen} color="primary">Privacy Policy</Button>.
+                            </span>
+                        }
                     />
                 </Box>
                 <Button
@@ -135,6 +176,26 @@ function AddEvent() {
                     />
                 </Box>
             </Box>
+            <Dialog open={termsOpen} onClose={handleTermsClose}>
+                <DialogTitle>Terms of Service and Privacy Policy</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1" paragraph>
+                        {/* Insert the terms of service and privacy policy content here */}
+                        Welcome to ECOVERSE . By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+
+                        By registering for an event, you agree to the event organizer’s terms and conditions, including payment and cancellation policies. All event fees must be paid in advance. We are not responsible for payment issues or disputes.
+
+                        Cancellation and refund policies are determined by the event organizer. Please review these policies before registering. You agree not to use the website for any unlawful purposes or activities that violate these Terms.
+
+                        We may update these Terms at any time. Your continued use of the website indicates your acceptance of the new Terms. If you have any questions, please contact us at [contact email].
+
+                        By clicking "I agree," you accept these terms.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleTermsClose} color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
