@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Divider, Button, IconButton } from '@mui/material';
 import { EventAvailable, Pending, CheckCircle as CheckCircleIcon, PauseCircle, Cancel as CancelIcon } from '@mui/icons-material';
@@ -166,6 +166,17 @@ function AdminECManagement() {
     const currentCourses = courses.slice(indexOfFirstEvent, indexOfLastEvent);
     const currentUsers = users.slice(indexOfFirstEvent, indexOfLastEvent);
 
+    // scrolling
+    const eventRef = useRef(null);
+    const courseRef = useRef(null);
+    const userRef = useRef(null);
+
+    const scrollToSection = (ref) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -198,18 +209,33 @@ function AdminECManagement() {
                     <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
                         <Typography variant="body1" gutterBottom>Dashboard</Typography>
                     </Link>
-                    <Link to="/event-management" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Event Management</Typography>
-                    </Link>
-                    <Link to="/course-management" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Course Management</Typography>
-                    </Link>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(eventRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Event Management
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(courseRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Course Management
+                    </Typography>
                     <Link to="/settings" style={{ textDecoration: 'none', color: 'inherit' }}>
                         <Typography variant="body1" gutterBottom>Settings</Typography>
                     </Link>
-                    <Link to="/account-management" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Account Management</Typography>
-                    </Link>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(userRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Account Management
+                    </Typography>
                 </Box>
                 <Box>
                     <Link to="/logout" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -223,6 +249,7 @@ function AdminECManagement() {
                 {/* User List */}
                 <Box sx={{ ml: '-15px', p: 2, width: 'calc(100% - 0px)' }}>
                     {/* User List */}
+                    <Box ref={userRef} sx={{ pt: 10 }}>
                     <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
                     <Box sx={{ mb: 3 }}>
                         {/* Header Row */}
@@ -324,9 +351,11 @@ function AdminECManagement() {
                         </Box>
                     </Box>
                     <ToastContainer />
+                    </Box>
                 </Box>
 
                 {/* Event List */}
+                <Box ref={eventRef} sx={{ pt: 10 }}>
                 <Typography variant="h5" align="left" gutterBottom>Event List</Typography>
                 <Box sx={{ mb: 5 }}>
                     {/* Header Row */}
@@ -423,12 +452,13 @@ function AdminECManagement() {
                         >
                             Next
                         </Button>
-                        
+                        </Box>
                     </Box>
                     
                 </Box>
 
                 {/* Course List */}
+                <Box ref={courseRef} sx={{ pt: 10 }}>
                 <Typography variant="h5" align="left" gutterBottom>Course List</Typography>
                 <Box sx={{ mb: 5 }}>
                     {/* Header Row */}
@@ -525,6 +555,7 @@ function AdminECManagement() {
                         >
                             Next
                         </Button>
+                    </Box>
                     </Box>
                 </Box>
 

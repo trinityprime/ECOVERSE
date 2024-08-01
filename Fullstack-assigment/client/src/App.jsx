@@ -1,5 +1,11 @@
 import './App.css';
 import { Container, AppBar, Toolbar, Typography, Box, Button, Menu, MenuItem } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import UserContext from './contexts/UserContext';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
 import UserEvents from './pages/UserEvents';
 import AddUserEvent from './pages/AddUserEvent';
 import EditUserEvent from './pages/EditUserEvent';
@@ -22,25 +28,17 @@ import Reports from './pages/Reports';
 import AddReport from './pages/AddReport';
 import EditReport from './pages/EditReport';
 import AdminECManagement from './pages/AdminECManagement';
-import { ThemeProvider } from '@mui/material/styles';
-import MyTheme from './themes/MyTheme';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState, useEffect, useContext } from 'react';
-import UserContext from './contexts/UserContext';
-import AddUser from './pages/AddUser';
-import EditUser from './pages/EditUser';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import http from './http';
-import Profile from './pages/Profile';
 import Footer from './footer.jsx';
-import Home from './pages/Home.jsx';
-
+import http from './http';
 
 function App() {
   const [user, setUser] = useState(null);
   const [userAnchorEl, setUserAnchorEl] = useState(null);
   const [adminAnchorEl, setAdminAnchorEl] = useState(null);
+  const [colorMenuAnchorEl, setColorMenuAnchorEl] = useState(null);
+  const [themeColor, setThemeColor] = useState('#4caf50'); // Default green
 
   const handleUserMenuClick = (event) => {
     setUserAnchorEl(event.currentTarget);
@@ -58,6 +56,16 @@ function App() {
     setAdminAnchorEl(null);
   };
 
+  const handleColorMenuClick = (event) => {
+    setColorMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleColorMenuClose = (color) => {
+    setThemeColor(color);
+    setColorMenuAnchorEl(null);
+    localStorage.setItem('themeColor', color); // Persist theme color
+  };
+
   const logout = () => {
     localStorage.clear();
     window.location = "/";
@@ -71,10 +79,25 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const savedColor = localStorage.getItem('themeColor');
+    if (savedColor) {
+      setThemeColor(savedColor);
+    }
+  }, []);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: themeColor,
+      },
+    },
+  });
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
-        <ThemeProvider theme={MyTheme}>
+        <ThemeProvider theme={theme}>
           <AppBar position="static" className='AppBar'>
             <Container>
               <Toolbar disableGutters={true}>
@@ -87,6 +110,29 @@ function App() {
                   </Container>
                 </Link>
                 <Box sx={{ flexGrow: 1 }}></Box>
+
+                {/* Color Theme Selector */}
+                {user && user.role === 'admin' && (
+                  <Button
+                    aria-controls="color-menu"
+                    aria-haspopup="true"
+                    onClick={handleColorMenuClick}
+                    style={{ marginLeft: '15px' }}
+                  >
+                    Change Theme
+                  </Button>
+                )}
+                <Menu
+                  id="color-menu"
+                  anchorEl={colorMenuAnchorEl}
+                  open={Boolean(colorMenuAnchorEl)}
+                  onClose={() => setColorMenuAnchorEl(null)}
+                >
+                  <MenuItem onClick={() => handleColorMenuClose('#4caf50')}>Green</MenuItem>
+                  <MenuItem onClick={() => handleColorMenuClose('#2196f3')}>Blue</MenuItem>
+                  <MenuItem onClick={() => handleColorMenuClose('#f44336')}>Red</MenuItem>
+                  <MenuItem onClick={() => handleColorMenuClose('#9c27b0')}>Purple</MenuItem>
+                </Menu>
 
                 {user && user.role === 'admin' ? (
                   <>
@@ -170,18 +216,18 @@ function App() {
                           </Link>
                         </MenuItem>
 
-                        <MenuItem onClick={handleAdminMenuClose}>
+                        <MenuItem onClick={handleUserMenuClose}>
                           <Link to="/Courses" style={{ textDecoration: 'none', color: 'inherit' }}>
                             All Courses
                           </Link>
                         </MenuItem>
-                        <MenuItem onClick={handleAdminMenuClose}>
+                        <MenuItem onClick={handleUserMenuClose}>
                           <Link to="/events" style={{ textDecoration: 'none', color: 'inherit' }}>
                             All Events
                           </Link>
                         </MenuItem>
 
-                        <MenuItem onClick={handleAdminMenuClose}>
+                        <MenuItem onClick={handleUserMenuClose}>
                           <Link to="/AddReport" style={{ textDecoration: 'none', color: 'inherit' }}>
                             Add Report
                           </Link>
@@ -208,69 +254,43 @@ function App() {
             </Container>
           </AppBar>
           {location.pathname === '/' && (
-          <div className='hero-container'>
-            <div className="text-container">
-              <h1 className="title">Welcome to EcoVerse</h1>
-              <p className="description">Empowering our community with sustainable living practices.</p>
-              <p>Click here to find out more!</p>
-              <button className="explore-button">Explore</button>
-            </div>
-            <div className="cards-container">
-              <div className="card">
-                <img src="path_to_image1.jpg" alt="Sustainability" />
-                <div className="card-title">Sustainability Initiatives</div>
-                <div className="card-description">Explore our various programs and initiatives designed to promote sustainable living and environmental stewardship within the community.</div>
-              </div>
-              <div className="card">
-                <img src="path_to_image2.jpg" alt="Volunteering" />
-                <div className="card-title">Volunteer Opportunities</div>
-                <div className="card-description">Find and participate in volunteer activities that contribute to a greener and more sustainable community.</div>
-              </div>
-              <div className="card">
-                <img src="path_to_image3.jpg" alt="Events" />
-                <div className="card-title">Upcoming Events</div>
-                <div className="card-description">Stay informed about our upcoming eco-friendly events, workshops, and drives designed to engage and educate.</div>
-              </div>
-              <div className="card">
-                <img src="path_to_image4.jpg" alt="Courses" />
-                <div className="card-title">Educational Courses</div>
-                <div className="card-description">Access courses on sustainable practices and green living to enhance your knowledge and skills in environmental stewardship.</div>
+            <div className='hero-container'>
+              <div className="text-container">
+                <h1 className="title">Welcome to EcoVerse</h1>
+                <p className="description">Empowering our community with sustainable living practices.</p>
+                <p>Click here to find out more!</p>
+                <button className="explore-button">Explore</button>
               </div>
             </div>
-          </div>
           )}
-
-
           <Container>
             <Routes>
-              <Route path={"/"} element={<Home />} />
-              <Route path={"/UserEvent"} element={<UserEvents />} />
-              <Route path={"/SignUps"} element={<SignUps />} />
-              <Route path={"/AddSignUpEvent"} element={<AddSignUpEvent />} />
-              <Route path={"/AddUserEvent"} element={<AddUserEvent />} />
-              <Route path={"/EditUserEvent/:id"} element={<EditUserEvent />} />
-              <Route path={"/success"} element={<SuccessPage />} />
-              <Route path={"/AddSignUp"} element={<AddSignUp />} />
-              <Route path={"/AddCourse"} element={<AddCourse />} />
-              <Route path={"/course-details/:id"} element={<CourseDetails />} />
-              <Route path={"/Courses"} element={<Courses />} />
-              <Route path={"/edit-course/:id"} element={<EditCourse />} />
-              <Route path={"/addevent"} element={<AddEvent />} />
-              <Route path={"/events"} element={<Events />} />
-              <Route path={"/event-details/:id"} element={<EventDetails />} />
-              <Route path={"/AdminECManagement"} element={<AdminECManagement />} />
-              <Route path={"/edit-event/:id"} element={<EditEvent />} />
-              <Route path={"/user-course-details/:id"} element={<UserCourseDetails />} />
-              <Route path={"/user-event-details/:id"} element={<UserEventDetails />} />
-              <Route path={"/EditSignUp/:id"} element={<EditSignUp />} />
-              <Route path={"/reports"} element={<Reports />} />
-              <Route path={"/addreport"} element={<AddReport />} />
-              <Route path={"/editreport/:id"} element={<EditReport />} />
-              <Route path={"/adduser"} element={<AddUser />} />
-              <Route path={"/edituser/:id"} element={<EditUser />} />
-              <Route path={"/register"} element={<Register />} />
-              <Route path={"/login"} element={<Login />} />
-              <Route path={"/profile"} element={<Profile />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/UserEvent" element={<UserEvents />} />
+              <Route path="/AddUserEvent" element={<AddUserEvent />} />
+              <Route path="/EditUserEvent/:id" element={<EditUserEvent />} />
+              <Route path="/SuccessPage" element={<SuccessPage />} />
+              <Route path="/AddSignUp" element={<AddSignUp />} />
+              <Route path="/AddSignUpEvent" element={<AddSignUpEvent />} />
+              <Route path="/SignUps" element={<SignUps />} />
+              <Route path="/AddCourse" element={<AddCourse />} />
+              <Route path="/Courses" element={<Courses />} />
+              <Route path="/CourseDetails/:id" element={<CourseDetails />} />
+              <Route path="/UserCourseDetails/:id" element={<UserCourseDetails />} />
+              <Route path="/EditCourse/:id" element={<EditCourse />} />
+              <Route path="/AddEvent" element={<AddEvent />} />
+              <Route path="/Events" element={<Events />} />
+              <Route path="/EventDetails/:id" element={<EventDetails />} />
+              <Route path="/UserEventDetails/:id" element={<UserEventDetails />} />
+              <Route path="/EditEvent/:id" element={<EditEvent />} />
+              <Route path="/EditSignUp/:id" element={<EditSignUp />} />
+              <Route path="/Reports" element={<Reports />} />
+              <Route path="/AddReport" element={<AddReport />} />
+              <Route path="/EditReport/:id" element={<EditReport />} />
+              <Route path="/AdminECManagement" element={<AdminECManagement />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
             </Routes>
           </Container>
           <Footer />

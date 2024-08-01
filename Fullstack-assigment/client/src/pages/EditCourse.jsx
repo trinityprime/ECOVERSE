@@ -92,7 +92,19 @@ function EditCourse() {
             courseEndDate: yup.date()
                 .typeError('Incorrect format for End Date')
                 .min(new Date(2024, 0, 1), 'End Date must be in the year 2024 or later')
-                .max(new Date(2099, 11, 31), 'End Date must be in the year 2099 or earlier'),
+                .max(new Date(2099, 11, 31), 'End Date must be in the year 2099 or earlier')
+                .test(
+                    'end-date-after-start-date',
+                    function (value) {
+                        const { courseStartDate } = this.parent;
+                        if (value && courseStartDate && value < courseStartDate) {
+                            return this.createError({
+                                message: `End Date (${value.getFullYear()}) must be dated after the Start Date (${courseStartDate.getFullYear()}) of the Course.`
+                            });
+                        }
+                        return true;
+                    }
+                ),
             courseTimeFrom: yup.string().trim()
                 .required('Start Time is required'),
             courseTimeTo: yup.string().trim()
