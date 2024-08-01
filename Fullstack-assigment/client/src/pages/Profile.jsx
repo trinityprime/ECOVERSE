@@ -249,56 +249,10 @@ function Profile() {
                     </div>
                     <ToastContainer />
                 </Box>
-
             </Box>
-            {userRole === 'admin' && (
-                <Box sx={{ mt: 4, width: '100%', maxWidth: '800px' }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                        All Users
-                    </Typography>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>ID</TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Phone Number</TableCell>
-                                <TableCell>Role</TableCell>
-                                <TableCell>Date of Birth</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {users.map((user) => (
-                                <TableRow key={user.id}>
-                                    <TableCell>{user.id}</TableCell>
-                                    <TableCell>{user.name}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.phoneNumber}</TableCell>
-                                    <TableCell>{user.role}</TableCell>
-                                    <TableCell>{dayjs(user.dob).format('DD-MM-YYYY')}</TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            color="secondary"
-                                            onClick={() => handleDeleteUser(user.id)}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                        <Link to={`/edituser/${user.id}`}>
-                                            <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                <Edit />
-                                            </IconButton>
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <ToastContainer />
-                </Box>
-            )}
         </Box>
-    );
+    )
 }
+
 
 export default Profile;
