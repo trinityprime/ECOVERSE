@@ -26,7 +26,7 @@ import {
     Cancel as CancelIcon,
     CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -275,7 +275,9 @@ function Events() {
             </Box>
 
             {filteredEvents.length === 0 ? (
-                <Typography>No events found. Please try again by changing the filters.</Typography>
+                <Typography>
+                    No events found. Please try again by changing the filters.
+                </Typography>
             ) : (
                 <Box sx={{ display: "flex", mb: 4 }}>
                     <Box sx={{ minWidth: 200, mr: 4 }}>
@@ -315,11 +317,12 @@ function Events() {
                                                 >
                                                     <img
                                                         alt="event"
-                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
+                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile
+                                                            }`}
                                                         style={{
                                                             maxWidth: "100%", // ensures the image scales down to fit the container
                                                             maxHeight: "400px", // adjust the height as needed
-                                                            objectFit: "contain" // maintains aspect ratio
+                                                            objectFit: "contain", // maintains aspect ratio
                                                         }}
                                                     />
                                                 </Box>
@@ -436,9 +439,8 @@ function Events() {
                                                 whiteSpace: "pre-wrap",
                                                 fontStyle: "italic",
                                                 marginTop: "5px",
-                                                color:
-                                                    renderEventStatusIconAndColor(event.eventStatus)
-                                                        .color,
+                                                color: renderEventStatusIconAndColor(event.eventStatus)
+                                                    .color,
                                             }}
                                         >
                                             Event Status: {event.eventStatus}
@@ -450,20 +452,26 @@ function Events() {
                                                 sx={{
                                                     whiteSpace: "pre-wrap",
                                                     fontWeight: "bold",
-                                                    color:
-                                                        renderEventStatusIconAndColor(event.eventStatus)
-                                                            .color,
+                                                    color: renderEventStatusIconAndColor(
+                                                        event.eventStatus
+                                                    ).color,
                                                     ml: 1,
                                                 }}
                                             >
                                                 {event.eventStatus.charAt(0).toUpperCase() +
                                                     event.eventStatus.slice(1)}
                                             </Typography>
-
-                                           
                                         </Box>
-                                        <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/UserEventDetails/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Typography
+                                            sx={{
+                                                color: "limegreen",
+                                                "&:hover": { textDecoration: "underline" },
+                                            }}
+                                        >
+                                            <Link
+                                                to={`/UserEventDetails/${event.id}`}
+                                                style={{ textDecoration: "none", color: "inherit" }}
+                                            >
                                                 View Details
                                             </Link>
                                         </Typography>
