@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Box, Typography, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../http';
+import UserContext from '../contexts/UserContext';
 
 function AddSignUp() {
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -13,9 +15,9 @@ function AddSignUp() {
 
     const formik = useFormik({
         initialValues: {
-            Name: "",
-            MobileNumber: "",
-            Email: "",
+            Name: user ? user.name : "",
+            MobileNumber: user ? user.phoneNumber:"",
+            Email: user ? user.email : "",
             numberOfPax: "",
             specialRequirements: "",
             eventCourseName: courseName,
@@ -156,7 +158,6 @@ function AddSignUp() {
                         error={formik.touched.specialRequirements && Boolean(formik.errors.specialRequirements)}
                         helperText={formik.touched.specialRequirements && formik.errors.specialRequirements}
                     />
-
                 </Box>
             </Box>
         </Box>
