@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Divider, Button, IconButton } from '@mui/material';
+import { EventAvailable, Pending, CheckCircle as CheckCircleIcon, PauseCircle, Cancel as CancelIcon } from '@mui/icons-material';
 import { Edit, Delete } from '@mui/icons-material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -117,6 +118,41 @@ function AdminECManagement() {
             fetchAllUsers();
         }
     }, [user]);
+
+    // Function to get status icon and color (courses + events)
+    const renderEventStatusIconAndColor = (eventStatus) => {
+        switch (eventStatus.toLowerCase()) {
+            case "scheduled":
+                return { icon: <EventAvailable />, color: "orange" };
+            case "ongoing":
+                return { icon: <Pending />, color: "blue" };
+            case "completed":
+                return { icon: <CheckCircleIcon />, color: "green" };
+            case "postponed":
+                return { icon: <PauseCircle />, color: "orange" };
+            case "cancelled":
+                return { icon: <CancelIcon />, color: "red" };
+            default:
+                return { icon: <EventAvailable />, color: "text.secondary" };
+        }
+    };
+    
+    const renderCourseStatusIconAndColor = (courseStatus) => {
+        switch (courseStatus.toLowerCase()) {
+            case 'scheduled':
+                return { icon: <EventAvailable />, color: 'orange' };
+            case 'ongoing':
+                return { icon: <Pending />, color: 'blue' };
+            case 'completed':
+                return { icon: <CheckCircleIcon />, color: 'green' };
+            case 'postponed':
+                return { icon: <PauseCircle />, color: 'orange' };
+            case 'cancelled':
+                return { icon: <CancelIcon />, color: 'red' };
+            default:
+                return { icon: <EventAvailable />, color: 'text.secondary' };
+        }
+    };
 
     // Calculate total number of pages for events and courses
     const totalEventPages = Math.ceil(events.length / perPage);
@@ -301,11 +337,14 @@ function AdminECManagement() {
                         <Grid item xs={3} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date</Typography>
                         </Grid>
-                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Event Name</Typography>
                         </Grid>
                         <Grid item xs={3} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
                         </Grid>
                     </Grid>
 
@@ -317,30 +356,39 @@ function AdminECManagement() {
                             </Grid>
                         </Grid>
                     ) : (
-                        currentEvents.map((event) => (
-                            <Card key={event.id} sx={{ mb: 2 }}>
-                                <CardContent>
-                                    <Grid container spacing={0} alignItems="center">
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{event.id}</Typography>
+                        currentEvents.map((event) => {
+                            const { icon, color } = renderEventStatusIconAndColor(event.eventStatus);
+
+                            return (
+                                <Card key={event.id} sx={{ mb: 2 }}>
+                                    <CardContent>
+                                        <Grid container spacing={0} alignItems="center">
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{event.id}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                <Typography>{dayjs(event.startDate).format('DD MMMM YYYY')}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{event.eventName}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    {icon} {event.eventStatus}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                    <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                        View Details
+                                                    </Link>
+                                                </Typography>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                            <Typography>{dayjs(event.eventDate).format('DD MMMM YYYY')}</Typography>
-                                        </Grid>
-                                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
-                                            <Typography>{event.eventName}</Typography>
-                                        </Grid>
-                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                                <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                    View Details
-                                                </Link>
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        ))
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
                     )}
 
 
@@ -391,11 +439,14 @@ function AdminECManagement() {
                         <Grid item xs={3} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Start Date</Typography>
                         </Grid>
-                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Course Name</Typography>
                         </Grid>
                         <Grid item xs={3} sx={{ textAlign: 'center' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
+                        </Grid>
+                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
                         </Grid>
                     </Grid>
 
@@ -407,30 +458,39 @@ function AdminECManagement() {
                             </Grid>
                         </Grid>
                     ) : (
-                        currentCourses.map((course) => (
-                            <Card key={course.id} sx={{ mb: 2 }}>
-                                <CardContent>
-                                    <Grid container spacing={0} alignItems="center">
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{course.id}</Typography>
+                        currentCourses.map((course) => {
+                            const { icon, color } = renderCourseStatusIconAndColor(course.courseStatus);
+
+                            return (
+                                <Card key={course.id} sx={{ mb: 2 }}>
+                                    <CardContent>
+                                        <Grid container spacing={0} alignItems="center">
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{course.id}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{course.courseName}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    {icon} {course.courseStatus}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                    <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                        View Details
+                                                    </Link>
+                                                </Typography>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                            <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
-                                        </Grid>
-                                        <Grid item xs={4} sx={{ textAlign: 'center' }}>
-                                            <Typography>{course.courseName}</Typography>
-                                        </Grid>
-                                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                                <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                    View Details
-                                                </Link>
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        ))
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
                     )}
 
 
