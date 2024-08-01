@@ -210,34 +210,35 @@ function App() {
 
           <div className='hero-container'>
             <div className="text-container">
-              <h1 className="title">Testing</h1>
-              <p className="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla erat orci, pulvinar eget neque a, congue egestas odio. Pellentesque rhoncus dui vitae odio maximus, in tempor urna pretium.</p>
-              <p>Test test est</p>
+              <h1 className="title">Welcome to EcoVerse</h1>
+              <p className="description">Empowering our community with sustainable living practices.</p>
+              <p>Click here to find out more!</p>
               <button className="explore-button">Explore</button>
             </div>
             <div className="cards-container">
               <div className="card">
-                <img src="path_to_image1.jpg" alt="Western Desert" />
-                <div className="card-title">Western Desert</div>
-                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. weiweweuiwhieue wue wdso sdjsd </div>
+                <img src="path_to_image1.jpg" alt="Sustainability" />
+                <div className="card-title">Sustainability Initiatives</div>
+                <div className="card-description">Explore our various programs and initiatives designed to promote sustainable living and environmental stewardship within the community.</div>
               </div>
               <div className="card">
-                <img src="path_to_image2.jpg" alt="Al Bagawat" />
-                <div className="card-title">Al Bagawat</div>
-                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+                <img src="path_to_image2.jpg" alt="Volunteering" />
+                <div className="card-title">Volunteer Opportunities</div>
+                <div className="card-description">Find and participate in volunteer activities that contribute to a greener and more sustainable community.</div>
               </div>
               <div className="card">
-                <img src="path_to_image3.jpg" alt="Pyramid Of Giza" />
-                <div className="card-title">Pyramid Of Giza</div>
-                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+                <img src="path_to_image3.jpg" alt="Events" />
+                <div className="card-title">Upcoming Events</div>
+                <div className="card-description">Stay informed about our upcoming eco-friendly events, workshops, and drives designed to engage and educate.</div>
               </div>
               <div className="card">
-                <img src="path_to_image4.jpg" alt="Kalahari Desert" />
-                <div className="card-title">Kalahari Desert</div>
-                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+                <img src="path_to_image4.jpg" alt="Courses" />
+                <div className="card-title">Educational Courses</div>
+                <div className="card-description">Access courses on sustainable practices and green living to enhance your knowledge and skills in environmental stewardship.</div>
               </div>
             </div>
           </div>
+
 
 
           <Container>
