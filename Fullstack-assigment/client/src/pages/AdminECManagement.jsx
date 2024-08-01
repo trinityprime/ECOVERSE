@@ -16,8 +16,6 @@ function AdminECManagement() {
     const [loadingEvents, setLoadingEvents] = useState(true);
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const perPage = 5; // Number of items per page
     const { user, setUser } = useContext(UserContext);
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
@@ -25,6 +23,15 @@ function AdminECManagement() {
     const [users, setUsers] = useState([]);
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+
+    // pagination
+    const perPage = 5; // Number of items per page
+    const [userPage, setUserPage] = useState(1);
+    const [coursePage, setCoursePage] = useState(1);
+    const [eventPage, setEventPage] = useState(1);
+    const paginateUsers = (page) => setUserPage(page);
+    const paginateCourses = (page) => setCoursePage(page);
+    const paginateEvents = (page) => setEventPage(page);
 
     // Get role to check if admin
     const fetchUserRole = async () => {
@@ -70,6 +77,12 @@ function AdminECManagement() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const logout = () => {
+        localStorage.clear();
+        window.location = "/";
+    };
+
 
     // Handle profile deletion
     const handleDeleteProfile = async () => {
@@ -136,7 +149,7 @@ function AdminECManagement() {
                 return { icon: <EventAvailable />, color: "text.secondary" };
         }
     };
-    
+
     const renderCourseStatusIconAndColor = (courseStatus) => {
         switch (courseStatus.toLowerCase()) {
             case 'scheduled':
@@ -154,17 +167,23 @@ function AdminECManagement() {
         }
     };
 
-    // Calculate total number of pages for events and courses
+    // Calculate total number of pages for events, courses, and users
     const totalEventPages = Math.ceil(events.length / perPage);
     const totalCoursePages = Math.ceil(courses.length / perPage);
     const totalUserPages = Math.ceil(users.length / perPage);
 
-    // Filter events and courses to display based on current page
-    const indexOfLastEvent = currentPage * perPage;
+    // Filter events, courses, and users to display based on their respective current pages
+    const indexOfLastEvent = eventPage * perPage;
     const indexOfFirstEvent = indexOfLastEvent - perPage;
     const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
-    const currentCourses = courses.slice(indexOfFirstEvent, indexOfLastEvent);
-    const currentUsers = users.slice(indexOfFirstEvent, indexOfLastEvent);
+
+    const indexOfLastCourse = coursePage * perPage;
+    const indexOfFirstCourse = indexOfLastCourse - perPage;
+    const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+    const indexOfLastUser = userPage * perPage;
+    const indexOfFirstUser = indexOfLastUser - perPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
     // scrolling
     const eventRef = useRef(null);
@@ -176,9 +195,6 @@ function AdminECManagement() {
             ref.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
-
-    // Change page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     if (loadingEvents || loadingCourses) {
         return <p>Loading data...</p>;
@@ -207,7 +223,7 @@ function AdminECManagement() {
                 <Divider />
                 <Box sx={{ my: 2 }}>
                     <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Dashboard</Typography>
+                        <Typography variant="body1" gutterBottom></Typography>
                     </Link>
                     <Typography
                         variant="body1"
@@ -226,7 +242,7 @@ function AdminECManagement() {
                         Course Management
                     </Typography>
                     <Link to="/settings" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Settings</Typography>
+                        <Typography variant="body1" gutterBottom></Typography>
                     </Link>
                     <Typography
                         variant="body1"
@@ -237,10 +253,13 @@ function AdminECManagement() {
                         Account Management
                     </Typography>
                 </Box>
-                <Box>
-                    <Link to="/logout" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom>Sign-out</Typography>
-                    </Link>
+                <Box
+                    sx={{ cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
+                    onClick={logout}
+                >
+                    <Typography variant="body1" gutterBottom>
+                        Sign-out
+                    </Typography>
                 </Box>
             </Box>
 
@@ -250,27 +269,110 @@ function AdminECManagement() {
                 <Box sx={{ ml: '-15px', p: 2, width: 'calc(100% - 0px)' }}>
                     {/* User List */}
                     <Box ref={userRef} sx={{ pt: 10 }}>
-                    <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
-                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="h5" align="left" gutterBottom>All Users</Typography>
+                        <Box sx={{ mb: 3 }}>
+                            {/* Header Row */}
+                            <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1.5 }}>
+                                <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone Number</Typography>
+                                </Grid>
+                                <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date of Birth</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
+                                </Grid>
+                            </Grid>
+
+                            {/* Data Rows */}
+                            {currentUsers.map((user) => (
+                                <Card key={user.id} sx={{ mb: 2 }}>
+                                    <CardContent>
+                                        <Grid container spacing={0} alignItems="center">
+                                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                                <Typography>{user.id}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{user.name}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{user.email}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{user.phoneNumber}</Typography>
+                                            </Grid>
+                                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                                                <Typography>{user.role}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
+                                            </Grid>
+                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                <IconButton
+                                                    color="secondary"
+                                                    onClick={() => handleDeleteUser(user.id)}
+                                                >
+                                                    <Delete />
+                                                </IconButton>
+                                                <Link to={`/edituser/${user.id}`}>
+                                                    <IconButton color="primary" sx={{ padding: '4px' }}>
+                                                        <Edit />
+                                                    </IconButton>
+                                                </Link>
+                                            </Grid>
+                                        </Grid>
+                                    </CardContent>
+                                </Card>
+                            ))}
+
+                            // USERS TABLE
+                            <Box mt={2} sx={{ textAlign: 'center' }}>
+                                <Button onClick={() => paginateUsers(userPage - 1)} disabled={userPage === 1} sx={{ mr: 1 }}>
+                                    Previous
+                                </Button>
+                                {Array.from({ length: totalUserPages }).map((_, index) => (
+                                    <Button key={index} onClick={() => paginateUsers(index + 1)} variant={userPage === index + 1 ? 'contained' : 'outlined'} sx={{ mx: 1 }}>
+                                        {index + 1}
+                                    </Button>
+                                ))}
+                                <Button onClick={() => paginateUsers(userPage + 1)} disabled={userPage === totalUserPages} sx={{ ml: 1 }}>
+                                    Next
+                                </Button>
+                            </Box>
+                        </Box>
+                        <ToastContainer />
+                    </Box>
+                </Box>
+
+                {/* Event List */}
+                <Box ref={eventRef} sx={{ pt: 10 }}>
+                    <Typography variant="h5" align="left" gutterBottom>Event List</Typography>
+                    <Box sx={{ mb: 5 }}>
                         {/* Header Row */}
-                        <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1.5 }}>
-                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                        <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1 }}>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
                             </Grid>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
+                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date</Typography>
                             </Grid>
                             <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Event Name</Typography>
                             </Grid>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone Number</Typography>
-                            </Grid>
-                            <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography>
-                            </Grid>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date of Birth</Typography>
+                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
                             </Grid>
                             <Grid item xs={2} sx={{ textAlign: 'center' }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
@@ -278,284 +380,148 @@ function AdminECManagement() {
                         </Grid>
 
                         {/* Data Rows */}
-                        {currentUsers.map((user) => (
-                            <Card key={user.id} sx={{ mb: 2 }}>
-                                <CardContent>
-                                    <Grid container spacing={0} alignItems="center">
-                                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                                            <Typography>{user.id}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{user.name}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{user.email}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{user.phoneNumber}</Typography>
-                                        </Grid>
-                                        <Grid item xs={1} sx={{ textAlign: 'center' }}>
-                                            <Typography>{user.role}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                            <IconButton
-                                                color="secondary"
-                                                onClick={() => handleDeleteUser(user.id)}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                            <Link to={`/edituser/${user.id}`}>
-                                                <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                    <Edit />
-                                                </IconButton>
-                                            </Link>
-                                        </Grid>
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        ))}
-                        {/* Pagination Controls for Users */}
+                        {currentEvents.length === 0 ? (
+                            <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
+                                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body1">No events available</Typography>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            currentEvents.map((event) => {
+                                const { icon, color } = renderEventStatusIconAndColor(event.eventStatus);
+
+                                return (
+                                    <Card key={event.id} sx={{ mb: 2 }}>
+                                        <CardContent>
+                                            <Grid container spacing={0} alignItems="center">
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{event.id}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{dayjs(event.startDate).format('DD MMMM YYYY')}</Typography>
+                                                </Grid>
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{event.eventName}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                    <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        {icon} {event.eventStatus}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                        <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                            View Details
+                                                        </Link>
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })
+                        )}
+
+
+                        {/* Pagination Controls for Events */}
                         <Box mt={2} sx={{ textAlign: 'center' }}>
-                            {/* Previous page button */}
-                            <Button
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                sx={{ mr: 1 }}
-                            >
+                            <Button onClick={() => paginateEvents(eventPage - 1)} disabled={eventPage === 1} sx={{ mr: 1 }}>
                                 Previous
                             </Button>
-
-                            {/* Page indicators or numbers */}
-                            {Array.from({ length: totalUserPages }).map((_, index) => (
-                                <Button
-                                    key={index}
-                                    onClick={() => paginate(index + 1)}
-                                    variant={currentPage === index + 1 ? 'contained' : 'outlined'}
-                                    sx={{ mx: 1 }}
-                                >
+                            {Array.from({ length: totalEventPages }).map((_, index) => (
+                                <Button key={index} onClick={() => paginateEvents(index + 1)} variant={eventPage === index + 1 ? 'contained' : 'outlined'} sx={{ mx: 1 }}>
                                     {index + 1}
                                 </Button>
                             ))}
-
-                            {/* Next page button */}
-                            <Button
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === totalUserPages}
-                                sx={{ ml: 1 }}
-                            >
+                            <Button onClick={() => paginateEvents(eventPage + 1)} disabled={eventPage === totalEventPages} sx={{ ml: 1 }}>
                                 Next
                             </Button>
                         </Box>
                     </Box>
-                    <ToastContainer />
-                    </Box>
-                </Box>
 
-                {/* Event List */}
-                <Box ref={eventRef} sx={{ pt: 10 }}>
-                <Typography variant="h5" align="left" gutterBottom>Event List</Typography>
-                <Box sx={{ mb: 5 }}>
-                    {/* Header Row */}
-                    <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1 }}>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
-                        </Grid>
-                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Event Name</Typography>
-                        </Grid>
-                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
-                        </Grid>
-                    </Grid>
-
-                    {/* Data Rows */}
-                    {currentEvents.length === 0 ? (
-                        <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography variant="body1">No events available</Typography>
-                            </Grid>
-                        </Grid>
-                    ) : (
-                        currentEvents.map((event) => {
-                            const { icon, color } = renderEventStatusIconAndColor(event.eventStatus);
-
-                            return (
-                                <Card key={event.id} sx={{ mb: 2 }}>
-                                    <CardContent>
-                                        <Grid container spacing={0} alignItems="center">
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography>{event.id}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                <Typography>{dayjs(event.startDate).format('DD MMMM YYYY')}</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography>{event.eventName}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {icon} {event.eventStatus}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                                    <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                        View Details
-                                                    </Link>
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })
-                    )}
-
-
-                    {/* Pagination Controls for Events */}
-                    <Box mt={2} sx={{ textAlign: 'center' }}>
-                        {/* Previous page button */}
-                        <Button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            sx={{ mr: 1 }}
-                        >
-                            Previous
-                        </Button>
-
-                        {/* Page indicators or numbers */}
-                        {Array.from({ length: totalEventPages }).map((_, index) => (
-                            <Button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                variant={currentPage === index + 1 ? 'contained' : 'outlined'}
-                                sx={{ mx: 1 }}
-                            >
-                                {index + 1}
-                            </Button>
-                        ))}
-
-                        {/* Next page button */}
-                        <Button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalEventPages}
-                            sx={{ ml: 1 }}
-                        >
-                            Next
-                        </Button>
-                        </Box>
-                    </Box>
-                    
                 </Box>
 
                 {/* Course List */}
                 <Box ref={courseRef} sx={{ pt: 10 }}>
-                <Typography variant="h5" align="left" gutterBottom>Course List</Typography>
-                <Box sx={{ mb: 5 }}>
-                    {/* Header Row */}
-                    <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1 }}>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
-                        </Grid>
-                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Start Date</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Course Name</Typography>
-                        </Grid>
-                        <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
-                        </Grid>
-                        <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
-                        </Grid>
-                    </Grid>
-
-                    {/* Data Rows */}
-                    {currentCourses.length === 0 ? (
-                        <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography variant="body1">No courses available</Typography>
+                    <Typography variant="h5" align="left" gutterBottom>Course List</Typography>
+                    <Box sx={{ mb: 5 }}>
+                        {/* Header Row */}
+                        <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1 }}>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>ID</Typography>
+                            </Grid>
+                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Start Date</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Course Name</Typography>
+                            </Grid>
+                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
                             </Grid>
                         </Grid>
-                    ) : (
-                        currentCourses.map((course) => {
-                            const { icon, color } = renderCourseStatusIconAndColor(course.courseStatus);
 
-                            return (
-                                <Card key={course.id} sx={{ mb: 2 }}>
-                                    <CardContent>
-                                        <Grid container spacing={0} alignItems="center">
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography>{course.id}</Typography>
+                        {/* Data Rows */}
+                        {currentCourses.length === 0 ? (
+                            <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
+                                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body1">No courses available</Typography>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            currentCourses.map((course) => {
+                                const { icon, color } = renderCourseStatusIconAndColor(course.courseStatus);
+
+                                return (
+                                    <Card key={course.id} sx={{ mb: 2 }}>
+                                        <CardContent>
+                                            <Grid container spacing={0} alignItems="center">
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{course.id}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
+                                                </Grid>
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography>{course.courseName}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
+                                                    <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        {icon} {course.courseStatus}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                                        <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                            View Details
+                                                        </Link>
+                                                    </Typography>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                <Typography>{dayjs(course.startDate).format('DD MMMM YYYY')}</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography>{course.courseName}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {icon} {course.courseStatus}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                                    <Link to={`/course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                        View Details
-                                                    </Link>
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })
-                    )}
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })
+                        )}
 
 
-                    {/* Pagination Controls for Courses */}
-                    <Box mt={2} sx={{ textAlign: 'center' }}>
-                        {/* Previous page button */}
-                        <Button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            sx={{ mr: 1 }}
-                        >
-                            Previous
-                        </Button>
-
-                        {/* Page indicators or numbers */}
-                        {Array.from({ length: totalCoursePages }).map((_, index) => (
-                            <Button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                variant={currentPage === index + 1 ? 'contained' : 'outlined'}
-                                sx={{ mx: 1 }}
-                            >
-                                {index + 1}
+                        {/* Pagination Controls for Courses */}
+                        <Box mt={2} sx={{ textAlign: 'center' }}>
+                            <Button onClick={() => paginateCourses(coursePage - 1)} disabled={coursePage === 1} sx={{ mr: 1 }}>
+                                Previous
                             </Button>
-                        ))}
-
-                        {/* Next page button */}
-                        <Button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalCoursePages}
-                            sx={{ ml: 1 }}
-                        >
-                            Next
-                        </Button>
-                    </Box>
+                            {Array.from({ length: totalCoursePages }).map((_, index) => (
+                                <Button key={index} onClick={() => paginateCourses(index + 1)} variant={coursePage === index + 1 ? 'contained' : 'outlined'} sx={{ mx: 1 }}>
+                                    {index + 1}
+                                </Button>
+                            ))}
+                            <Button onClick={() => paginateCourses(coursePage + 1)} disabled={coursePage === totalCoursePages} sx={{ ml: 1 }}>
+                                Next
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
 
