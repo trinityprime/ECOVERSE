@@ -463,7 +463,7 @@ function Events() {
                                            
                                         </Box>
                                         <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/user-event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <Link to={`/UserEventDetails/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                                 View Details
                                             </Link>
                                         </Typography>
