@@ -143,6 +143,7 @@ router.get("/auth", validateToken, (req, res) => {
     });
 });
 
+
 // list users in admin acc
 router.get("/", validateToken, isAdmin, async (req, res) => {
     try {
@@ -153,6 +154,31 @@ router.get("/", validateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 });
+
+
+router.get("/signups", validateToken, async (req, res) => {
+    let userId = req.user.id;
+
+    try {
+        // Fetch sign-ups with course details
+        let signUps = await SignUp.findAll({
+            where: { userId },
+            include: [{
+                model: Course,
+                attributes: ["id", "title", "description"] 
+            }]
+        });
+
+        if (!signUps.length) {
+            return res.status(404).json({ message: "No sign-ups found." });
+        }
+
+        res.json(signUps);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching sign-ups." });
+    }
+});
+
 
 // delete in admin acc
 router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
@@ -172,6 +198,7 @@ router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
     }
 });
 
+
 // get user info for update in admin acc
 router.get('/:userId', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
@@ -188,6 +215,7 @@ router.get('/:userId', validateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch user' });
     }
 });
+
 
 // editing user info in admin acc
 router.put('/:userId', validateToken, isAdmin, async (req, res) => {

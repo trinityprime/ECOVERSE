@@ -32,6 +32,9 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Footer from './footer.jsx';
 import http from './http';
+import RequestOtp from './pages/RequestOtp';
+import VerifyOtp from './pages/VerifyOtp';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -263,6 +266,7 @@ function App() {
               </div>
             </div>
           )}
+
           <Container>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -291,6 +295,9 @@ function App() {
               <Route path="/AdminECManagement" element={<AdminECManagement />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              {/* <Route path="/request-otp" element={<RequestOtp />} />
+              <Route path="/verify-otp" element={<VerifyOtp />} />
+              <Route path="/reset-password" element={<ResetPassword />} /> */}
             </Routes>
           </Container>
           <Footer />

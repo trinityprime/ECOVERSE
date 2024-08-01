@@ -43,6 +43,41 @@ router.get("/", async (req, res) => {
     res.json(list);
 });
 
+router.get("/", async (req, res) => {
+    let condition = {};
+    let search = req.query.search;
+    let userId = req.query.userId; // Assuming you pass the user ID in the query
+
+    if (userId) {
+        condition.userId = userId; // Filter by userId
+    }
+
+    if (search) {
+        condition[Op.and] = [
+            condition[Op.or] = [
+                { Name: { [Op.like]: `%${search}%` } },
+                { MobileNumber: { [Op.like]: `%${search}%` } },
+                { Email: { [Op.like]: `%${search}%` } },
+                { numberOfPax: { [Op.like]: `%${search}%` } },
+                { specialRequirements: { [Op.like]: `%${search}%` } },
+                { eventCourseName: { [Op.like]: `%${search}%` } }
+            ]
+        ];
+    }
+
+    try {
+        let list = await SignUp.findAll({
+            where: condition,
+            order: [['createdAt', 'DESC']]
+        });
+        res.json(list);
+    } catch (error) {
+        console.error('Error fetching sign-ups:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 router.get("/:id", async (req, res) => {
     let id = req.params.id;
     let signUp = await SignUp.findByPk(id);

@@ -2,13 +2,14 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
-
 app.use(cors({
     origin: process.env.CLIENT_URL
 }));
+
 // Simple Route
 app.get("/", (req, res) => {
     res.send("Welcome to the learning space.");
@@ -33,26 +34,34 @@ app.use("/report", reportRoute);
 const userRoute = require('./routes/user');
 app.use("/user", userRoute);
 
-const profileRoute = require('./routes/profile')
-app.use('/profile', profileRoute)
+const profileRoute = require('./routes/profile');
+app.use('/profile', profileRoute);
 
-const adminRoute = require('./routes/admin')
-app.use('/admin', adminRoute)
+const adminRoute = require('./routes/admin');
+app.use('/admin', adminRoute);
 
 const initializeAdminAccount = require('./initializeAdmin'); 
 
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);
+
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 const db = require('./models');
 db.sequelize.sync({ alter: true })
     .then(async () => {
         await initializeAdminAccount();
-        let port = process.env.APP_PORT;
+        const port = process.env.APP_PORT || 3000;
         app.listen(port, () => {
-            console.log(`⚡ Sever running on http://localhost:${port}`);
+            console.log(`⚡ Server running on http://localhost:${port}`);
         });
     })
     .catch((err) => {
-        console.log(err);
+        console.error('Database synchronization error:', err);
     });
