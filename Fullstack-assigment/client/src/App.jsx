@@ -79,7 +79,7 @@ function App() {
             <Container>
               <Toolbar disableGutters={true}>
                 <Link to="/">
-                  <Container style={{ display: 'flex', alignItems: 'center' }} maxWidth>
+                  <Container style={{ display: 'flex', alignItems: 'center' }} maxWidth="xl">
                     <img src="../ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '50px', display: 'flex' }} />
                     <Typography variant="h6" component="div" style={{ display: 'flex', alignItems: 'center' }}>
                       ECOVERSE
@@ -209,10 +209,35 @@ function App() {
           </AppBar>
 
           <div className='hero-container'>
-            <h1>This is just for testing</h1>
-            <p>Testing</p>
+            <div className="text-container">
+              <h1 className="title">Testing</h1>
+              <p className="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla erat orci, pulvinar eget neque a, congue egestas odio. Pellentesque rhoncus dui vitae odio maximus, in tempor urna pretium.</p>
+              <p>Test test est</p>
+              <button className="explore-button">Explore</button>
+            </div>
+            <div className="cards-container">
+              <div className="card">
+                <img src="path_to_image1.jpg" alt="Western Desert" />
+                <div className="card-title">Western Desert</div>
+                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. weiweweuiwhieue wue wdso sdjsd </div>
+              </div>
+              <div className="card">
+                <img src="path_to_image2.jpg" alt="Al Bagawat" />
+                <div className="card-title">Al Bagawat</div>
+                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+              </div>
+              <div className="card">
+                <img src="path_to_image3.jpg" alt="Pyramid Of Giza" />
+                <div className="card-title">Pyramid Of Giza</div>
+                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+              </div>
+              <div className="card">
+                <img src="path_to_image4.jpg" alt="Kalahari Desert" />
+                <div className="card-title">Kalahari Desert</div>
+                <div className="card-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+              </div>
+            </div>
           </div>
-
 
 
           <Container>
