@@ -207,7 +207,7 @@ function App() {
               </Toolbar>
             </Container>
           </AppBar>
-
+          {location.pathname === '/' && (
           <div className='hero-container'>
             <div className="text-container">
               <h1 className="title">Welcome to EcoVerse</h1>
@@ -238,7 +238,7 @@ function App() {
               </div>
             </div>
           </div>
-
+          )}
 
 
           <Container>
