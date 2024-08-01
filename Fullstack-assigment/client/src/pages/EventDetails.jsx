@@ -195,6 +195,10 @@ function EventDetails() {
                                                 maxHeight: "400px", // adjust the height as needed
                                                 objectFit: "contain" // maintains aspect ratio
                                             }}
+                                            onError={(e) => {
+                                                console.error("Error loading image:", e);
+                                                e.target.src = "/path/to/placeholder-image.jpg"; // Optional: set a placeholder image in case of an error
+                                            }}
                                         />
                                     </Box>
                                 ) : (
@@ -204,6 +208,7 @@ function EventDetails() {
                                         </Typography>
                                     </div>
                                 )}
+
                                 <Typography variant="body1">
                                     <strong>Event Name:</strong> {event.eventName}
                                 </Typography>

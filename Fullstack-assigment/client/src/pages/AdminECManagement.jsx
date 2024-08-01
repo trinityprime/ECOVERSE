@@ -573,17 +573,17 @@ function AdminECManagement() {
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                         <Button>
-                            <Link to={`/addevent`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to={`/AddEvent`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 Create New Event
                             </Link>
                         </Button>
                         <Button>
-                            <Link to={`/addcourse`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to={`/AddCourse`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 Create New Course
                             </Link>
                         </Button>
                         <Button>
-                            <Link to={`/adduser`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to={`/AddUser`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 Create New User
                             </Link>
                         </Button>

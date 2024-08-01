@@ -57,20 +57,6 @@ function Profile() {
         }
     };
 
-    // for admin user table delete
-    const handleDeleteUser = async (userId) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
-            try {
-                await http.delete(`/user/${userId}`);
-                toast.success("User deleted successfully!");
-                setUsers(users.filter(u => u.id !== userId));
-            } catch (error) {
-                console.error("Error deleting user:", error);
-                toast.success("An error occurred while deleting the user.");
-            }
-        }
-    };
-
     const handleClickOpen = () => {
         setOpen(true);
     };

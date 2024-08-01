@@ -123,10 +123,10 @@ function AddCourse() {
 
             http.post("/course", data)
                 .then((res) => {
-                    console.log(res.data);
                     toast.success('Course created successfully!');
-                    setSelectedCourseType(courseTypeOptions.find(option => option.value === data.courseType)); // Store selected course type details
-
+                    setTimeout(() => {
+                        navigate('/AdminECManagement');
+                    }, 1400);
                 })
                 .catch((error) => {
                     console.error('Error creating course:', error);

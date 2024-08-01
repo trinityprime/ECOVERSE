@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import http from '../http';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -16,6 +16,7 @@ function EditEvent() {
         eventDescription: ""
     });
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         http.get(`/userEvent/${id}`).then((res) => {
@@ -41,6 +42,9 @@ function EditEvent() {
                 .max(100, 'Event Address must be at most 100 characters')
                 .required('Event Address is required'),
             eventDate: yup.date()
+                .typeError('Incorrect format for Event Date')
+                .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
+                .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
                 .required('Event Date is required'),
             eventDescription: yup.string().trim()
                 .min(3, 'Event Description must be at least 3 characters')
@@ -53,7 +57,7 @@ function EditEvent() {
             http.put(`/userEvent/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/userEvent");
+                    navigate("/UserEvent");
                 });
         }
     });
