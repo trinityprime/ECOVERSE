@@ -5,7 +5,7 @@
 .footer{
     
     background-color: black;
-    margin-top: 2rem; /* this one is the reason why got white gaps */
+    margin-top: 0rem; /* this one is the reason why got white gaps */
     width: 100%;
 }
 

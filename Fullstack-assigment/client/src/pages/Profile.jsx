@@ -102,7 +102,6 @@ function Profile() {
 
     return (
         <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <ToastContainer />
             <Typography variant="h5" sx={{ mb: 2 }}>
                 Profile
             </Typography>
