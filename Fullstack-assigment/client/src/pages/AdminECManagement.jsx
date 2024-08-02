@@ -337,7 +337,7 @@ function AdminECManagement() {
                                 </Card>
                             ))}
 
-                            // USERS TABLE
+                            {/* USERS TABLE */}
                             <Box mt={2} sx={{ textAlign: 'center' }}>
                                 <Button onClick={() => paginateUsers(userPage - 1)} disabled={userPage === 1} sx={{ mr: 1 }}>
                                     Previous

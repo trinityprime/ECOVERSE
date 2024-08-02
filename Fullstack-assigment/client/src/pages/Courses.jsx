@@ -363,9 +363,15 @@ function Courses() {
 
                                         {course.termsAndConditions && (
                                             <Typography sx={{ whiteSpace: 'pre-wrap', mb: 1, color: 'red', fontSize: '13px' }}>
-                                                {course.termsAndConditions}
+                                                <span style={{ fontWeight: 'bold' }}>Terms and Conditions: </span>
+                                                <ul style={{ paddingLeft: '20px' }}>
+                                                    {course.termsAndConditions.split('\n').map((item, index) => (
+                                                        <li key={index} style={{ marginBottom: '5px' }}>{item}</li>
+                                                    ))}
+                                                </ul>
                                             </Typography>
                                         )}
+
 
                                         <Typography sx={{ whiteSpace: 'pre-wrap', fontStyle: 'italic' }} color={renderCourseStatusIconAndColor(course.courseStatus).color}>
                                             Course Status: {course.courseStatus}

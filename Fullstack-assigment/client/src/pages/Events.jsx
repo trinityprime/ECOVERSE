@@ -414,26 +414,19 @@ function Events() {
                                         <Typography sx={{ whiteSpace: "pre-wrap", mb: 1 }}>
                                             {event.eventDescription}
                                         </Typography>
-
+                                        <Divider sx={{ mt: 2 }} />
                                         {event.termsAndConditions && (
-                                            <>
-                                                <Divider sx={{ mt: 2, mb: 1 }}>
-                                                    Terms and Conditions:
-                                                </Divider>
-                                                <Typography
-                                                    sx={{
-                                                        whiteSpace: "pre-wrap",
-                                                        mb: 1,
-                                                        color: "red",
-                                                        fontSize: "13px",
-                                                    }}
-                                                >
-                                                    {event.termsAndConditions}
-                                                </Typography>
-                                            </>
+                                            <Typography sx={{ whiteSpace: 'pre-wrap', mb: 1, color: 'red', fontSize: '13px' }}>
+                                                <span style={{ fontWeight: 'bold' }}>Terms and Conditions: </span>
+                                                <ul style={{ paddingLeft: '20px' }}>
+                                                    {event.termsAndConditions.split('\n').map((item, index) => (
+                                                        <li key={index} style={{ marginBottom: '5px' }}>{item}</li>
+                                                    ))}
+                                                </ul>
+                                            </Typography>
                                         )}
 
-                                        <Divider sx={{ mt: 2 }} />
+                                        
                                         <Typography
                                             sx={{
                                                 whiteSpace: "pre-wrap",
