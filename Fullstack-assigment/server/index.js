@@ -6,8 +6,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
+
+// Set up CORS to allow requests from your frontend
 app.use(cors({
-    origin: process.env.CLIENT_URL
+    origin: process.env.CLIENT_URL // Ensure this is set correctly in your .env file
 }));
 
 // Simple Route
@@ -40,7 +42,7 @@ app.use('/profile', profileRoute);
 const adminRoute = require('./routes/admin');
 app.use('/admin', adminRoute);
 
-const initializeAdminAccount = require('./initializeAdmin'); 
+const initializeAdminAccount = require('./initializeAdmin');
 
 const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes);
@@ -48,11 +50,13 @@ app.use('/auth', authRoutes);
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
 
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
 
+// Database setup
 const db = require('./models');
 db.sequelize.sync({ alter: true })
     .then(async () => {

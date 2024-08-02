@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Modal, Box, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Divider, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, } from "@mui/material";
+import { Modal, Box, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Divider, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import dayjs from "dayjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Papa from "papaparse";
 
 function EventDetails() {
     const { id } = useParams();
@@ -16,33 +17,58 @@ function EventDetails() {
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [openExportModal, setOpenExportModal] = useState(false);
 
-    const handleExportEvent = async () => {
+    const handleExportEvent = async (format) => {
         try {
-            const response = await axios.get(
-                `http://localhost:3001/event/export/${id}`
-            );
+            const response = await axios.get(`http://localhost:3001/event/${id}`);
             if (response.status === 200) {
-                toast.success(`Event ID ${id} has been successfully exported.`);
-                setTimeout(() => {
-                    navigate('/AdminECManagement');
-                }, 1400);
-                // Handle exported data or download here if necessary
+                const eventData = response.data;
+                if (format === 'csv') {
+                    exportToCSV(eventData);
+                }
+                toast.success(`Event ID ${id} has been successfully exported in ${format}.`);
             } else {
                 toast.error(`Failed to export Event ID ${id}.`);
             }
         } catch (error) {
-            toast.error(`Failed to export Event ID ${id}.`);
+            toast.error(`Failed to export Event ID ${id} using ${format}.`);
             console.error("Error exporting event:", error);
         }
     };
 
+    const exportToCSV = (eventData) => {
+        const csvData = [
+            {
+                'Event ID': eventData.id,
+                'Event Name': eventData.eventName,
+                'Event Type': eventData.eventType,
+                'Date': dayjs(eventData.eventDate).format("DD MMMM YYYY"),
+                'Time': `${eventData.eventTimeFrom} to ${eventData.eventTimeTo}`,
+                'Location': eventData.location,
+                'Organizer Details': eventData.organizerDetails,
+                'Max Participants': eventData.maxParticipants,
+                'Description': eventData.eventDescription,
+                'Terms and Conditions': eventData.termsAndConditions,
+                'Status': eventData.eventStatus,
+                'Image': `${import.meta.env.VITE_FILE_BASE_URL}${eventData.imageFile}`
+            }
+        ];
+
+        const csv = Papa.unparse(csvData);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `Event_${eventData.id}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     useEffect(() => {
         const fetchEvent = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/event/${id}`);
                 if (response.status === 200) {
-                    setEvent(response.data); // Assuming response.data includes 'participants'
+                    setEvent(response.data);
                     setLoading(false);
                 } else {
                     setError("Failed to fetch event details");
@@ -63,7 +89,6 @@ function EventDetails() {
             const response = await axios.delete(`http://localhost:3001/event/${eventId}`);
             if (response.status === 200) {
                 toast.success(`Event ID ${eventId} has been successfully deleted.`);
-                // Optionally navigate away after deletion
                 navigate('/AdminECManagement');
             } else {
                 toast.error(`Failed to delete Event ID ${eventId}.`);
@@ -73,28 +98,27 @@ function EventDetails() {
             console.error("Error deleting event:", error);
         }
     };
-    
 
     if (loading) {
-        return <p>Loading event details...</p>; // Display a loading spinner or message
+        return <p>Loading event details...</p>;
     }
 
     if (error) {
-        return <p>{error}</p>; // Display an error message
+        return <p>{error}</p>;
     }
 
     return (
         <Box sx={{ display: "flex" }}>
             <Box
                 sx={{
-                    width: "240px", // Adjusted width for the sidebar
+                    width: "240px",
                     position: "fixed",
-                    top: "120px", // Adjust to accommodate app bar height
+                    top: "120px",
                     left: "50px",
                     backgroundColor: "#f0f0f0",
                     p: 2,
                     boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                    zIndex: "1000", // Ensure the sidebar is above other content
+                    zIndex: "1000",
                 }}
             >
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -102,52 +126,30 @@ function EventDetails() {
                 </Typography>
                 <Divider />
                 <Box sx={{ my: 2 }}>
-                    <Link
-                        to="/dashboard"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Dashboard
                         </Typography>
                     </Link>
-                    <Link
-                        to="/event-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/event-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Event Management
                         </Typography>
                     </Link>
-                    <Link
-                        to="/course-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Course Management
                         </Typography>
                     </Link>
-                    <Link
-                        to="/settings"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                        <Typography variant="body1" gutterBottom>
-                            Settings
-                        </Typography>
-                    </Link>
-                    <Link
-                        to="/account-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+
+                    <Link to="/account-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Account Management
                         </Typography>
                     </Link>
                 </Box>
                 <Box>
-                    <Link
-                        to="/logout"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/logout" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Sign-out
                         </Typography>
@@ -195,201 +197,141 @@ function EventDetails() {
                                                 maxHeight: "400px", // adjust the height as needed
                                                 objectFit: "contain" // maintains aspect ratio
                                             }}
-                                            onError={(e) => {
-                                                console.error("Error loading image:", e);
-                                                e.target.src = "/path/to/placeholder-image.jpg"; // Optional: set a placeholder image in case of an error
-                                            }}
                                         />
                                     </Box>
                                 ) : (
-                                    <div style={{ marginBottom: "1rem" }}>
-                                        <Typography variant="body1" color="textSecondary">
-                                            No image available for this event.
-                                        </Typography>
-                                    </div>
+                                    <Typography>No image is added or available.</Typography>
                                 )}
-
-                                <Typography variant="body1">
-                                    <strong>Event Name:</strong> {event.eventName}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Event Type:</strong> {event.eventType}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Date:</strong>{" "}
-                                    {dayjs(event.eventDate).format("DD MMMM YYYY")}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Time:</strong> {event.eventTimeFrom} to{" "}
-                                    {event.eventTimeTo}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Location:</strong> {event.location}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Organizer Details:</strong> {event.organizerDetails}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Max Participants:</strong> {event.maxParticipants}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Description:</strong> {event.eventDescription}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Terms and Conditions:</strong>{" "}
-                                    {event.termsAndConditions}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Status:</strong> {event.eventStatus}
-                                </Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <Typography variant="body1" fontWeight="bold">Field</Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body1" fontWeight="bold">Details</Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {Object.entries({
+                                                'Event Name': event.eventName,
+                                                'Event Type': event.eventType,
+                                                'Date': dayjs(event.eventDate).format("DD MMMM YYYY"),
+                                                'Time': `${event.eventTimeFrom} to ${event.eventTimeTo}`,
+                                                'Location': event.location,
+                                                'Organizer Details': event.organizerDetails,
+                                                'Max Participants': event.maxParticipants,
+                                                'Description': event.eventDescription,
+                                                'Terms and Conditions': event.termsAndConditions,
+                                                'Status': event.eventStatus,
+                                            }).map(([field, value]) => (
+                                                <TableRow key={field}>
+                                                    <TableCell>{field}</TableCell>
+                                                    <TableCell>{value}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sx={{ textAlign: "center" }}>
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: "limegreen", color: "white" }}
+                                    color="primary"
                                     onClick={() => setOpenExportModal(true)}
                                 >
                                     Export
                                 </Button>
-                            </Grid>
-
-                            <Grid item xs={6} sx={{ textAlign: "right" }}>
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: "blue", color: "white" }}
+                                    color="primary"
+                                    sx={{ ml: 1 }}
                                     onClick={() => setOpenModal(true)}
                                 >
                                     View Additional Details
                                 </Button>
                             </Grid>
                         </Grid>
+
+                        <Dialog
+                            open={openExportModal}
+                            onClose={() => setOpenExportModal(false)}
+                            aria-labelledby="export-dialog-title"
+                            aria-describedby="export-dialog-description"
+                        >
+                            <DialogTitle id="export-dialog-title">Export Event</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="export-dialog-description">
+                                    Choose the format you want to export the event details.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        handleExportEvent("csv");
+                                        setOpenExportModal(false);
+                                    }}
+                                >
+                                    Export as CSV
+                                </Button>
+                                <Button onClick={() => setOpenExportModal(false)}>Cancel</Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog
+                            open={openDeleteConfirmation}
+                            onClose={() => setOpenDeleteConfirmation(false)}
+                            aria-labelledby="delete-dialog-title"
+                            aria-describedby="delete-dialog-description"
+                        >
+                            <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="delete-dialog-description">
+                                    Are you sure you want to delete this event? This action cannot be undone.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        handleDeleteEvent(id);
+                                        setOpenDeleteConfirmation(false);
+                                    }}
+                                    color="secondary"
+                                >
+                                    Delete
+                                </Button>
+                                <Button onClick={() => setOpenDeleteConfirmation(false)}>
+                                    Cancel
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog
+                            open={openModal}
+                            onClose={() => setOpenModal(false)}
+                            aria-labelledby="event-modal-title"
+                            aria-describedby="event-modal-description"
+                        >
+                            <DialogTitle id="event-modal-title">Additional Event Details</DialogTitle>
+                            <DialogContent>
+                                <Typography variant="body1">
+                                    {/* Replace this with additional event details as needed */}
+                                    Here you can include more information about the event.
+                                </Typography>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => setOpenModal(false)}>Close</Button>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 )}
-
-                {/* Additional Details Modal */}
-                {event && (
-                    <Modal open={openModal} onClose={() => setOpenModal(false)}>
-                        <Box sx={{ ...modalStyle, width: 400 }}>
-                            <Typography variant="h6" component="h2" gutterBottom>
-                                Additional Details
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Participants:</strong>
-                            </Typography>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>ID</TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Email</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {event.participants &&
-                                            event.participants.map((participant) => (
-                                                <TableRow key={participant.id}>
-                                                    <TableCell>{participant.id}</TableCell>
-                                                    <TableCell>{participant.name}</TableCell>
-                                                    <TableCell>{participant.email}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        {/* Hardcoded Row Example */}
-                                        <TableRow>
-                                            <TableCell>999</TableCell>
-                                            <TableCell>John Doe</TableCell>
-                                            <TableCell>john.doe@gmail.com</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>666</TableCell>
-                                            <TableCell>some random demon</TableCell>
-                                            <TableCell>imunderyourbed@yahoo.com</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Box>
-                    </Modal>
-                )}
-
-                {/* Delete Confirmation Dialog */}
-                <Dialog
-                    open={openDeleteConfirmation}
-                    onClose={() => setOpenDeleteConfirmation(false)}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {"Confirm Deletion"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete this event?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => setOpenDeleteConfirmation(false)}
-                            color="primary"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                handleDeleteEvent(id);
-                                setOpenDeleteConfirmation(false);
-                            }}
-                            color="secondary"
-                        >
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Export Modal */}
-                <Modal
-                    open={openExportModal}
-                    onClose={() => setOpenExportModal(false)}
-                    aria-labelledby="export-modal-title"
-                    aria-describedby="export-modal-description"
-                >
-                    <Box sx={modalStyle}>
-                        <DialogTitle id="export-modal-title">Export Event?</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="export-modal-description">
-                                Are you sure you want to export this event?
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setOpenExportModal(false)} color="primary">
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    handleExportEvent();
-                                    setOpenExportModal(false);
-                                }}
-                                color="secondary"
-                            >
-                                Export
-                            </Button>
-                        </DialogActions>
-                    </Box>
-                </Modal>
             </Box>
         </Box>
     );
 }
-
-const modalStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 4,
-    outline: "none",
-};
 
 export default EventDetails;

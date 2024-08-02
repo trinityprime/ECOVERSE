@@ -5,6 +5,7 @@ import { Modal, Box, Typography, TableContainer, Table, TableHead, TableBody, Ta
 import dayjs from "dayjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Papa from 'papaparse';
 
 function CourseDetails() {
     const { id } = useParams();
@@ -18,15 +19,40 @@ function CourseDetails() {
 
     const handleExportCourse = async () => {
         try {
-            const response = await axios.get(
-                `http://localhost:3001/course/export/${id}`
-            );
+            const response = await axios.get(`http://localhost:3001/course/${id}`);
             if (response.status === 200) {
-                toast.success(`Course ID ${id} has been successfully exported.`);
-                setTimeout(() => {
-                    navigate('/AdminECManagement');
-                }, 1400);
-                // Handle exported data or download here if necessary
+                const courseData = response.data;
+
+                // Prepare data for CSV
+                const csvData = [
+                    ["Field", "Details"],
+                    ["Course Name", courseData.courseName],
+                    ["Course Type", courseData.courseType],
+                    ["Course Dates", `${dayjs(courseData.courseStartDate).format('DD MMMM YYYY')} to ${dayjs(courseData.courseEndDate).format('DD MMMM YYYY')}`],
+                    ["Time", `${courseData.courseTimeFrom} to ${courseData.courseTimeTo}`],
+                    ["Location", courseData.location],
+                    ["Organizer Details", courseData.organizerDetails],
+                    ["Max Participants", courseData.maxParticipants],
+                    ["Description", courseData.courseDescription],
+                    ["Terms and Conditions", courseData.termsAndConditions],
+                    ["Status", courseData.courseStatus]
+                ];
+
+                // Convert data to CSV
+                const csv = Papa.unparse(csvData);
+
+                // Create a blob and download
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                if (link.download !== undefined) { // feature detection
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `course_${id}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             } else {
                 toast.error(`Failed to export Course ID ${id}.`);
             }
@@ -101,52 +127,30 @@ function CourseDetails() {
                 </Typography>
                 <Divider />
                 <Box sx={{ my: 2 }}>
-                    <Link
-                        to="/dashboard"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Dashboard
                         </Typography>
                     </Link>
-                    <Link
-                        to="/event-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
-                            Event Management
+                            course Management
                         </Typography>
                     </Link>
-                    <Link
-                        to="/course-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Course Management
                         </Typography>
                     </Link>
-                    <Link
-                        to="/settings"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                        <Typography variant="body1" gutterBottom>
-                            Settings
-                        </Typography>
-                    </Link>
-                    <Link
-                        to="/account-management"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+
+                    <Link to="/account-management" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Account Management
                         </Typography>
                     </Link>
                 </Box>
                 <Box>
-                    <Link
-                        to="/logout"
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
+                    <Link to="/logout" style={{ textDecoration: "none", color: "inherit" }}>
                         <Typography variant="body1" gutterBottom>
                             Sign-out
                         </Typography>
@@ -154,7 +158,6 @@ function CourseDetails() {
                 </Box>
             </Box>
 
-            {/* Main Content */}
             <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
                 <ToastContainer />
                 <Typography variant="h5" align="center" gutterBottom>
@@ -198,196 +201,138 @@ function CourseDetails() {
                                         />
                                     </Box>
                                 ) : (
-                                    <div style={{ marginBottom: "1rem" }}>
-                                        <Typography variant="body1" color="textSecondary">
-                                            No image available for this course.
-                                        </Typography>
-                                    </div>
+                                    <Typography>No image is added or available.</Typography>
                                 )}
-                                <Typography variant="body1">
-                                    <strong>Course Name:</strong> {course.courseName}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Course Type:</strong> {course.courseType}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Course Dates: </strong>
-                                    {`${dayjs(course.courseStartDate).format('DD MMMM YYYY')} to ${dayjs(course.courseEndDate).format('DD MMMM YYYY')}`}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Time:</strong> {course.courseTimeFrom} to{" "}
-                                    {course.courseTimeTo}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Location:</strong> {course.location}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Organizer Details:</strong> {course.organizerDetails}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Max Participants:</strong> {course.maxParticipants}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Description:</strong> {course.courseDescription}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Terms and Conditions:</strong>{" "}
-                                    {course.termsAndConditions}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Status:</strong> {course.courseStatus}
-                                </Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <Typography variant="body1" fontWeight="bold">Field</Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body1" fontWeight="bold">Details</Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {Object.entries({
+                                                'course Name': course.courseName,
+                                                'course Type': course.courseType,
+                                                'Date': dayjs(course.courseDate).format("DD MMMM YYYY"),
+                                                'Time': `${course.courseTimeFrom} to ${course.courseTimeTo}`,
+                                                'Location': course.location,
+                                                'Organizer Details': course.organizerDetails,
+                                                'Max Participants': course.maxParticipants,
+                                                'Description': course.courseDescription,
+                                                'Terms and Conditions': course.termsAndConditions,
+                                                'Status': course.courseStatus,
+                                            }).map(([field, value]) => (
+                                                <TableRow key={field}>
+                                                    <TableCell>{field}</TableCell>
+                                                    <TableCell>{value}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sx={{ textAlign: "center" }}>
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: "limegreen", color: "white" }}
+                                    color="primary"
                                     onClick={() => setOpenExportModal(true)}
                                 >
                                     Export
                                 </Button>
-                            </Grid>
-
-                            <Grid item xs={6} sx={{ textAlign: "right" }}>
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: "blue", color: "white" }}
+                                    color="primary"
+                                    sx={{ ml: 1 }}
                                     onClick={() => setOpenModal(true)}
                                 >
                                     View Additional Details
                                 </Button>
                             </Grid>
                         </Grid>
+
+                        <Dialog
+                            open={openExportModal}
+                            onClose={() => setOpenExportModal(false)}
+                            aria-labelledby="export-dialog-title"
+                            aria-describedby="export-dialog-description"
+                        >
+                            <DialogTitle id="export-dialog-title">Export course</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="export-dialog-description">
+                                    Choose the format you want to export the course details.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        handleExportcourse("csv");
+                                        setOpenExportModal(false);
+                                    }}
+                                >
+                                    Export as CSV
+                                </Button>
+                                <Button onClick={() => setOpenExportModal(false)}>Cancel</Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog
+                            open={openDeleteConfirmation}
+                            onClose={() => setOpenDeleteConfirmation(false)}
+                            aria-labelledby="delete-dialog-title"
+                            aria-describedby="delete-dialog-description"
+                        >
+                            <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="delete-dialog-description">
+                                    Are you sure you want to delete this course? This action cannot be undone.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        handleDeletecourse(id);
+                                        setOpenDeleteConfirmation(false);
+                                    }}
+                                    color="secondary"
+                                >
+                                    Delete
+                                </Button>
+                                <Button onClick={() => setOpenDeleteConfirmation(false)}>
+                                    Cancel
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog
+                            open={openModal}
+                            onClose={() => setOpenModal(false)}
+                            aria-labelledby="course-modal-title"
+                            aria-describedby="course-modal-description"
+                        >
+                            <DialogTitle id="course-modal-title">Additional Course Details</DialogTitle>
+                            <DialogContent>
+                                <Typography variant="body1">
+                                    {/* Replace this with additional course details as needed */}
+                                    Here you can include more information about the course.
+                                </Typography>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => setOpenModal(false)}>Close</Button>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 )}
-
-                {/* Additional Details Modal */}
-                {course && (
-                    <Modal open={openModal} onClose={() => setOpenModal(false)}>
-                        <Box sx={{ ...modalStyle, width: 400 }}>
-                            <Typography variant="h6" component="h2" gutterBottom>
-                                Additional Details
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Participants:</strong>
-                            </Typography>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>ID</TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Email</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {/* Display participants here */}
-                                        {/* For example, assuming course.participants is an array of objects */}
-                                        {course.participants &&
-                                            course.participants.map((participant) => (
-                                                <TableRow key={participant.id}>
-                                                    <TableCell>{participant.id}</TableCell>
-                                                    <TableCell>{participant.name}</TableCell>
-                                                    <TableCell>{participant.email}</TableCell>
-                                                </TableRow>
-
-                                            ))}
-                                        {/* Hardcoded Row Example */}
-                                        <TableRow>
-                                            <TableCell>999</TableCell>
-                                            <TableCell>John Doe</TableCell>
-                                            <TableCell>john.doe@gmail.com</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>666</TableCell>
-                                            <TableCell>some random demon</TableCell>
-                                            <TableCell>imunderyourbed@yahoo.com</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Box>
-                    </Modal>
-                )}
-
-                {/* Delete Confirmation Dialog */}
-                <Dialog
-                    open={openDeleteConfirmation}
-                    onClose={() => setOpenDeleteConfirmation(false)}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {"Confirm Deletion"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete this course?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => setOpenDeleteConfirmation(false)}
-                            color="primary"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                handleDeleteCourse(id);
-                                setOpenDeleteConfirmation(false);
-                            }}
-                            color="secondary"
-                        >
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Export Modal */}
-                <Modal
-                    open={openExportModal}
-                    onClose={() => setOpenExportModal(false)}
-                    aria-labelledby="export-modal-title"
-                    aria-describedby="export-modal-description"
-                >
-                    <Box sx={modalStyle}>
-                        <DialogTitle id="export-modal-title">Export Course?</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="export-modal-description">
-                                Are you sure you want to export this course?
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setOpenExportModal(false)} color="primary">
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    handleExportCourse();
-                                    setOpenExportModal(false);
-                                }}
-                                color="secondary"
-                            >
-                                Export
-                            </Button>
-                        </DialogActions>
-                    </Box>
-                </Modal>
             </Box>
         </Box>
     );
 }
-
-const modalStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 4,
-    outline: "none",
-};
 
 export default CourseDetails;

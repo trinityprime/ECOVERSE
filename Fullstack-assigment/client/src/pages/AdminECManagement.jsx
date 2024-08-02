@@ -222,8 +222,10 @@ function AdminECManagement() {
                 <Typography variant="h6" fontWeight="bold" gutterBottom>Admin Navigation</Typography>
                 <Divider />
                 <Box sx={{ my: 2 }}>
-                    <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom></Typography>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                        <Typography variant="body1" gutterBottom>
+                            Dashboard
+                        </Typography>
                     </Link>
                     <Typography
                         variant="body1"
