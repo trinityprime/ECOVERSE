@@ -20,7 +20,7 @@ const Footer = () => {
                             <p>Individual</p>
                         </a>
                     </div>
-                    <div className="sb__footer-links_div">
+                    {/* <div className="sb__footer-links_div">
                         <h4>Resources</h4>
                         <a href="/resource">
                             <p>Rescource center</p>
@@ -31,7 +31,7 @@ const Footer = () => {
                         <a href="/resource">
                             <p>STV</p>
                         </a>
-                    </div>
+                    </div> */}
                     <div className="sb__footer-links_div">
                         <h4>Partners</h4>
                         <a href="https://www.onepa.gov.sg/" target="_blank" rel="noopener noreferrer">
@@ -44,11 +44,8 @@ const Footer = () => {
 
                     <div className="sb__footer-links_div">
                         <h4>Company</h4>
-                        <a href="/about">
+                        <a href="/aboutus">
                             <p>About us</p>
-                        </a>
-                        <a href="/career">
-                            <p>Join us</p>
                         </a>
                         <a href="/contact">
                             <p>Contact us</p>
