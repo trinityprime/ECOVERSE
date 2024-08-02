@@ -8,6 +8,7 @@ import http from '../http';
 function AddEvent() {
     const navigate = useNavigate();
     const [termsOpen, setTermsOpen] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
 
     const handleTermsOpen = () => {
         setTermsOpen(true);
@@ -15,6 +16,10 @@ function AddEvent() {
 
     const handleTermsClose = () => {
         setTermsOpen(false);
+    };
+
+    const handleAlertClose = () => {
+        setAlertOpen(false);
     };
 
     const formik = useFormik({
@@ -62,6 +67,10 @@ function AddEvent() {
                 .required('You must accept the terms and conditions')
         }),
         onSubmit: (data) => {
+            if (!data.agreeTerms) {
+                setAlertOpen(true);
+                return;
+            }
             data.eventName = data.eventName.trim();
             data.eventDescription = data.eventDescription.trim();
             http.post("/userEvent", data)
@@ -108,7 +117,7 @@ function AddEvent() {
                 </Button>
             </Box>
             <Box width="50%">
-                <Box component="form">
+                <Box component="form" onSubmit={formik.handleSubmit}>
                     <TextField
                         fullWidth
                         margin="dense"
@@ -196,6 +205,17 @@ function AddEvent() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleTermsClose} color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={alertOpen} onClose={handleAlertClose}>
+                <DialogTitle>Terms and Conditions</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">
+                        You must accept the terms and conditions to submit the event.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleAlertClose} color="primary">Close</Button>
                 </DialogActions>
             </Dialog>
         </Box>

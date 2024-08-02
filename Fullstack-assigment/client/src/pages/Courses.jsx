@@ -385,7 +385,7 @@ function Courses() {
                                         </Box>
 
                                         <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/UserCourseDetails/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <Link to={`/user-course-details/${course.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                                 View Details
                                             </Link>
                                         </Typography>
