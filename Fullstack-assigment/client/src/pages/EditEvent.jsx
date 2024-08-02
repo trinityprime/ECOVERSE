@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+import {
+  Box, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
 import http from "../http";
 import { useFormik } from "formik";
@@ -16,6 +17,7 @@ function EditEvent() {
 
   const [imageFile, setImageFile] = useState(null);
   const [event, setEvent] = useState({
+    // Initial state
     eventName: "",
     eventType: "",
     eventDate: "",
@@ -62,6 +64,7 @@ function EditEvent() {
     { value: "Postponed", label: "Postponed" },
   ];
 
+  // Fetch event data
   useEffect(() => {
     http.get(`/event/${id}`)
       .then((res) => {
@@ -70,6 +73,7 @@ function EditEvent() {
         setImageFile(res.data.imageFile); // Update imageFile state
         setLoading(false);
         formik.setValues({
+          // Set formik values
           eventName: res.data.eventName,
           eventDate: res.data.eventDate,
           eventTimeFrom: res.data.eventTimeFrom,
@@ -89,23 +93,11 @@ function EditEvent() {
         setLoading(false);
       });
   }, [id]);
-  
+
+
   const formik = useFormik({
-    InitialValues: event,
+    initialValues: event, 
     enableReinitialize: true,
-    initialValues: {
-      eventName: event.eventName,
-      eventDate: event.eventDate,
-      eventTimeFrom: event.eventTimeFrom,
-      eventTimeTo: event.eventTimeTo,
-      location: event.location,
-      maxParticipants: event.maxParticipants,
-      organizerDetails: event.organizerDetails,
-      eventDescription: event.eventDescription,
-      termsAndConditions: event.termsAndConditions,
-      eventType: event.eventType,
-      eventStatus: event.eventStatus,
-    },
     validationSchema: yup.object({
       eventName: yup
         .string()
@@ -140,6 +132,7 @@ function EditEvent() {
         .required("Terms and Conditions are required"),
       eventType: yup.string().trim().required("Event Type is required"),
       eventStatus: yup.string().trim().required("Event Status is required"),
+      eventImage: "",
     }),
 
     onSubmit: (data) => {
@@ -150,7 +143,7 @@ function EditEvent() {
       data.eventDescription = data.eventDescription.trim();
       data.termsAndConditions = data.termsAndConditions.trim();
 
-      
+
 
       // Update event data with PUT request
       http
@@ -202,31 +195,37 @@ function EditEvent() {
       });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+
+  // Function to handle file change (upload)
+  const onFileChange = (e) => {
+    let file = e.target.files[0];
     if (file) {
       if (file.size > 1024 * 1024) {
         toast.error("Maximum file size is 1MB");
         return;
       }
-      const formData = new FormData();
+
+      let formData = new FormData();
       formData.append("file", file);
-      http.post("/file/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        formik.setFieldValue("eventImage", res.data.filename); // Update formik value
-        setEvent({ ...event, imageFle: res.data.filename }); 
-        setImageFile(res.data.filename); // Update imageFile state
-      })
-      .catch((error) => {
-        toast.error("Failed to upload image");
-        console.error("Error uploading image:", error);
-      });
+      http
+        .post("/file/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          // Update formik values with new image filename
+          formik.setFieldValue("eventImage", res.data.filename);
+          // Also update the event state to display the new image
+          setEvent({ ...event, imageFile: res.data.filename }); // Fix this line
+        })
+        .catch((error) => {
+          toast.error("Failed to upload image");
+          console.error("Error uploading image:", error);
+        });
     }
   };
+
 
 
   return (
@@ -279,7 +278,7 @@ function EditEvent() {
                   </Typography>
                 )}
               </FormControl>
-              
+
               <TextField
                 fullWidth
                 margin="dense"
@@ -468,32 +467,46 @@ function EditEvent() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-              <Box sx={{ textAlign: "center", mt: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
                 <Button variant="contained" component="label">
                   Upload Image
-                  <input
-                    hidden
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleFileChange}
-                  />
+                  <input hidden accept="image/*" type="file" onChange={onFileChange} />
                 </Button>
-                {imageFile ? (
+                {event.imageFile && (
                   <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                     <img
                       alt="event"
-                      src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}
-                      style={{ width: "100%", height: "auto" }}
+                      src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "200px",
+                        objectFit: "cover",
+                      }}
                     />
                   </Box>
-                ) : (
-                  <Typography variant="caption" color="textSecondary" sx={{ mt: 2 }}>
-                    No image is added for this event
+                )}
+                {!event.imageFile && (
+                  <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
+                    No image available for this event.
                   </Typography>
+                )}
+                {formik.values.eventImage && (
+                  <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
+                    <img
+                      alt="event"
+                      src={`${import.meta.env.VITE_FILE_BASE_URL}${formik.values.eventImage}`}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "200px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
                 )}
               </Box>
             </Grid>
+
+
           </Grid>
           <Box sx={{ mt: 2 }}>
             <Button variant="contained" type="submit">

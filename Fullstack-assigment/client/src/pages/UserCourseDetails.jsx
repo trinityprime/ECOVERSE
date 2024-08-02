@@ -167,12 +167,6 @@ function CourseDetails() {
                         </Grid>
                     </Box>
                 )}
-
-
-
-
-
-
             </Box>
         </Box>
     );

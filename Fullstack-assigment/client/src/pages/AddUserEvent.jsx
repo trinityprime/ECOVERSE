@@ -45,9 +45,11 @@ function AddEvent() {
                 .min(3, 'Must be at least 3 characters')
                 .max(100, 'Must be 100 characters or less')
                 .required('Event address is required'),
-            eventDate: yup
-                .date()
-                .required('Event date is required'),
+            eventDate: yup.date()
+                .typeError('Incorrect format for Event Date')
+                .min(new Date(2024, 0, 1), 'Event Date must be in the year 2024 or later')
+                .max(new Date(2099, 11, 31), 'Event Date must be in the year 2099 or earlier')
+                .required('Event Date is required'),
             eventDescription: yup
                 .string()
                 .trim()

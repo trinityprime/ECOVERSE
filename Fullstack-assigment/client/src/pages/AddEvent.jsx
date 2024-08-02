@@ -122,6 +122,7 @@ function AddEvent() {
                     }, 1400);
                 })
                 .catch((error) => {
+                    console.error('Error creating event:', error);
                     toast.error('Failed to create event. Please try again later.');
                 });
         }
@@ -340,22 +341,17 @@ function AddEvent() {
                         </Button>
                     </Grid>
                     <Grid item xs={12} md={6} lg={4}>
-                        <input
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            id="image-file"
-                            type="file"
-                            onChange={onFileChange}
-                        />
-                        <label htmlFor="image-file">
-                            <Button
-                                variant="contained"
-                                component="span"
-                                sx={{ width: '100%' }}
-                            >
-                                Upload Event Image
+                        <Box sx={{ textAlign: 'center', mt: 2 }}>
+                            <Button variant="contained" component="label">
+                                Upload Image
+                                <input hidden accept="image/*" multiple type="file" onChange={onFileChange} />
                             </Button>
-                        </label>
+                            {imageFile && (
+                                <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
+                                    <img alt="Event" src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`} />
+                                </Box>
+                            )}
+                        </Box>
                     </Grid>
                 </Grid>
             </Box>

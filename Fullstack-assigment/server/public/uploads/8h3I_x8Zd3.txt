@@ -1,0 +1,26 @@
+Barcode|Name|Description|ReleaseDate(dd/MM/yyyy)|Feature|Price(S$)|Quantity|DiscountType|QuantitySold|Weight(kg)|PackagingMaterial
+123456789|Laptop|High-performance laptop for work and entertainment.|01/01/2018|Intel Core i7 processor; 16GB RAM; 512GB SSD|1000|100|A|20|2.5|Recyclable cardboard box
+234567890|Smartphone|Feature-packed smartphone with advanced camera and display.|08/03/2018|"6.5"" AMOLED display; 128GB storage; 5G connectivity"|700|120|A|30|0.2|Foam-lined retail box
+345678901|Smart TV|4K Ultra HD smart TV with built-in streaming apps.|15/05/2018|"65"" screen; voice control; HDR support"|900|80|A|10|30|Styrofoam-lined cardboard box
+456789012|Fitness Tracker|Wearable fitness tracker with heart rate monitor and GPS.|22/07/2018|Heart rate monitor; step counter; GPS tracking|130|150|B|25|0.05|Plastic clamshell packaging
+678901234|Wireless Earbuds|True wireless earbuds with noise cancellation.|28/09/2018|Noise cancellation; touch controls; 30-hour battery life|150|100|B|15|0.1|PET blister pack
+789012345|Coffee Maker|Programmable coffee maker for brewing delicious coffee.|04/12/2018|12-cup capacity; programmable timer; auto shut-off|80|80|C|10|3|Cardboard retail box
+890123456|Digital Camera|High-resolution digital camera for capturing memories.|11/02/2019|24MP sensor; 4K video recording; Wi-Fi connectivity|400|75|A|20|0.5|Foam-lined retail box
+901234567|Gaming Console|Next-gen gaming console for immersive gaming experience.|18/04/2019|4K gaming; SSD storage; ray tracing|500|100|A|30|4|Custom-printed retail box
+123456785|Tablet|Versatile tablet for work and entertainment on-the-go.|25/06/2019|"10.1"" display; quad-core processor; 64GB storage"|300|120|B|25|0.5|Recycled cardboard box
+120456789|External Hard Drive|External hard drive for storing and backing up data.|01/09/2019|2TB capacity; USB 3.0 connectivity; rugged design|130|150|B|20|0.2|Recyclable cardboard box
+234567893|Wireless Router|High-speed wireless router for seamless internet connectivity.|08/11/2019|Dual-band Wi-Fi; gigabit Ethernet ports; parental controls|80|200|C|30|0.5|Foam-lined retail box
+758412345|Power Bank|Portable power bank for charging devices on-the-go.|15/01/2020|20000mAh capacity; multiple USB ports; LED indicators|40|250|C|40|0.3|PET blister pack
+456999012|Electric Toothbrush|Electric toothbrush for efficient and thorough cleaning.|23/03/2020|Sonic technology; multiple cleaning modes; built-in timer|50|180|C|25|0.2|Plastic clamshell packaging
+567890123|Portable Speaker|Compact portable speaker for music on-the-go.|30/05/2020|10W output; Bluetooth connectivity; built-in mic|30|300|C|50|0.4|Retail display box
+608901234|Wireless Mouse|Wireless mouse for comfortable and precise navigation.|06/08/2020|Optical sensor; ergonomic design; plug-and-play|20|250|C|40|0.1|Recyclable cardboard box
+789012365|Action Camera|Action camera for capturing adventures in high-definition.|12/10/2020|4K video recording; waterproof; Wi-Fi connectivity|150|150|B|20|0.1|Foam-lined retail box
+890123458|Stand Mixer|Versatile tablet for work and entertainment on-the-go.|19/12/2020|5-quart stainless steel bowl; 10-speed settings; tilt-head design|200|100|B|15|7.5|Cardboard retail box
+901234569|Fitness Watch|Fitness watch for tracking workouts and monitoring health.|26/02/2021|GPS tracking; heart rate monitor; sleep analysis|180|120|B|20|0.1|Recycled paper box
+123456701|Electric Kettle|Electric kettle for boiling water quickly and efficiently.|03/05/2021|1.7-liter capacity; stainless steel construction; auto shut-off|30|200|C|30|0.9|Foam-lined cardboard box
+123456780|Wireless Keyboard|Wireless keyboard for comfortable typing and convenience.|09/07/2021|Full-size layout; quiet keys; long battery life|50|180|C|25|0.7|Recyclable plastic bag
+234567899|Robot Vacuum Cleaner|Robot vacuum cleaner for hands-free cleaning.|16/09/2021|Smart navigation; multi-surface brushes; app control|300|100|B|15|3.5|Molded plastic clamshell
+305678901|Portable SSD|Portable SSD for fast and reliable storage.|23/11/2021|1TB capacity; USB-C connectivity; shock-resistant|180|150|B|20|0.1|Recyclable cardboard box
+745678901|Air Purifier|Air purifier for clean and fresh indoor air.|01/02/2022|True HEPA filter; 4-stage purification; quiet operation|200|120|B|20|6|Recycled plastic clamshell
+597890123|Portable Projector|Portable projector for home entertainment and presentations.|09/04/2022|1080p resolution; built-in speaker; HDMI input|250|80|B|10|1.5|Cardboard retail box
+678971234|Slow Cooker|Slow cooker for convenient and flavorful cooking.|16/06/2022|6-quart capacity; programmable timer; removable stoneware|60|70|C|15|5|Molded polystyrene clamshell

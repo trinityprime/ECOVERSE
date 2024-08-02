@@ -26,7 +26,7 @@ import {
     Cancel as CancelIcon,
     CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -275,7 +275,9 @@ function Events() {
             </Box>
 
             {filteredEvents.length === 0 ? (
-                <Typography>No events found. Please try again by changing the filters.</Typography>
+                <Typography>
+                    No events found. Please try again by changing the filters.
+                </Typography>
             ) : (
                 <Box sx={{ display: "flex", mb: 4 }}>
                     <Box sx={{ minWidth: 200, mr: 4 }}>
@@ -315,11 +317,12 @@ function Events() {
                                                 >
                                                     <img
                                                         alt="event"
-                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
+                                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile
+                                                            }`}
                                                         style={{
                                                             maxWidth: "100%", // ensures the image scales down to fit the container
                                                             maxHeight: "400px", // adjust the height as needed
-                                                            objectFit: "contain" // maintains aspect ratio
+                                                            objectFit: "contain", // maintains aspect ratio
                                                         }}
                                                     />
                                                 </Box>
@@ -411,34 +414,26 @@ function Events() {
                                         <Typography sx={{ whiteSpace: "pre-wrap", mb: 1 }}>
                                             {event.eventDescription}
                                         </Typography>
-
+                                        <Divider sx={{ mt: 2 }} />
                                         {event.termsAndConditions && (
-                                            <>
-                                                <Divider sx={{ mt: 2, mb: 1 }}>
-                                                    Terms and Conditions:
-                                                </Divider>
-                                                <Typography
-                                                    sx={{
-                                                        whiteSpace: "pre-wrap",
-                                                        mb: 1,
-                                                        color: "red",
-                                                        fontSize: "13px",
-                                                    }}
-                                                >
-                                                    {event.termsAndConditions}
-                                                </Typography>
-                                            </>
+                                            <Typography sx={{ whiteSpace: 'pre-wrap', mb: 1, color: 'red', fontSize: '13px' }}>
+                                                <span style={{ fontWeight: 'bold' }}>Terms and Conditions: </span>
+                                                <ul style={{ paddingLeft: '20px' }}>
+                                                    {event.termsAndConditions.split('\n').map((item, index) => (
+                                                        <li key={index} style={{ marginBottom: '5px' }}>{item}</li>
+                                                    ))}
+                                                </ul>
+                                            </Typography>
                                         )}
 
-                                        <Divider sx={{ mt: 2 }} />
+                                        
                                         <Typography
                                             sx={{
                                                 whiteSpace: "pre-wrap",
                                                 fontStyle: "italic",
                                                 marginTop: "5px",
-                                                color:
-                                                    renderEventStatusIconAndColor(event.eventStatus)
-                                                        .color,
+                                                color: renderEventStatusIconAndColor(event.eventStatus)
+                                                    .color,
                                             }}
                                         >
                                             Event Status: {event.eventStatus}
@@ -450,20 +445,26 @@ function Events() {
                                                 sx={{
                                                     whiteSpace: "pre-wrap",
                                                     fontWeight: "bold",
-                                                    color:
-                                                        renderEventStatusIconAndColor(event.eventStatus)
-                                                            .color,
+                                                    color: renderEventStatusIconAndColor(
+                                                        event.eventStatus
+                                                    ).color,
                                                     ml: 1,
                                                 }}
                                             >
                                                 {event.eventStatus.charAt(0).toUpperCase() +
                                                     event.eventStatus.slice(1)}
                                             </Typography>
-
-                                           
                                         </Box>
-                                        <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                            <Link to={`/user-event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Typography
+                                            sx={{
+                                                color: "limegreen",
+                                                "&:hover": { textDecoration: "underline" },
+                                            }}
+                                        >
+                                            <Link
+                                                to={`/UserEventDetails/${event.id}`}
+                                                style={{ textDecoration: "none", color: "inherit" }}
+                                            >
                                                 View Details
                                             </Link>
                                         </Typography>
