@@ -1,10 +1,11 @@
-import React, { useEffect,useContext } from 'react';
-import { Box, Typography, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { Box, Typography, TextField, Button, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import http from '../http';
 import UserContext from '../contexts/UserContext';
+
 function AddSignUp() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
@@ -12,10 +13,25 @@ function AddSignUp() {
     const queryParams = new URLSearchParams(location.search);
     const eventName = queryParams.get('eventName') || "";
 
+    const [termsOpen, setTermsOpen] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
+
+    const handleTermsOpen = () => {
+        setTermsOpen(true);
+    };
+
+    const handleTermsClose = () => {
+        setTermsOpen(false);
+    };
+
+    const handleAlertClose = () => {
+        setAlertOpen(false);
+    };
+
     const formik = useFormik({
         initialValues: {
             Name: user ? user.name : "",
-            MobileNumber: user ? user.phoneNumber:"",
+            MobileNumber: user ? user.phoneNumber : "",
             Email: user ? user.email : "",
             numberOfPax: "",
             specialRequirements: "",
@@ -26,12 +42,16 @@ function AddSignUp() {
             Name: yup.string().trim().min(3, 'Must be at least 3 characters').max(100, 'Must be 100 characters or less').required('Name is required'),
             MobileNumber: yup.number().required('Mobile number is required'),
             Email: yup.string().email('Invalid email address').required('Email is required'),
-            numberOfPax: yup.number().min(1, 'Must be at least 1').required('Number of participants is required'),
+            numberOfPax: yup.number().min(1, 'Must be at least 1').required('Number of participants is required').max(10, 'Max Pax is 10'),
             specialRequirements: yup.string().trim().max(500, 'Must be 500 characters or less'),
             eventCourseName: yup.string().trim().min(3, 'Must be at least 3 characters').max(100, 'Must be 100 characters or less').required('Event/Course name is required'),
             agreeTerms: yup.boolean().oneOf([true], 'You must accept the terms and conditions').required('You must accept the terms and conditions')
         }),
         onSubmit: (data) => {
+            if (!data.agreeTerms) {
+                setAlertOpen(true);
+                return;
+            }
             data.Name = data.Name.trim();
             data.specialRequirements = data.specialRequirements.trim();
             data.eventCourseName = data.eventCourseName.trim();
@@ -60,7 +80,13 @@ function AddSignUp() {
                                 color="primary"
                             />
                         }
-                        label="I have read and agree to the Terms of Service and Privacy Policy."
+                        label={
+                            <span>
+                                I have read and agree to the{' '}
+                                <Button onClick={handleTermsOpen} color="primary">Terms of Service</Button> and{' '}
+                                <Button onClick={handleTermsOpen} color="primary">Privacy Policy</Button>.
+                            </span>
+                        }
                     />
                 </Box>
                 <Button
@@ -73,13 +99,13 @@ function AddSignUp() {
                 </Button>
             </Box>
             <Box width="50%">
-                <Box component="form">
+                <Box component="form" onSubmit={formik.handleSubmit}>
                     <TextField
                         fullWidth
                         margin="dense"
                         autoComplete="off"
                         label="Event Name"
-                        name="eventName"
+                        name="eventCourseName"
                         value={formik.values.eventCourseName}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -88,7 +114,6 @@ function AddSignUp() {
                         InputProps={{
                             readOnly: true
                         }}
-
                     />
                     <TextField
                         fullWidth
@@ -158,9 +183,39 @@ function AddSignUp() {
                         error={formik.touched.specialRequirements && Boolean(formik.errors.specialRequirements)}
                         helperText={formik.touched.specialRequirements && formik.errors.specialRequirements}
                     />
-
                 </Box>
             </Box>
+            <Dialog open={termsOpen} onClose={handleTermsClose}>
+                <DialogTitle>Terms of Service and Privacy Policy</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1" paragraph>
+                        {/* Insert the terms of service and privacy policy content here */}
+                        Welcome to ECOVERSE . By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+
+                        By registering for an event, you agree to the event organizer’s terms and conditions, including payment and cancellation policies. All event fees must be paid in advance. We are not responsible for payment issues or disputes.
+
+                        Cancellation and refund policies are determined by the event organizer. Please review these policies before registering. You agree not to use the website for any unlawful purposes or activities that violate these Terms.
+
+                        We may update these Terms at any time. Your continued use of the website indicates your acceptance of the new Terms. If you have any questions, please contact us at [contact email].
+
+                        By clicking "I agree," you accept these terms.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleTermsClose} color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={alertOpen} onClose={handleAlertClose}>
+                <DialogTitle>Terms and Conditions</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">
+                        You must accept the terms and conditions to submit the form.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleAlertClose} color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
