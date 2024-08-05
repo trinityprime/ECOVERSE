@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Input, IconButton, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Box, Typography, Input, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { Search, Clear, Edit } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import http from '../http';
 
 function SignUps() {
     const [signUpList, setSignUpList] = useState([]);
+    const [filteredSignUpList, setFilteredSignUpList] = useState([]);
     const [search, setSearch] = useState('');
+    const [filterType, setFilterType] = useState('All');
 
     const onSearchChange = (e) => {
         setSearch(e.target.value);
     };
 
     const getSignUp = () => {
-        http.get('/signup')
+        const url = '/signup';
+        console.log(`Fetching sign ups with URL: ${url}`);
+        http.get(url)
             .then((res) => {
+                console.log('Fetched sign ups:', res.data);
                 if (Array.isArray(res.data)) {
                     setSignUpList(res.data);
+                    filterSignUps(res.data, filterType, search); // Filter after fetching
                 } else {
                     setSignUpList([]);
                 }
@@ -27,38 +33,52 @@ function SignUps() {
             });
     };
 
-    const searchSignUp = () => {
-        http.get(`/signup?search=${search}`)
-            .then((res) => {
-                if (Array.isArray(res.data)) {
-                    setSignUpList(res.data);
-                } else {
-                    setSignUpList([]);
-                }
-            })
-            .catch((error) => {
-                console.error('Error searching sign ups:', error);
-                setSignUpList([]);
-            });
+    const filterSignUps = (data, filterType, search) => {
+        let filteredData = data;
+
+        // Apply filterType
+        if (filterType !== 'All') {
+            filteredData = filteredData.filter(signUp => signUp.type === filterType);
+        }
+
+        // Apply search
+        if (search) {
+            const searchLower = search.toLowerCase();
+            filteredData = filteredData.filter(signUp => 
+                signUp.Name.toLowerCase().includes(searchLower) ||
+                signUp.Email.toLowerCase().includes(searchLower) ||
+                signUp.eventCourseName.toLowerCase().includes(searchLower)
+            );
+        }
+
+        setFilteredSignUpList(filteredData);
     };
 
     useEffect(() => {
         getSignUp();
-    }, []);
+    }, [filterType]);
+
+    useEffect(() => {
+        filterSignUps(signUpList, filterType, search);
+    }, [search, filterType, signUpList]);
 
     const onSearchKeyDown = (e) => {
         if (e.key === "Enter") {
-            searchSignUp();
+            filterSignUps(signUpList, filterType, search);
         }
     };
 
     const onClickSearch = () => {
-        searchSignUp();
+        filterSignUps(signUpList, filterType, search);
     };
 
     const onClickClear = () => {
         setSearch('');
-        getSignUp();
+        filterSignUps(signUpList, filterType, '');
+    };
+
+    const handleFilterChange = (e) => {
+        setFilterType(e.target.value);
     };
 
     return (
@@ -81,11 +101,18 @@ function SignUps() {
                     <Clear />
                 </IconButton>
                 <Box sx={{ flexGrow: 1 }} />
-                <Link to="/AddSignUp" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>
-                        Add
-                    </Button>
-                </Link>
+                <FormControl sx={{ minWidth: 120 }}>
+                    <InputLabel>Filter</InputLabel>
+                    <Select
+                        value={filterType}
+                        onChange={handleFilterChange}
+                        label="Filter"
+                    >
+                        <MenuItem value="All">All</MenuItem>
+                        <MenuItem value="Event">Event</MenuItem>
+                        <MenuItem value="Course">Course</MenuItem>
+                    </Select>
+                </FormControl>
             </Box>
             <TableContainer component={Paper}>
                 <Table>
@@ -101,7 +128,7 @@ function SignUps() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {signUpList.map((signUp) => (
+                        {filteredSignUpList.map((signUp) => (
                             <TableRow key={signUp.id}>
                                 <TableCell>{signUp.Name}</TableCell>
                                 <TableCell>{signUp.MobileNumber}</TableCell>

@@ -151,7 +151,9 @@ function EditSignUp() {
                             onChange={formik.handleChange}
                             error={formik.touched.eventCourseName && Boolean(formik.errors.eventCourseName)}
                             helperText={formik.touched.eventCourseName && formik.errors.eventCourseName}
+                            disabled // Add this prop to disable the field
                         />
+
                         <Box sx={{ mt: 2 }}>
                             <Button variant="contained" type="submit">
                                 Update
