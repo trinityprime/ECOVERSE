@@ -37,6 +37,7 @@ import http from './http';
 import RequestOtp from './pages/RequestOtp';
 import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
+import UserViewOwn from './pages/UserViewOwn';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -237,6 +238,11 @@ function App() {
                             Add Report
                           </Link>
                         </MenuItem>
+                        <MenuItem onClick={handleUserMenuClose}>
+                          <Link to="/UserViewOwn" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Your Sign ups
+                          </Link>
+                        </MenuItem>
                       </Menu>
 
                       <Button onClick={logout}>Logout</Button>
@@ -299,6 +305,7 @@ function App() {
               <Route path="/AdminECManagement" element={<AdminECManagement />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/UserViewOwn" element={<UserViewOwn />} />
               {/* <Route path="/request-otp" element={<RequestOtp />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/reset-password" element={<ResetPassword />} /> */}
