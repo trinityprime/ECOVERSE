@@ -39,9 +39,7 @@ function Reports() {
         })
         .then((res) => {
             if (Array.isArray(res.data)) {
-                // Filter reports for non-admin users
-                const filteredReports = user.isAdmin ? res.data : res.data.filter(report => report.userId === user.id);
-                setReportList(filteredReports);
+                setReportList(res.data);
             } else {
                 setReportList([]);
             }
@@ -109,10 +107,11 @@ function Reports() {
     };
 
     const filteredReports = reportList.filter(report => (
-        dayjs(report.createdAt).format(global.datetimeFormat).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.isAdmin || report.userId === user.id) &&
+        (dayjs(report.createdAt).format(global.datetimeFormat).toLowerCase().includes(searchTerm.toLowerCase()) ||
         renderIncidentType(report.incidentType).toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (report.user && report.user.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        (report.user && report.user.name.toLowerCase().includes(searchTerm.toLowerCase())))
     ));
 
     return (
@@ -165,12 +164,16 @@ function Reports() {
                                     <TableCell>{renderIncidentType(report.incidentType)}</TableCell>
                                     <TableCell>{report.description}</TableCell>
                                     <TableCell>
-                                        <IconButton color="primary" component={Link} to={`/editreport/${report.id}`}>
-                                            <Edit />
-                                        </IconButton>
-                                        <IconButton color="error" onClick={() => handleDeleteReport(report.id)}>
-                                            <Delete />
-                                        </IconButton>
+                                        {(user.isAdmin || report.userId === user.id) && (
+                                            <>
+                                                <IconButton color="primary" component={Link} to={`/editreport/${report.id}`}>
+                                                    <Edit />
+                                                </IconButton>
+                                                <IconButton color="error" onClick={() => handleDeleteReport(report.id)}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
