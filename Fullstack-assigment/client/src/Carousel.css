@@ -1,0 +1,68 @@
+.carousel-container {
+    position: relative;
+    background-color: #f5f5dc; /* Dark Beige */
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.carousel {
+    display: flex;
+    width: 100%;
+    max-width: 1800px; /* Adjust as needed */
+    margin: auto;
+    transition: transform 0.5s ease-in-out; /* Smooth transition */
+}
+
+.carousel img {
+    width: calc(100% / 3 - 10px); /* Adjust width and margin */
+    margin-right: 10px; /* Gap between images */
+    flex-shrink: 0;
+}
+
+.carousel img:last-child {
+    margin-right: 0; /* Remove margin on last image */
+}
+
+.carousel-button {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+    font-size: 24px;
+}
+
+.carousel-button.prev {
+    position: absolute;
+    left: 10px;
+  }
+  
+  .carousel-button.next {
+    position: absolute;
+    right: 10px;
+  }
+  
+  .eclipse-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+  }
+  
+  .eclipse {
+    width: 10px;
+    height: 10px;
+    background-color: #888;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .eclipse.active {
+    background-color: #333;
+  }

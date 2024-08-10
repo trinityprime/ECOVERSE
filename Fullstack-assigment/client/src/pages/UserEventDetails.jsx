@@ -12,30 +12,6 @@ function EventDetails() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [openModal, setOpenModal] = useState(false);
-    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-    const [openExportModal, setOpenExportModal] = useState(false);
-
-    const handleExportEvent = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:3001/event/export/${id}`
-            );
-            if (response.status === 200) {
-                toast.success(`Event ID ${id} has been successfully exported.`);
-                setTimeout(() => {
-                    navigate('/AdminECManagement');
-                }, 1400);
-                // Handle exported data or download here if necessary
-            } else {
-                toast.error(`Failed to export Event ID ${id}.`);
-            }
-        } catch (error) {
-            toast.error(`Failed to export Event ID ${id}.`);
-            console.error("Error exporting event:", error);
-        }
-    };
-
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -63,7 +39,6 @@ function EventDetails() {
             const response = await axios.delete(`http://localhost:3001/event/${eventId}`);
             if (response.status === 200) {
                 toast.success(`Event ID ${eventId} has been successfully deleted.`);
-                // Optionally navigate away after deletion
                 navigate('/AdminECManagement');
             } else {
                 toast.error(`Failed to delete Event ID ${eventId}.`);
@@ -73,19 +48,18 @@ function EventDetails() {
             console.error("Error deleting event:", error);
         }
     };
-    
+
 
     if (loading) {
-        return <p>Loading event details...</p>; // Display a loading spinner or message
+        return <p>Loading event details...</p>;
     }
 
     if (error) {
-        return <p>{error}</p>; // Display an error message
+        return <p>{error}</p>;
     }
 
     return (
         <Box sx={{ display: "flex" }}>
-            
             <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
                 <ToastContainer />
                 <Typography variant="h5" align="center" gutterBottom>
@@ -94,7 +68,6 @@ function EventDetails() {
                 {event && (
                     <Box>
                         <Grid container spacing={2}>
-                            
                             <Grid item xs={12}>
                                 {event.imageFile ? (
                                     <Box
@@ -105,9 +78,9 @@ function EventDetails() {
                                             alt="event"
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
                                             style={{
-                                                maxWidth: "100%", // ensures the image scales down to fit the container
-                                                maxHeight: "400px", // adjust the height as needed
-                                                objectFit: "contain" // maintains aspect ratio
+                                                maxWidth: "100%",
+                                                maxHeight: "400px",
+                                                objectFit: "contain"
                                             }}
                                         />
                                     </Box>
@@ -152,24 +125,25 @@ function EventDetails() {
                                     <strong>Status:</strong> {event.eventStatus}
                                 </Typography>
                             </Grid>
-                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                <Link
-                                    to={`/AddSignUpEvent?eventName=${encodeURIComponent(event.eventName)}`}
-                                    style={{ textDecoration: 'none', color: 'inherit' }}
-                                >
-                                    Sign up event
-                                </Link>
-                            </Typography>
-                            
+
+                            {event.eventStatus !== "Completed" && (
+                                <Grid item xs={12}>
+                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                        <Link
+                                            to={`/AddSignUpEvent?eventName=${encodeURIComponent(event.eventName)}`}
+                                            style={{ textDecoration: 'none', color: 'inherit' }}
+                                        >
+                                            Sign up event
+                                        </Link>
+                                    </Typography>
+                                </Grid>
+                            )}
                         </Grid>
                     </Box>
                 )}
-
-                
             </Box>
         </Box>
     );
 }
-
 
 export default EventDetails;

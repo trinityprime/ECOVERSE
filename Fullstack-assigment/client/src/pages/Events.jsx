@@ -286,13 +286,12 @@ function Events() {
                         </Typography>
                         {Object.keys(categories).map((category, index) => (
                             <Typography key={index} variant="body2" gutterBottom>
-                                {category} ({categories[category]})
+                                <span style={{ fontWeight: 'bold' }}>{category}</span> - ({categories[category]})
                             </Typography>
                         ))}
 
-                        <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-                            Skills
-                        </Typography>
+                        <Divider sx={{ my: 2 }} />
+
                         {Object.keys(skills).map((skill, index) => (
                             <Typography key={index} variant="body2" gutterBottom>
                                 {skill} ({skills[skill]})
@@ -426,7 +425,7 @@ function Events() {
                                             </Typography>
                                         )}
 
-                                        
+
                                         <Typography
                                             sx={{
                                                 whiteSpace: "pre-wrap",

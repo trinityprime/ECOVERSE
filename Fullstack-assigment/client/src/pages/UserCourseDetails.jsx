@@ -152,15 +152,19 @@ function CourseDetails() {
                                     <strong>Status:</strong> {course.courseStatus}
                                 </Typography>
                             </Grid>
+                            {course.courseStatus !== "Completed" && (
+                                <Grid item xs={12}>
+                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
+                                        <Link
+                                            to={`/AddSignUp?courseName=${encodeURIComponent(course.courseName)}`}
+                                            style={{ textDecoration: 'none', color: 'inherit' }}
+                                        >
+                                            Sign up course
+                                        </Link>
+                                    </Typography>
+                                </Grid>
+                            )}
 
-                            <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                <Link
-                                    to={`/AddSignUp?courseName=${encodeURIComponent(course.courseName)}`}
-                                    style={{ textDecoration: 'none', color: 'inherit' }}
-                                >
-                                    Sign up course
-                                </Link>
-                            </Typography>
 
 
 

@@ -258,15 +258,12 @@ function Courses() {
                         </Typography>
                         {Object.keys(categories).map((category, index) => (
                             <Typography key={index} variant="body2" gutterBottom>
-                                <span style={{ fontWeight: 'bold' }}>{category}</span> - {categories[category]}
+                                <span style={{ fontWeight: 'bold' }}>{category}</span> - ({categories[category]})
                             </Typography>
                         ))}
 
                         <Divider sx={{ my: 2 }} />
 
-                        <Typography variant="h6" gutterBottom>
-                            Top Skills
-                        </Typography>
                         {Object.keys(skills).map((skill, index) => (
                             <Typography key={index} variant="body2" gutterBottom>
                                 <span style={{ fontWeight: 'bold' }}>{skill}</span> - {skills[skill]}

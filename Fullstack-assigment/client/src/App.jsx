@@ -32,9 +32,12 @@ import EditReport from './pages/EditReport';
 import AdminECManagement from './pages/AdminECManagement';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import AboutUs from './pages/aboutus'; 
+import AboutUs from './pages/AboutUs';
 import Footer from './footer.jsx';
 import http from './http';
+
+import CustomCarousel from './pages/Carousel';
+
 import RequestOtp from './pages/RequestOtp';
 import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
@@ -240,10 +243,10 @@ function App() {
                           </Link>
                         </MenuItem>
                         <MenuItem onClick={handleAdminMenuClose}>
-                        <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                          Your Added Events
-                        </Link>
-                      </MenuItem>
+                          <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            Your Added Events
+                          </Link>
+                        </MenuItem>
                       </Menu>
                       <Button onClick={logout}>Logout</Button>
                     </>
@@ -275,6 +278,13 @@ function App() {
             </div>
           )}
 
+          <div>
+            {location.pathname === '/' && (
+              <CustomCarousel />
+            )}
+            {/* Other components */}
+          </div>
+
           <Container>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -305,7 +315,7 @@ function App() {
               <Route path="/AdminECManagement" element={<AdminECManagement />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/aboutus" element={<AboutUs />} />
+              <Route path="/AboutUs" element={<AboutUs />} />
               {/* <Route path="/request-otp" element={<RequestOtp />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/reset-password" element={<ResetPassword />} /> */}
