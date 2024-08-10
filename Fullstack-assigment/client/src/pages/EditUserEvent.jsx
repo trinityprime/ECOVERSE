@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import http from '../http';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import UserContext from '../contexts/UserContext'; // Import UserContext to access user data
 
 function EditEvent() {
     const { id } = useParams();
@@ -17,6 +18,7 @@ function EditEvent() {
     });
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // Get user data from UserContext
 
     useEffect(() => {
         http.get(`/userEvent/${id}`).then((res) => {
@@ -154,14 +156,16 @@ function EditEvent() {
                             <Button variant="contained" sx={{ ml: 2 }} color="error" onClick={handleOpen}>
                                 Delete
                             </Button>
-                            <Button variant="contained" sx={{ ml: 2 }} color="success">
-                                <Link
-                                    to={`/AddEvent?eventName=${encodeURIComponent(event.eventName)}&maxParticipants=${encodeURIComponent(event.maxParticipants)}&eventDate=${encodeURIComponent(event.eventDate)}&eventDescription=${encodeURIComponent(event.eventDescription)}`}
-                                    style={{ textDecoration: 'none', color: 'inherit' }}
-                                >
-                                    Approve
-                                </Link>
-                            </Button>
+                            {user.role === 'admin' && ( // Conditionally render the Approve button
+                                <Button variant="contained" sx={{ ml: 2 }} color="success">
+                                    <Link
+                                        to={`/AddEvent?eventName=${encodeURIComponent(event.eventName)}&maxParticipants=${encodeURIComponent(event.maxParticipants)}&eventDate=${encodeURIComponent(event.eventDate)}&eventDescription=${encodeURIComponent(event.eventDescription)}`}
+                                        style={{ textDecoration: 'none', color: 'inherit' }}
+                                    >
+                                        Approve
+                                    </Link>
+                                </Button>
+                            )}
                         </Box>
                     </Box>
                 )

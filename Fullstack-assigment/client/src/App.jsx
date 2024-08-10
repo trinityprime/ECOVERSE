@@ -38,7 +38,7 @@ import http from './http';
 import RequestOtp from './pages/RequestOtp';
 import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
-import UserViewOwn from './pages/UserViewOwn';
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -239,11 +239,19 @@ function App() {
                             Add Report
                           </Link>
                         </MenuItem>
-                        <MenuItem onClick={handleUserMenuClose}>
-                          <Link to="/UserViewOwn" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Your Sign ups
-                          </Link>
-                        </MenuItem>
+                        <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          Your Added Event
+                        </Link>
+                      </MenuItem>
+
+                      <MenuItem onClick={handleAdminMenuClose}>
+                        <Link to="/SignUps" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          View all your signups
+                        </Link>
+                      </MenuItem>
+                        
+                       
                       </Menu>
 
                       <Button onClick={logout}>Logout</Button>

@@ -1,12 +1,14 @@
-const { UserEvent } = require('../models');
+const { UserEvent, User } = require('../models');
 const express = require('express');
 const router = express.Router();
 const { Op } = require("sequelize");
 const yup = require("yup");
+const { validateToken } = require('../middlewares/auth');
 
 // Route to create a new event
-router.post("/", async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
     let data = req.body;
+    data.userId = req.user.id; // Associate the event with the authenticated user
     let validationSchema = yup.object({
         eventName: yup.string().trim().min(3).max(100).required(),
         eventPax: yup.number().min(1).max(1000).required(),
@@ -24,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 
 // Route to get all events
-router.get("/", async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
     let condition = {};
     let search = req.query.search;
     if (search) {
@@ -38,15 +40,18 @@ router.get("/", async (req, res) => {
     }
     let list = await UserEvent.findAll({
         where: condition,
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        include: { model: User, as: "user", attributes: ['name'] } // Include user details
     });
     res.json(list);
 });
 
 // Route to get a single event by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateToken, async (req, res) => {
     let id = req.params.id;
-    let event = await UserEvent.findByPk(id);
+    let event = await UserEvent.findByPk(id, {
+        include: { model: User, as: "user", attributes: ['name'] } // Include user details
+    });
     if (!event) {
         res.sendStatus(404);
         return;
@@ -55,7 +60,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Route to update an event by ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", validateToken, async (req, res) => {
     let id = req.params.id;
     let event = await UserEvent.findByPk(id);
     if (!event) {
@@ -72,7 +77,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Route to delete an event by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", validateToken, async (req, res) => {
     try {
         let id = req.params.id;
         let num = await UserEvent.destroy({ where: { id: id } });

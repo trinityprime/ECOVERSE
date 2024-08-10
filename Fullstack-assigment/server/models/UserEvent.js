@@ -20,9 +20,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         }
-        
     }, {
         tableName: 'userEvent'
     });
+
+    UserEvent.associate = (models) => {
+        UserEvent.belongsTo(models.User, {
+            foreignKey: "userId",
+            as: 'user'
+        });
+    };
+
     return UserEvent;
-}
+};

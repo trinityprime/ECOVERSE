@@ -1,20 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Input, IconButton, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { AccessTime, Search, Clear, Edit } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, TextField } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
+import { toast } from 'react-toastify';
+import UserContext from '../contexts/UserContext'; // Import UserContext to access user data
 
 function Events() {
     const [eventList, setEventList] = useState([]);
-    const [search, setSearch] = useState('');
+    const [visibleEvents, setVisibleEvents] = useState(5);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useContext(UserContext); // Get user data from UserContext
 
-    const onSearchChange = (e) => {
-        setSearch(e.target.value);
+    const showToast = (message, type = 'success') => {
+        toast.dismiss();
+        toast[type](message, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     };
 
-    const getEvent = () => {
+    const getEvents = () => {
         http.get('/userEvent')
             .then((res) => {
                 if (Array.isArray(res.data)) {
@@ -23,74 +39,86 @@ function Events() {
                     setEventList([]);
                 }
             })
-            .catch((error) => {
-                console.error('Error fetching events:', error);
-                setEventList([]);
-            });
-    };
-
-    const searchEvent = () => {
-        http.get(`/userEvent?search=${search}`)
-            .then((res) => {
-                if (Array.isArray(res.data)) {
-                    setEventList(res.data);
-                } else {
-                    setEventList([]);
-                }
-            })
-            .catch((error) => {
-                console.error('Error searching events:', error);
+            .catch((err) => {
+                console.error('Error fetching events:', err);
+                showToast('Error fetching events', 'error');
                 setEventList([]);
             });
     };
 
     useEffect(() => {
-        getEvent();
+        getEvents();
+        setVisibleEvents(5);
+        setHasMore(true);
     }, []);
 
-    const onSearchKeyDown = (e) => {
-        if (e.key === "Enter") {
-            searchEvent();
+    useEffect(() => {
+        if (location.state) {
+            if (location.state.addedEvent) {
+                showToast('Event added successfully');
+                navigate(location.pathname, { replace: true, state: {} });
+            } else if (location.state.updatedEvent) {
+                showToast('Event updated successfully');
+                navigate(location.pathname, { replace: true, state: {} });
+            }
+        }
+    }, [location, navigate]);
+
+    const handleViewMore = () => {
+        const newVisibleEvents = visibleEvents + 5;
+        setVisibleEvents(newVisibleEvents);
+        if (newVisibleEvents >= filteredEvents.length) {
+            setHasMore(false);
         }
     };
 
-    const onClickSearch = () => {
-        searchEvent();
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+        setVisibleEvents(5);
+        setHasMore(true);
     };
 
-    const onClickClear = () => {
-        setSearch('');
-        getEvent();
-    };
+    // Filter events based on user role
+    const filteredEvents = eventList.filter(event => {
+        // Admin can see all events; non-admin can only see their own events
+        if (user.role === 'admin') {
+            return true;
+        } else {
+            return event.userId === user.id;
+        }
+    }).filter(event => (
+        event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.eventAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dayjs(event.eventDate).format(global.datetimeFormat).toLowerCase().includes(searchTerm.toLowerCase())
+    ));
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
-                All Event added by user
+            <Typography variant="h2" sx={{ my: 4 }}>
+                Your Own Added Event
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Input
-                    value={search}
-                    placeholder="Search by event name, address, date, etc."
-                    onChange={onSearchChange}
-                    onKeyDown={onSearchKeyDown}
-                    sx={{ flex: 1, mr: 2 }}
-                />
-                <IconButton color="primary" onClick={onClickSearch}>
-                    <Search />
-                </IconButton>
-                <IconButton color="primary" onClick={onClickClear}>
-                    <Clear />
-                </IconButton>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mt: 0 }}>
                 <Box sx={{ flexGrow: 1 }} />
                 <Link to="/AddUserEvent" style={{ textDecoration: 'none' }}>
                     <Button variant='contained'>
-                        Add
+                        Add Event
                     </Button>
                 </Link>
             </Box>
+
+            <Box sx={{ mb: 2 }}>
+                <TextField
+                    fullWidth
+                    label="Search events"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                />
+            </Box>
+
             <TableContainer component={Paper}>
-                <Table>
+                <Table sx={{ minWidth: 650 }} aria-label="user event table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Event Name</TableCell>
@@ -102,12 +130,12 @@ function Events() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {eventList.map((event) => (
+                        {filteredEvents.slice(0, visibleEvents).map((event) => (
                             <TableRow key={event.id}>
                                 <TableCell>{event.eventName}</TableCell>
                                 <TableCell>{event.eventPax}</TableCell>
                                 <TableCell>{event.eventAddress}</TableCell>
-                                <TableCell>{dayjs(event.eventDate).format('DD/MM/YYYY')}</TableCell>
+                                <TableCell>{dayjs(event.eventDate).format(global.datetimeFormat)}</TableCell>
                                 <TableCell>{event.eventDescription}</TableCell>
                                 <TableCell>
                                     <Link to={`/EditUserEvent/${event.id}`}>
@@ -121,6 +149,14 @@ function Events() {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                {hasMore && filteredEvents.length > visibleEvents && (
+                    <Button variant="outlined" onClick={handleViewMore}>
+                        View More
+                    </Button>
+                )}
+            </Box>
         </Box>
     );
 }
