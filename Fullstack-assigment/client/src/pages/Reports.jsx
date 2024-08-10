@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, TextField } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
 import { toast } from 'react-toastify';
 import NavigationBox from './NavigationBox';
-import UserContext from '../contexts/UserContext';
+import UserContext from '../contexts/UserContext'; // Import UserContext to access user data
 
 function Reports() {
     const [reportList, setReportList] = useState([]);
@@ -16,7 +16,7 @@ function Reports() {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(UserContext);
+    const { user } = useContext(UserContext); // Get user data from UserContext
 
     const showToast = (message, type = 'success') => {
         toast.dismiss();
@@ -32,32 +32,26 @@ function Reports() {
     };
 
     const getReports = () => {
-        http.get('/report', {
-            params: {
-                includeAllUsers: user.isAdmin // Request all reports if user is admin
-            }
-        })
-        .then((res) => {
-            if (Array.isArray(res.data)) {
-                // Filter reports for non-admin users
-                const filteredReports = user.isAdmin ? res.data : res.data.filter(report => report.userId === user.id);
-                setReportList(filteredReports);
-            } else {
+        http.get('/report')
+            .then((res) => {
+                if (Array.isArray(res.data)) {
+                    setReportList(res.data);
+                } else {
+                    setReportList([]);
+                }
+            })
+            .catch((err) => {
+                console.error('Error fetching reports:', err);
+                showToast('Error fetching reports', 'error');
                 setReportList([]);
-            }
-        })
-        .catch((err) => {
-            console.error('Error fetching reports:', err);
-            showToast('Error fetching reports', 'error');
-            setReportList([]);
-        });
+            });
     };
 
     useEffect(() => {
         getReports();
         setVisibleReports(5);
         setHasMore(true);
-    }, [user.isAdmin, user.id]);
+    }, []);
 
     useEffect(() => {
         if (location.state) {
@@ -96,23 +90,18 @@ function Reports() {
         setHasMore(true);
     };
 
-    const handleDeleteReport = (reportId) => {
-        http.delete(`/report/${reportId}`)
-            .then(() => {
-                showToast('Report deleted successfully');
-                getReports();
-            })
-            .catch((err) => {
-                console.error('Error deleting report:', err);
-                showToast('Error deleting report', 'error');
-            });
-    };
-
-    const filteredReports = reportList.filter(report => (
+    // Filter reports based on user role
+    const filteredReports = reportList.filter(report => {
+        // Admin can see all reports; non-admin can only see their own reports
+        if (user.role === 'admin') {
+            return true;
+        } else {
+            return report.userId === user.id;
+        }
+    }).filter(report => (
         dayjs(report.createdAt).format(global.datetimeFormat).toLowerCase().includes(searchTerm.toLowerCase()) ||
         renderIncidentType(report.incidentType).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (report.user && report.user.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        report.title.toLowerCase().includes(searchTerm.toLowerCase())
     ));
 
     return (
@@ -149,7 +138,7 @@ function Reports() {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Date</TableCell>
-                                {user.isAdmin && <TableCell>Name</TableCell>}
+                                <TableCell>Name</TableCell>
                                 <TableCell>Title</TableCell>
                                 <TableCell>Type of Incident</TableCell>
                                 <TableCell>Description</TableCell>
@@ -160,17 +149,16 @@ function Reports() {
                             {filteredReports.slice(0, visibleReports).map((report) => (
                                 <TableRow key={report.id}>
                                     <TableCell>{dayjs(report.updatedAt || report.createdAt).format(global.datetimeFormat)}</TableCell>
-                                    {user.isAdmin && <TableCell>{report.user ? report.user.name : 'Unknown'}</TableCell>}
+                                    <TableCell>{report.user ? report.user.name : 'Unknown'}</TableCell>
                                     <TableCell>{report.title}</TableCell>
                                     <TableCell>{renderIncidentType(report.incidentType)}</TableCell>
                                     <TableCell>{report.description}</TableCell>
                                     <TableCell>
-                                        <IconButton color="primary" component={Link} to={`/editreport/${report.id}`}>
-                                            <Edit />
-                                        </IconButton>
-                                        <IconButton color="error" onClick={() => handleDeleteReport(report.id)}>
-                                            <Delete />
-                                        </IconButton>
+                                        <Link to={`/editreport/${report.id}`}>
+                                            <IconButton color="primary">
+                                                <Edit />
+                                            </IconButton>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))}

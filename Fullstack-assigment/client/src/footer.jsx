@@ -37,6 +37,9 @@ const Footer = () => {
                         <a href="https://www.onepa.gov.sg/" target="_blank" rel="noopener noreferrer">
                             <p>onePA</p>
                         </a>
+                        <a href="https://www.nea.gov.sg/" target="_blank" rel="noopener noreferrer">
+                            <p>National Environment Agency</p>
+                        </a>
                         <a href="https://www.nationalgeographic.com/environment/article/green-urban-landscape-cities-Singapore" target="_blank" rel="noopener noreferrer">
                             <p>National Geographic</p>
                         </a>
@@ -46,9 +49,6 @@ const Footer = () => {
                         <h4>Company</h4>
                         <a href="/aboutus">
                             <p>About us</p>
-                        </a>
-                        <a href="/contact">
-                            <p>Contact us</p>
                         </a>
                     </div>
                     <div className="sb__footer-links_div">
