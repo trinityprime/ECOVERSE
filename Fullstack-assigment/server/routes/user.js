@@ -73,35 +73,46 @@ router.post("/register", async (req, res) => {
 
 // login to user acc
 router.post("/login", async (req, res) => {
-    let data = req.body;
-    let errorMsg = "Email or password is not correct.";
-    let user = await User.findOne({
-        where: { email: data.email }
-    });
-    if (!user) {
-        res.status(400).json({ message: errorMsg });
-        return;
-    }
-    let match = await bcrypt.compare(data.password, user.password);
-    if (!match) {
-        res.status(400).json({ message: errorMsg });
-        return;
-    }
+    const { email, password } = req.body;
+    const errorMsg = "Email or password is not correct.";
 
-    let userInfo = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        phoneNumber: user.phoneNumber,
-        dob: user.dob,
-        role: user.role,
-    };
-    let accessToken = sign(userInfo, process.env.APP_SECRET,
-        { expiresIn: process.env.TOKEN_EXPIRES_IN });
-    res.json({
-        accessToken: accessToken,
-        user: userInfo
-    });
+    try {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(400).json({ message: errorMsg });
+        }
+
+        if (user.status === 'deactivated') {
+            return res.status(403).json({ message: "Account is deactivated." });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(400).json({ message: errorMsg });
+        }
+
+        const userInfo = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            phoneNumber: user.phoneNumber,
+            dob: user.dob,
+            role: user.role,
+        };
+
+        const accessToken = sign(userInfo, process.env.APP_SECRET, {
+            expiresIn: process.env.TOKEN_EXPIRES_IN,
+        });
+
+        res.json({
+            accessToken,
+            user: userInfo,
+        });
+
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 //add user from admin acc
@@ -127,7 +138,7 @@ router.post('/', validateToken, isAdmin, async (req, res) => {
         res.status(500).json({ message: 'Error creating user', error });
     }
 });
-  
+
 
 router.get("/auth", validateToken, (req, res) => {
     let userInfo = {
@@ -165,7 +176,7 @@ router.get("/signups", validateToken, async (req, res) => {
             where: { userId },
             include: [{
                 model: Course,
-                attributes: ["id", "title", "description"] 
+                attributes: ["id", "title", "description"]
             }]
         });
 
@@ -180,8 +191,28 @@ router.get("/signups", validateToken, async (req, res) => {
 });
 
 
-// delete in admin acc
-router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
+// deactivate in admin acc
+router.put("/deactivate", validateToken, async (req, res) => {
+    try {
+        const { id } = req.user; // Get user ID from the token
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        user.status = 'deactivated'; // Update user status to 'deactivated'
+        await user.save();
+
+        res.status(200).json({ message: "Account deactivated successfully." });
+    } catch (error) {
+        console.error("Error deactivating account:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+// Reactivate in admin acc
+router.put('/:userId/reactivate', validateToken, isAdmin, async (req, res) => {
     const userId = req.params.userId;
 
     try {
@@ -190,11 +221,19 @@ router.delete('/:userId', validateToken, isAdmin, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        await user.destroy();
-        res.json({ message: 'User deleted successfully' });
+        // Check if the user is already activated
+        if (user.status === 'activated') {
+            return res.status(400).json({ error: 'User is already activated' });
+        }
+
+        // Update the user's status to 'activated'
+        user.status = 'activated';
+        await user.save();
+
+        res.json({ message: 'User reactivated successfully' });
     } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ error: 'Failed to delete user' });
+        console.error('Error reactivating user:', error);
+        res.status(500).json({ error: 'Failed to reactivate user' });
     }
 });
 

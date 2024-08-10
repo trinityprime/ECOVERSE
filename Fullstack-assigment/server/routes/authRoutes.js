@@ -20,7 +20,8 @@ router.post('/request-otp', async (req, res) => {
         res.status(500).send('Failed to send OTP');
     }
 });
-3
+
+
 // Verify OTP
 router.post('/verify-otp', (req, res) => {
     const { email, otp } = req.body;

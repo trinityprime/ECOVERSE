@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, IconButton, CircularProgress, Button, Table, TableBody, TableCell, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Box, Typography, IconButton, CircularProgress, Button, Table, TableBody, TableCell, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,  } from '@mui/material';
+import { PowerSettingsNew } from '@mui/icons-material';
 import { Edit, Delete } from '@mui/icons-material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,6 +11,7 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 
 function Profile() {
     const { user, setUser } = useContext(UserContext);
@@ -65,19 +67,6 @@ function Profile() {
         setOpen(false);
     };
 
-    // for current profile delete
-    const handleDeleteProfile = async () => {
-        try {
-            await http.delete('/profile');
-            toast.success("Profile deleted successfully!");
-            setUser(null);
-            navigate('/login');
-        } catch (error) {
-            console.error("Error deleting profile:", error);
-            toast.error("An error occurred while deleting the profile.");
-        }
-    };
-
     // for current profile update
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
@@ -93,6 +82,15 @@ function Profile() {
         }
     };
 
+    const handleDeactivateAccount = async () => {
+        try {
+            await http.put('/user/deactivate');
+            toast.success("Your account has been deactivated.");
+            navigate("/login")
+        } catch (err) {
+            toast.error(`Failed to deactivate account: ${err.response?.data?.message || err.message}`);
+        }
+    };
 
     if (loading) {
         return <CircularProgress />;
@@ -181,20 +179,11 @@ function Profile() {
                             <Typography variant="body1" sx={{ mb: 1 }} align='center' fontSize={25}>
                                 {userRole}
                             </Typography>
-
-                            <div align='center'>
-                                {user.role === 'admin' && (
-                                    <Button variant="contained" onClick={() => navigate('/adduser')}>
-                                        Add User
-                                    </Button>
-
-                                )}
-                            </div>
                         </>
                     )}
 
                 </Box>
-                <Box sx={{ width: '50%', p: 3, bgcolor: 'background.paper', boxShadow: 1, borderRadius: 8, ml: 2 }}>
+                <Box sx={{ width: '50%', p: 3, bgcolor: 'background.paper', boxShadow: 1, ml: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
                         Contact Details
                     </Typography>
@@ -211,29 +200,31 @@ function Profile() {
                         <IconButton color="primary" sx={{ padding: '20px' }} onClick={() => setEditMode(!editMode)}>
                             <Edit />
                         </IconButton>
-                        <IconButton color="secondary" sx={{ padding: '20px' }} onClick={handleClickOpen}>
-                            <Delete />
+                        <IconButton color="warning" sx={{ padding: '20px' }} onClick={handleClickOpen}>
+                            {/* Change to warning color for deactivation */}
+                            <PowerSettingsNew />
                         </IconButton>
 
                         <Dialog open={open} onClose={handleClose}>
-                            <DialogTitle>Delete Profile</DialogTitle>
+                            <DialogTitle>Deactivate Account</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
-                                    Are you sure you want to delete your profile? This action cannot be undone.
+                                    Are you sure you want to deactivate your account? You will not be able to access it until it is reactivated.
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleClose} color="inherit" variant="contained">
                                     Cancel
                                 </Button>
-                                <Button onClick={handleDeleteProfile} color="error" variant="contained">
-                                    Delete
+                                <Button onClick={handleDeactivateAccount} color="warning" variant="contained">
+                                    Deactivate
                                 </Button>
                             </DialogActions>
                         </Dialog>
                     </div>
                     <ToastContainer />
                 </Box>
+
             </Box>
         </Box>
     )
