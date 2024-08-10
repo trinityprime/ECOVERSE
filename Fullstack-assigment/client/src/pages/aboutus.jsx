@@ -1,6 +1,8 @@
 import React from "react";
-import '../home.css'; // Use the same CSS file if styles are shared
-import HeroSection from '../hero.jsx'; // If you want to reuse the hero section
+import '../home.css';
+import HeroSection from '../hero.jsx';
+import '../AboutUs.css';
+import aboutUsImage from '../assets/Aboutus.jpg'; // Adjust the path as needed
 
 const AboutUs = () => {
   return (
@@ -9,7 +11,10 @@ const AboutUs = () => {
         {/* You can customize the HeroSection for the About Us page if needed */}
       </HeroSection>
       <section className="about-us-content">
-        <h1 className="about-us-title">About Us</h1>
+        <div className="about-us-header">
+          <img src={aboutUsImage} alt="About Us" className="about-us-image" />
+          <h1 className="about-us-title">About Us</h1>
+        </div>
         <p className="about-us-description">
           Welcome to EcoVerse, where our mission is to offer a centralized digital space designed to empower residents with knowledge and resources to embrace sustainable living practices within their community. Serving as a dynamic platform and information hub, EcoVerse fosters a culture of sustainability by facilitating engagement, participation, and collaboration within the community.
         </p>
