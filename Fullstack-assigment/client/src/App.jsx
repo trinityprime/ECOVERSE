@@ -219,7 +219,7 @@ function App() {
 
                         <MenuItem onClick={handleUserMenuClose}>
                           <Link to="/AddUserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Add Your Own Event
+                            Add Your Own Events
                           </Link>
                         </MenuItem>
 
@@ -236,24 +236,15 @@ function App() {
 
                         <MenuItem onClick={handleUserMenuClose}>
                           <Link to="/AddReport" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Add Report
+                            Add Reports
                           </Link>
                         </MenuItem>
                         <MenuItem onClick={handleAdminMenuClose}>
                         <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                          Your Added Event
+                          Your Added Events
                         </Link>
                       </MenuItem>
-
-                      <MenuItem onClick={handleAdminMenuClose}>
-                        <Link to="/SignUps" style={{ textDecoration: 'none', color: 'inherit' }}>
-                          View all your signups
-                        </Link>
-                      </MenuItem>
-                        
-                       
                       </Menu>
-
                       <Button onClick={logout}>Logout</Button>
                     </>
                   )

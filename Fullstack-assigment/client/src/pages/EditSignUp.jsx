@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import http from '../http';
 import { useFormik } from 'formik';
+import UserContext from '../contexts/UserContext';
 import * as yup from 'yup';
 
 function EditSignUp() {
@@ -17,7 +18,9 @@ function EditSignUp() {
         specialRequirements: "",
         eventCourseName: ""
     });
+
     const [loading, setLoading] = useState(true);
+    const { user } = useContext(UserContext); // Get user data from UserContext
 
     useEffect(() => {
         http.get(`/signup/${id}`).then((res) => {
@@ -54,7 +57,12 @@ function EditSignUp() {
             data.eventCourseName = data.eventCourseName.trim();
             http.put(`/signup/${id}`, data)
                 .then((res) => {
-                    navigate("/signups");
+                    // Navigate based on user role
+                    if (user.role === 'admin') {
+                        navigate("/signups");
+                    } else if (user.role === 'volunteer' || user.role === 'organization') {
+                        navigate("/profile");
+                    }
                 });
         }
     });
@@ -69,7 +77,11 @@ function EditSignUp() {
     const deleteSignUp = () => {
         http.delete(`/signup/${id}`)
             .then((res) => {
-                navigate("/signups");
+                if (user.role === 'admin') {
+                    navigate("/signups");
+                } else if (user.role === 'volunteer' || user.role === 'organization') {
+                    navigate("/profile");
+                }
             });
     }
 

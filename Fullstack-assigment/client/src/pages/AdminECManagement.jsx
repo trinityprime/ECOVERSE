@@ -83,7 +83,6 @@ function AdminECManagement() {
         }
     };
     
-    
 
     const logout = () => {
         localStorage.clear();
