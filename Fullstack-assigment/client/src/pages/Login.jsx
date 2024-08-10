@@ -31,13 +31,20 @@ function Login() {
         .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
           "Password must contain at least 1 letter and 1 number"),
     }),
+    
     onSubmit: (data) => {
       data.email = data.email.trim().toLowerCase();
       data.password = data.password.trim();
+
       http.post("/user/login", data)
         .then((res) => {
           localStorage.setItem("accessToken", res.data.accessToken);
           setUser(res.data.user);
+
+          if (res.data.user.status === 'deactivated') {
+            toast.error("Your account is deactivated.");
+            return; // Prevent further code execution
+          }
 
           const userRole = res.data.user.role;
           if (userRole === 'admin') {
@@ -48,12 +55,13 @@ function Login() {
             console.error('Unknown user role:', userRole);
             navigate("/default");
           }
-
         })
         .catch((err) => {
-          toast.error(`${err.response.data.message}`);
+          console.error('Login error: Account is deactivated!'); 
+          const errorMessage = err.response?.data?.message || 'Login failed';
+          toast.error(errorMessage);
         });
-    }
+    },
   });
 
   const handlePasswordVisibility = () => {

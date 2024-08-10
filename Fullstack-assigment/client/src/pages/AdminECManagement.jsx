@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Divider, Button, IconButton } from '@mui/material';
 import { EventAvailable, Pending, CheckCircle as CheckCircleIcon, PauseCircle, Cancel as CancelIcon } from '@mui/icons-material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, PowerSettingsNew } from '@mui/icons-material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserContext from '../contexts/UserContext';
@@ -19,10 +19,7 @@ function AdminECManagement() {
     const { user, setUser } = useContext(UserContext);
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
-    const [editMode, setEditMode] = useState(false);
     const [users, setUsers] = useState([]);
-    const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
 
     // pagination
     const perPage = 5; // Number of items per page
@@ -32,6 +29,9 @@ function AdminECManagement() {
     const paginateUsers = (page) => setUserPage(page);
     const paginateCourses = (page) => setCoursePage(page);
     const paginateEvents = (page) => setEventPage(page);
+
+
+
 
     // Get role to check if admin
     const fetchUserRole = async () => {
@@ -55,46 +55,39 @@ function AdminECManagement() {
         }
     };
 
-    // Handle user deletion
-    const handleDeleteUser = async (userId) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
-            try {
-                await http.delete(`/user/${userId}`);
-                toast.success("User deleted successfully!");
-                setUsers(users.filter(u => u.id !== userId));
-            } catch (error) {
-                console.error("Error deleting user:", error);
-                toast.success("An error occurred while deleting the user.");
-            }
+
+    const handleDeactivateUser = (userId) => {
+        if (window.confirm("Are you sure you want to deactivate this user?")) {
+            http.put(`/user/${userId}/deactivate`)
+                .then(() => {
+                    toast.success("User has been deactivated.");
+                    window.location.reload();
+
+                })
+                .catch((err) => {
+                    toast.error(`Failed to deactivate user: ${err.response?.data?.message || err.message}`);
+                });
         }
     };
-
-    // Handle dialog open/close
-    const handleClickOpen = () => {
-        setOpen(true);
+    
+    const handleReactivateUser = (userId) => {
+        if (window.confirm("Are you sure you want to reactivate this user?")) {
+            http.put(`/user/${userId}/reactivate`)
+                .then(() => {
+                    toast.success("User has been reactivated.");
+                    window.location.reload();
+                })
+                .catch((err) => {
+                    toast.error(`Failed to reactivate user: ${err.response?.data?.message || err.message}`);
+                });
+        }
     };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    
+    
 
     const logout = () => {
         localStorage.clear();
         window.location = "/";
-    };
-
-
-    // Handle profile deletion
-    const handleDeleteProfile = async () => {
-        try {
-            await http.delete('/profile');
-            toast.success("Profile deleted successfully!");
-            setUser(null);
-            navigate('/login');
-        } catch (error) {
-            console.error("Error deleting profile:", error);
-            toast.error("An error occurred while deleting the profile.");
-        }
     };
 
     // Fetch events and courses
@@ -322,22 +315,37 @@ function AdminECManagement() {
                                                 <Typography>{dayjs(user.dob).format('DD-MM-YYYY')}</Typography>
                                             </Grid>
                                             <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                <IconButton
-                                                    color="secondary"
-                                                    onClick={() => handleDeleteUser(user.id)}
-                                                >
-                                                    <Delete />
-                                                </IconButton>
-                                                <Link to={`/edituser/${user.id}`}>
-                                                    <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                        <Edit />
-                                                    </IconButton>
-                                                </Link>
+                                                {user.status === 'deactivated' ? (
+                                                    <Typography
+                                                        color="primary"
+                                                        onClick={() => handleReactivateUser(user.id)}
+                                                        sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                                    >
+                                                        REACTIVATE
+                                                    </Typography>
+                                                ) : (
+                                                    <>
+                                                        {user.id !== 1 && (
+                                                            <IconButton
+                                                                color="secondary"
+                                                                onClick={() => handleDeactivateUser(user.id)}
+                                                            >
+                                                                <PowerSettingsNew />
+                                                            </IconButton>
+                                                        )}
+                                                        <Link to={`/edituser/${user.id}`}>
+                                                            <IconButton color="primary" sx={{ padding: '4px' }}>
+                                                                <Edit />
+                                                            </IconButton>
+                                                        </Link>
+                                                    </>
+                                                )}
                                             </Grid>
                                         </Grid>
                                     </CardContent>
                                 </Card>
                             ))}
+
 
                             {/* USERS TABLE */}
                             <Box mt={2} sx={{ textAlign: 'center' }}>

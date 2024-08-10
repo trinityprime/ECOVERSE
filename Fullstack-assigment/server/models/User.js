@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         role: {
             type: DataTypes.ENUM('volunteer', 'organization', 'admin'),
             defaultValue: 'volunteer'
+        },
+        status: {
+            type: DataTypes.ENUM('activated', 'deactivated'),
+            defaultValue: 'activated'
         }
     }, {
         tableName: 'users',
@@ -31,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     User.associate = (models) => {
         User.hasMany(models.Report, {
             foreignKey: "userId",
-            onDelete: "cascade" 
+            onDelete: "cascade"
         });
     };
 
