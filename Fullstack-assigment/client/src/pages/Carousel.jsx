@@ -21,9 +21,17 @@ function CustomCarousel() {
   const navigate = useNavigate();
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const handleViewAllClick = () => {
+  const handleViewAllEventsClick = () => {
+    navigate('/Events'); // Redirect to Events page
+  };
+
+  const handleViewAllCoursesClick = () => {
+    navigate('/Courses'); // Redirect to Courses page
+  };
+
+  const handleRegisterClick = () => {
     if (user) {
-      navigate('/Events'); // Redirect to Events page if logged in
+      // Proceed with registration
     } else {
       setOpenSnackbar(true); // Show the snackbar if not logged in
     }
@@ -68,21 +76,29 @@ function CustomCarousel() {
           </Box>
         ))}
       </Carousel>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: '20px' }}
-        onClick={handleViewAllClick}
-      >
-        View All Events and Courses
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleViewAllEventsClick}
+        >
+          View All Events
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleViewAllCoursesClick}
+        >
+          View All Courses
+        </Button>
+      </Box>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="info">
-          Please log in first to have access and view all events and courses.
+          Please log in first to register for events and courses.
         </Alert>
       </Snackbar>
     </Box>
