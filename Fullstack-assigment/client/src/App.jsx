@@ -32,7 +32,7 @@ import EditReport from './pages/EditReport';
 import AdminECManagement from './pages/AdminECManagement';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import AboutUs from './pages/AboutUs';
+import AboutUs from './pages/aboutus.jsx';
 import Footer from './footer.jsx';
 import http from './http';
 
