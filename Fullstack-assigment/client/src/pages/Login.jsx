@@ -118,9 +118,9 @@ function Login() {
           <Typography variant="body3">
             Don't have an account? <Link href="/register">Register here</Link>
           </Typography>
-          {/* <Typography variant="body3">
+          <Typography variant="body3">
             Forgot your password? <Link href="/request-otp">Reset it here</Link>
-          </Typography> */}
+          </Typography>
         </Box>
       </Box>
       <ToastContainer />
