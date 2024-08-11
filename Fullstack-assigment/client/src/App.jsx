@@ -275,7 +275,10 @@ function App() {
                 <h1 className="title">Welcome to EcoVerse</h1>
                 <p className="description">Empowering our community with sustainable living practices.</p>
                 <p>Click here to find out more!</p>
-                <button className="explore-button">Explore</button>
+                <Link to="/AboutUs">
+                  <button className="explore-button">About Us</button>
+                </Link>
+
               </div>
             </div>
           )}
