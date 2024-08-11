@@ -20,13 +20,29 @@ function CustomCarousel() {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isEventsOpen, setIsEventsOpen] = useState(false); // Track if events section is open
+  const [isCoursesOpen, setIsCoursesOpen] = useState(false); // Track if courses section is open
 
   const handleViewAllEventsClick = () => {
-    navigate('/Events'); // Redirect to Events page
+    if (isEventsOpen) {
+      // Code to close events section (e.g., navigate back or hide the section)
+      navigate('/'); // Example: navigate to home or another page
+    } else {
+      // Code to open events section
+      navigate('/Events');
+    }
+    setIsEventsOpen(!isEventsOpen); // Toggle the state
   };
 
   const handleViewAllCoursesClick = () => {
-    navigate('/Courses'); // Redirect to Courses page
+    if (isCoursesOpen) {
+      // Code to close courses section (e.g., navigate back or hide the section)
+      navigate('/'); // Example: navigate to home or another page
+    } else {
+      // Code to open courses section
+      navigate('/Courses');
+    }
+    setIsCoursesOpen(!isCoursesOpen); // Toggle the state
   };
 
   const handleRegisterClick = () => {
@@ -82,14 +98,14 @@ function CustomCarousel() {
           color="primary"
           onClick={handleViewAllEventsClick}
         >
-          View All Events
+          {isEventsOpen ? 'Close Events' : 'View All Events'}
         </Button>
         <Button
           variant="contained"
           color="secondary"
           onClick={handleViewAllCoursesClick}
         >
-          View All Courses
+          {isCoursesOpen ? 'Close Courses' : 'View All Courses'}
         </Button>
       </Box>
       <Snackbar
