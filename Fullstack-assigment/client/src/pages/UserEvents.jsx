@@ -94,18 +94,11 @@ function Events() {
 
     return (
         <Box>
-            <Typography variant="h2" sx={{ my: 4 }}>
-                Your Own Added Event
+            <Typography variant="h3" sx={{ my: 4 }}>
+                User suggested event
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mt: 0 }}>
-                <Box sx={{ flexGrow: 1 }} />
-                <Link to="/AddUserEvent" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>
-                        Add Event
-                    </Button>
-                </Link>
-            </Box>
+           
 
             <Box sx={{ mb: 2 }}>
                 <TextField

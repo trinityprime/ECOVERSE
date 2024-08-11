@@ -17,7 +17,7 @@
 }
 
 .carousel img {
-    width: calc(100% / 3 - 10px); /* Adjust width and margin */
+    width: calc(100% / 3 - 20px); /* Adjust width and margin */
     margin-right: 10px; /* Gap between images */
     flex-shrink: 0;
 }
