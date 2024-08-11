@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Modal, Box, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Divider, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Box, Typography, Grid, Snackbar, Alert } from "@mui/material";
 import dayjs from "dayjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserContext from "../contexts/UserContext"; // Adjust the import path if necessary
 
 function CourseDetails() {
     const { id } = useParams();
@@ -12,36 +13,15 @@ function CourseDetails() {
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [openModal, setOpenModal] = useState(false);
-    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-    const [openExportModal, setOpenExportModal] = useState(false);
-
-    const handleExportCourse = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:3001/course/export/${id}`
-            );
-            if (response.status === 200) {
-                toast.success(`Course ID ${id} has been successfully exported.`);
-                setTimeout(() => {
-                    navigate('/AdminECManagement');
-                }, 1400);
-                // Handle exported data or download here if necessary
-            } else {
-                toast.error(`Failed to export Course ID ${id}.`);
-            }
-        } catch (error) {
-            toast.error(`Failed to export Course ID ${id}.`);
-            console.error("Error exporting course:", error);
-        }
-    };
+    const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar state
+    const { user } = useContext(UserContext); // Get user from UserContext
 
     useEffect(() => {
         const fetchCourse = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/course/${id}`);
                 if (response.status === 200) {
-                    setCourse(response.data); // Assuming response.data includes 'participants'
+                    setCourse(response.data);
                     setLoading(false);
                 } else {
                     setError("Failed to fetch course details");
@@ -57,12 +37,23 @@ function CourseDetails() {
         fetchCourse();
     }, [id]);
 
+    const handleSignUpClick = () => {
+        if (user) {
+            navigate(`/AddSignUp?courseName=${encodeURIComponent(course.courseName)}`);
+        } else {
+            setOpenSnackbar(true); // Show snackbar if not logged in
+        }
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
+
     const handleDeleteCourse = async (courseId) => {
         try {
             const response = await axios.delete(`http://localhost:3001/course/${courseId}`);
             if (response.status === 200) {
                 toast.success(`Course ID ${courseId} has been successfully deleted.`);
-                // Optionally navigate away after deletion
                 navigate('/AdminECManagement');
             } else {
                 toast.error(`Failed to delete Course ID ${courseId}.`);
@@ -73,19 +64,33 @@ function CourseDetails() {
         }
     };
 
+    const handleExportCourse = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3001/course/export/${id}`);
+            if (response.status === 200) {
+                toast.success(`Course ID ${id} has been successfully exported.`);
+                setTimeout(() => {
+                    navigate('/AdminECManagement');
+                }, 1400);
+            } else {
+                toast.error(`Failed to export Course ID ${id}.`);
+            }
+        } catch (error) {
+            toast.error(`Failed to export Course ID ${id}.`);
+            console.error("Error exporting course:", error);
+        }
+    };
+
     if (loading) {
-        return <p>Loading course details...</p>; // Display a loading spinner or message
+        return <p>Loading course details...</p>;
     }
 
     if (error) {
-        return <p>{error}</p>; // Display an error message
+        return <p>{error}</p>;
     }
 
     return (
         <Box sx={{ display: "flex" }}>
-
-
-            {/* Main Content */}
             <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
                 <ToastContainer />
                 <Typography variant="h5" align="center" gutterBottom>
@@ -94,7 +99,6 @@ function CourseDetails() {
                 {course && (
                     <Box>
                         <Grid container spacing={2}>
-
                             <Grid item xs={12}>
                                 {course.imageFile ? (
                                     <Box
@@ -105,9 +109,9 @@ function CourseDetails() {
                                             alt="course"
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${course.imageFile}`}
                                             style={{
-                                                maxWidth: "100%", // ensures the image scales down to fit the container
-                                                maxHeight: "400px", // adjust the height as needed
-                                                objectFit: "contain" // maintains aspect ratio
+                                                maxWidth: "100%",
+                                                maxHeight: "400px",
+                                                objectFit: "contain"
                                             }}
                                         />
                                     </Box>
@@ -154,28 +158,29 @@ function CourseDetails() {
                             </Grid>
                             {course.courseStatus !== "Completed" && (
                                 <Grid item xs={12}>
-                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                        <Link
-                                            to={`/AddSignUp?courseName=${encodeURIComponent(course.courseName)}`}
-                                            style={{ textDecoration: 'none', color: 'inherit' }}
-                                        >
-                                            Sign up course
-                                        </Link>
+                                    <Typography
+                                        sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline', cursor: 'pointer' } }}
+                                        onClick={handleSignUpClick}
+                                    >
+                                        Sign up course
                                     </Typography>
                                 </Grid>
                             )}
-
-
-
-
                         </Grid>
                     </Box>
                 )}
             </Box>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="info">
+                    Please log in to sign up for this course!
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }
-
-
 
 export default CourseDetails;

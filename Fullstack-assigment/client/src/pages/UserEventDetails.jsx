@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Modal, Box, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Divider, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, } from "@mui/material";
+import { Box, Typography, Grid, Snackbar, Alert } from "@mui/material";
 import dayjs from "dayjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserContext from "../contexts/UserContext"; // Adjust the import path if necessary
 
 function EventDetails() {
     const { id } = useParams();
@@ -12,6 +13,8 @@ function EventDetails() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useContext(UserContext); // Get user from UserContext
+    const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar state
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -34,21 +37,17 @@ function EventDetails() {
         fetchEvent();
     }, [id]);
 
-    const handleDeleteEvent = async (eventId) => {
-        try {
-            const response = await axios.delete(`http://localhost:3001/event/${eventId}`);
-            if (response.status === 200) {
-                toast.success(`Event ID ${eventId} has been successfully deleted.`);
-                navigate('/AdminECManagement');
-            } else {
-                toast.error(`Failed to delete Event ID ${eventId}.`);
-            }
-        } catch (error) {
-            toast.error(`Failed to delete Event ID ${eventId}.`);
-            console.error("Error deleting event:", error);
+    const handleSignUpClick = () => {
+        if (user) {
+            navigate(`/AddSignUpEvent?eventName=${encodeURIComponent(event.eventName)}`);
+        } else {
+            setOpenSnackbar(true); // Show snackbar if not logged in
         }
     };
 
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
 
     if (loading) {
         return <p>Loading event details...</p>;
@@ -128,13 +127,11 @@ function EventDetails() {
 
                             {event.eventStatus !== "Completed" && (
                                 <Grid item xs={12}>
-                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                        <Link
-                                            to={`/AddSignUpEvent?eventName=${encodeURIComponent(event.eventName)}`}
-                                            style={{ textDecoration: 'none', color: 'inherit' }}
-                                        >
-                                            Sign up event
-                                        </Link>
+                                    <Typography
+                                        sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline', cursor: 'pointer' } }}
+                                        onClick={handleSignUpClick}
+                                    >
+                                        Sign up event
                                     </Typography>
                                 </Grid>
                             )}
@@ -142,6 +139,15 @@ function EventDetails() {
                     </Box>
                 )}
             </Box>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="info">
+                    Please log in to sign up for this event!
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }
