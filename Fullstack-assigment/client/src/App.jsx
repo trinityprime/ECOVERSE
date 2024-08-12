@@ -32,7 +32,7 @@ import EditReport from './pages/EditReport';
 import AdminECManagement from './pages/AdminECManagement';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import AboutUs from './pages/AboutUs';
+import AboutUs from './pages/AboutUs.jsx';
 import ContactUs from './pages/ContactUs';
 import Footer from './footer.jsx';
 import http from './http';
@@ -202,7 +202,69 @@ function App() {
 
                   user && (
                     <>
-                      {/* User Dropdown */}
+                     
+                  
+                      {/* Separate Buttons in the NavBar with Hover Effect */}
+                     
+                  
+                      <Button
+                        component={Link}
+                        to="/Courses"
+                        style={{
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          marginLeft: '15px',
+                          transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#007BFF')}
+                        onMouseOut={(e) => (e.target.style.color = 'inherit')}
+                      >
+                        All Courses
+                      </Button>
+                  
+                      <Button
+                        component={Link}
+                        to="/events"
+                        style={{
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          marginLeft: '15px',
+                          transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#007BFF')}
+                        onMouseOut={(e) => (e.target.style.color = 'inherit')}
+                      >
+                        All Events
+                      </Button>
+                  
+                      <Button
+                        component={Link}
+                        to="/AddReport"
+                        style={{
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          marginLeft: '15px',
+                          transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#007BFF')}
+                        onMouseOut={(e) => (e.target.style.color = 'inherit')}
+                      >
+                        Add Reports
+                      </Button>
+                      <Button
+                        component={Link}
+                        to="/AddUserEvent"
+                        style={{
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          marginLeft: '15px',
+                          transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#007BFF')}
+                        onMouseOut={(e) => (e.target.style.color = 'inherit')}
+                      >
+                        SUGGEST A EVENT
+                      </Button>
                       <Button
                         aria-controls="user-menu"
                         aria-haspopup="true"
@@ -222,38 +284,18 @@ function App() {
                             Profile
                           </Link>
                         </MenuItem>
-
-                        <MenuItem onClick={handleUserMenuClose}>
-                          <Link to="/AddUserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Add Your Own Events
-                          </Link>
-                        </MenuItem>
-
-                        <MenuItem onClick={handleUserMenuClose}>
-                          <Link to="/Courses" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            All Courses
-                          </Link>
-                        </MenuItem>
-                        <MenuItem onClick={handleUserMenuClose}>
-                          <Link to="/events" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            All Events
-                          </Link>
-                        </MenuItem>
-
-                        <MenuItem onClick={handleUserMenuClose}>
-                          <Link to="/AddReport" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            Add Reports
-                          </Link>
-                        </MenuItem>
                         <MenuItem onClick={handleAdminMenuClose}>
                           <Link to="/UserEvent" style={{ textDecoration: 'none', color: 'inherit' }}>
                             Your Added Events
                           </Link>
                         </MenuItem>
                       </Menu>
-                      <Button onClick={logout}>Logout</Button>
+                  
+                      <Button onClick={logout} style={{ marginLeft: '15px' }}>Logout</Button>
                     </>
                   )
+                  
+                  
                 )}
 
                 {!user && (
