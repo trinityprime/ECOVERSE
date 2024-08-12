@@ -36,6 +36,13 @@ function EventDetails() {
     };
 
     const exportToCSV = (eventData) => {
+        const imageLink = eventData.imageFile 
+            ? `${import.meta.env.VITE_FILE_BASE_URL}${eventData.imageFile}` 
+            : 'No image available';
+        const imageAltText = eventData.imageFile 
+            ? `Course ${eventData.id} Image` 
+            : 'No image available';
+
         const csvData = [
             {
                 'Event ID': eventData.id,
@@ -49,7 +56,8 @@ function EventDetails() {
                 'Description': eventData.eventDescription,
                 'Terms and Conditions': eventData.termsAndConditions,
                 'Status': eventData.eventStatus,
-                'Image': `${import.meta.env.VITE_FILE_BASE_URL}${eventData.imageFile}`
+                'Image Link': imageLink,  // Image link or 'No image available'
+                'Image Alt Text': imageAltText  // Alt text or 'No image available' 
             }
         ];
 
@@ -57,7 +65,7 @@ function EventDetails() {
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', `Event_${eventData.id}.csv`);
+        link.setAttribute('download', `EcoVerse_Event_${eventData.id}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -99,6 +107,11 @@ function EventDetails() {
         }
     };
 
+    const logout = () => {
+        localStorage.clear();
+        window.location = "/";
+    };
+
     if (loading) {
         return <p>Loading event details...</p>;
     }
@@ -121,9 +134,7 @@ function EventDetails() {
                     zIndex: "1000",
                 }}
             >
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    Navigation
-                </Typography>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>Admin Navigation</Typography>
                 <Divider />
                 <Box sx={{ my: 2 }}>
                     <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
@@ -131,29 +142,45 @@ function EventDetails() {
                             Dashboard
                         </Typography>
                     </Link>
-                    <Link to="/event-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Event Management
-                        </Typography>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(eventRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Event Management
+                    </Typography>
                     </Link>
-                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Course Management
-                        </Typography>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(courseRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Course Management
+                    </Typography>
                     </Link>
-
-                    <Link to="/account-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Account Management
-                        </Typography>
+                    
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(userRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Account Management
+                    </Typography>
                     </Link>
                 </Box>
-                <Box>
-                    <Link to="/logout" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Sign-out
-                        </Typography>
-                    </Link>
+                <Box
+                    sx={{ cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
+                    onClick={logout}
+                >
+                    <Typography variant="body1" gutterBottom>
+                        Sign-out
+                    </Typography>
                 </Box>
             </Box>
 

@@ -4,17 +4,11 @@ import Carousel from 'react-material-ui-carousel'; // Make sure you have install
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext'; // Adjust the import path if necessary
 
-const carouselItems = [
-  {
-    imageFile: 'path-to-your-image1.jpg', // Replace with actual image path
-    alt: 'Event/Course 1',
-  },
-  {
-    imageFile: 'path-to-your-image2.jpg', // Replace with actual image path
-    alt: 'Event/Course 2',
-  },
-  // Add more items as needed
-];
+// Generate 7 random carousel items
+const carouselItems = Array.from({ length: 7 }, (_, index) => ({
+  imageFile: `https://picsum.photos/800/400?random=${index + 1}`, // Placeholder images
+  alt: `Event/Course ${index + 1}`,
+}));
 
 function CustomCarousel() {
   const { user } = useContext(UserContext);
@@ -25,22 +19,18 @@ function CustomCarousel() {
 
   const handleViewAllEventsClick = () => {
     if (isEventsOpen) {
-      // Code to close events section (e.g., navigate back or hide the section)
-      navigate('/'); // Example: navigate to home or another page
+      navigate('/'); // Navigate to home or another page
     } else {
-      // Code to open events section
-      navigate('/Events');
+      navigate('/Events'); // Navigate to Events page
     }
     setIsEventsOpen(!isEventsOpen); // Toggle the state
   };
 
   const handleViewAllCoursesClick = () => {
     if (isCoursesOpen) {
-      // Code to close courses section (e.g., navigate back or hide the section)
-      navigate('/'); // Example: navigate to home or another page
+      navigate('/'); // Navigate to home or another page
     } else {
-      // Code to open courses section
-      navigate('/Courses');
+      navigate('/Courses'); // Navigate to Courses page
     }
     setIsCoursesOpen(!isCoursesOpen); // Toggle the state
   };
@@ -88,7 +78,7 @@ function CustomCarousel() {
               padding: '20px',
             }}
           >
-            <img src={item.imageFile} alt={item.alt} style={{ width: '100%', height: 'auto' }} />
+            <img src={item.imageFile} alt={item.alt} />
           </Box>
         ))}
       </Carousel>

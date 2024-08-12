@@ -17,49 +17,63 @@ function CourseDetails() {
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [openExportModal, setOpenExportModal] = useState(false);
 
-    const handleExportCourse = async () => {
+    const logout = () => {
+        localStorage.clear();
+        window.location = "/";
+    };
+
+    const handleExportCourse = async (format) => {
         try {
             const response = await axios.get(`http://localhost:3001/course/${id}`);
             if (response.status === 200) {
                 const courseData = response.data;
-
-                // Prepare data for CSV
-                const csvData = [
-                    ["Field", "Details"],
-                    ["Course Name", courseData.courseName],
-                    ["Course Type", courseData.courseType],
-                    ["Course Dates", `${dayjs(courseData.courseStartDate).format('DD MMMM YYYY')} to ${dayjs(courseData.courseEndDate).format('DD MMMM YYYY')}`],
-                    ["Time", `${courseData.courseTimeFrom} to ${courseData.courseTimeTo}`],
-                    ["Location", courseData.location],
-                    ["Organizer Details", courseData.organizerDetails],
-                    ["Max Participants", courseData.maxParticipants],
-                    ["Description", courseData.courseDescription],
-                    ["Terms and Conditions", courseData.termsAndConditions],
-                    ["Status", courseData.courseStatus]
-                ];
-
-                // Convert data to CSV
-                const csv = Papa.unparse(csvData);
-
-                // Create a blob and download
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                if (link.download !== undefined) { // feature detection
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', `course_${id}.csv`);
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                if (format === 'csv') {
+                    exportToCSV(courseData);
                 }
+                toast.success(`Course ID ${id} has been successfully exported in ${format}.`);
             } else {
                 toast.error(`Failed to export Course ID ${id}.`);
             }
         } catch (error) {
-            toast.error(`Failed to export Course ID ${id}.`);
-            console.error("Error exporting course:", error);
+            toast.error(`Failed to export Course ID ${id} using ${format}.`);
+            console.error("Error exporting Course:", error);
         }
+    };
+
+    const exportToCSV = (courseData) => {
+        const imageLink = courseData.imageFile 
+            ? `${import.meta.env.VITE_FILE_BASE_URL}${courseData.imageFile}` 
+            : 'No image available';
+        const imageAltText = courseData.imageFile 
+            ? `Course ${courseData.id} Image` 
+            : 'No image available';
+    
+        const csvData = [
+            {
+                'Course ID': courseData.id,
+                'Course Name': courseData.courseName,
+                'Course Type': courseData.courseType,
+                'Date': dayjs(courseData.courseDate).format("DD MMMM YYYY"),
+                'Time': `${courseData.courseTimeFrom} to ${courseData.courseTimeTo}`,
+                'Location': courseData.location,
+                'Organizer Details': courseData.organizerDetails,
+                'Max Participants': courseData.maxParticipants,
+                'Description': courseData.courseDescription,
+                'Terms and Conditions': courseData.termsAndConditions,
+                'Status': courseData.courseStatus,
+                'Image Link': imageLink,  // Image link or 'No image available'
+                'Image Alt Text': imageAltText  // Alt text or 'No image available'
+            }
+        ];
+    
+        const csv = Papa.unparse(csvData);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `EcoVerse_Course_${courseData.id}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     useEffect(() => {
@@ -122,9 +136,7 @@ function CourseDetails() {
                     zIndex: "1000",
                 }}
             >
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    Navigation
-                </Typography>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>Admin Navigation</Typography>
                 <Divider />
                 <Box sx={{ my: 2 }}>
                     <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
@@ -132,29 +144,45 @@ function CourseDetails() {
                             Dashboard
                         </Typography>
                     </Link>
-                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            course Management
-                        </Typography>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(courseRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Event Management
+                    </Typography>
                     </Link>
-                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Course Management
-                        </Typography>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(courseRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Course Management
+                    </Typography>
                     </Link>
-
-                    <Link to="/account-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Account Management
-                        </Typography>
+                    
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Typography
+                        variant="body1"
+                        gutterBottom
+                        onClick={() => scrollToSection(userRef)}
+                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                        Account Management
+                    </Typography>
                     </Link>
                 </Box>
-                <Box>
-                    <Link to="/logout" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Sign-out
-                        </Typography>
-                    </Link>
+                <Box
+                    sx={{ cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
+                    onClick={logout}
+                >
+                    <Typography variant="body1" gutterBottom>
+                        Sign-out
+                    </Typography>
                 </Box>
             </Box>
 
@@ -219,8 +247,8 @@ function CourseDetails() {
                                         </TableHead>
                                         <TableBody>
                                             {Object.entries({
-                                                'course Name': course.courseName,
-                                                'course Type': course.courseType,
+                                                'Course Name': course.courseName,
+                                                'Course Type': course.courseType,
                                                 'Date': dayjs(course.courseDate).format("DD MMMM YYYY"),
                                                 'Time': `${course.courseTimeFrom} to ${course.courseTimeTo}`,
                                                 'Location': course.location,
@@ -273,7 +301,7 @@ function CourseDetails() {
                             <DialogActions>
                                 <Button
                                     onClick={() => {
-                                        handleExportcourse("csv");
+                                        handleExportCourse("csv");
                                         setOpenExportModal(false);
                                     }}
                                 >

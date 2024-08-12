@@ -1,68 +1,72 @@
 .carousel-container {
-    position: relative;
-    background-color: #f5f5dc; /* Dark Beige */
-    padding: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+  position: relative;
+  background-color: #f5f5dc; /* Dark Beige */
+  padding: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .carousel {
-    display: flex;
-    width: 100%;
-    max-width: 1800px; /* Adjust as needed */
-    margin: auto;
-    transition: transform 0.5s ease-in-out; /* Smooth transition */
+  display: flex;
+  width: 100%;
+  max-width: 1200px; /* Adjust as needed */
+  margin: auto;
+  overflow: hidden; /* Ensure images do not overflow */
 }
 
 .carousel img {
-    width: calc(100% / 3 - 20px); /* Adjust width and margin */
-    margin-right: 10px; /* Gap between images */
-    flex-shrink: 0;
+  width: calc(50% - 10px); /* Adjust width for 2 images per page */
+  height: 250px; /* Adjust height as needed */
+  margin-right: 10px; /* Gap between images */
+  object-fit: cover; /* Maintain aspect ratio */
+  border-radius: 8px; /* Optional: add border-radius */
 }
 
 .carousel img:last-child {
-    margin-right: 0; /* Remove margin on last image */
+  margin-right: 0; /* Remove margin on last image */
 }
 
 .carousel-button {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    z-index: 1;
-    font-size: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+  font-size: 24px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%; /* Make buttons circular */
 }
 
 .carousel-button.prev {
-    position: absolute;
-    left: 10px;
-  }
-  
-  .carousel-button.next {
-    position: absolute;
-    right: 10px;
-  }
-  
-  .eclipse-indicators {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 5px;
-  }
-  
-  .eclipse {
-    width: 10px;
-    height: 10px;
-    background-color: #888;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  
-  .eclipse.active {
-    background-color: #333;
-  }
+  left: 10px;
+}
+
+.carousel-button.next {
+  right: 10px;
+}
+
+.eclipse-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.eclipse {
+  width: 10px;
+  height: 10px;
+  background-color: #888;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.eclipse.active {
+  background-color: #333;
+}
