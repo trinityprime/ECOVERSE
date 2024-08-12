@@ -1,0 +1,86 @@
+.contact-us-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.contact-us-content {
+  margin-top: 40px;
+}
+
+.contact-us-header {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.contact-us-image {
+  width: 100%;
+  height: 300px; /* Adjust as needed */
+  object-fit: cover;
+}
+
+.contact-us-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 3em;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.google-map {
+  width: 100%;
+  height: 450px;
+  margin-bottom: -120px;
+}
+
+.google-map iframe {
+  width: 100%;
+  height: 60%;
+}
+
+.contact-details {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.contact-column {
+  flex: 1;
+  padding: 0 15px;
+}
+
+.contact-column h2 {
+  color: #0066cc;
+  margin-bottom: 15px;
+}
+
+.contact-column p {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .contact-details {
+      flex-direction: column;
+  }
+  
+  .contact-column {
+      margin-bottom: 20px;
+  }
+}
+
+/* Keeping these styles in case they're used elsewhere */
+.values-list {
+  padding-left: 20px;
+}
+
+.values-list li {
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.values-list li strong {
+  color: #4caf50;
+}
