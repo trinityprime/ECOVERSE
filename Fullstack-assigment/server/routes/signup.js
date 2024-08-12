@@ -4,6 +4,9 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const yup = require("yup");
 const { validateToken } = require('../middlewares/auth');
+const nodemailer = require('nodemailer');
+
+
 
 // Route to create a new sign-up
 router.post("/", validateToken, async (req, res) => {
@@ -75,6 +78,11 @@ router.get("/:id", validateToken, async (req, res) => {
 
     res.json(signUp);
 });
+
+
+
+
+
 
 // Route to update a sign-up by ID
 router.put("/:id", validateToken, async (req, res) => {
