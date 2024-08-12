@@ -1,50 +1,44 @@
 import React, { useState } from 'react';
+import { Button, TextField, Container, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import http from '../http'; 
 const VerifyOtp = () => {
-  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate()
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleVerifyOtp = async () => {
     try {
-      const response = await fetch('/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
-      });
-
-      if (response.ok) {
-        navigate('/reset-password', { state: { email } }); // Navigate to reset-password
-      } else {
-        setMessage('Invalid or expired OTP.');
-      }
-    } catch (error) {
-      setMessage('An error occurred. Please try again.');
+      await http.post('/otp/verify', { otp, email });
+      navigate('/reset-password'); 
+    } catch (err) {
+      setError('Invalid OTP. Please try again.');
     }
   };
 
   return (
-    <div>
-      <h2>Verify OTP</h2>
-      <input
-        type="email"
+    <Container>
+      <Typography variant="h4">Verify OTP</Typography>
+      <TextField
+        label="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        required
+        fullWidth
+        margin="normal"
       />
-      <input
-        type="text"
+      <TextField
+        label="OTP"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
-        placeholder="Enter OTP"
-        required
+        fullWidth
+        margin="normal"
       />
-      <button onClick={handleVerifyOtp}>Verify OTP</button>
-      {message && <p>{message}</p>}
-    </div>
+      {error && <Typography color="error">{error}</Typography>}
+      <Button onClick={handleVerifyOtp} variant="contained" color="primary">
+        Verify OTP
+      </Button>
+    </Container>
   );
 };
 
