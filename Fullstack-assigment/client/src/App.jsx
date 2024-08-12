@@ -33,6 +33,7 @@ import AdminECManagement from './pages/AdminECManagement';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
 import Footer from './footer.jsx';
 import http from './http';
 
@@ -321,6 +322,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/AboutUs" element={<AboutUs />} />
+              <Route path="/ContactUs" element={<ContactUs />} />
               <Route path="/request-otp" element={<RequestOtp />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/reset-password" element={<ResetPassword />} />

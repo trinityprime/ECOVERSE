@@ -10,7 +10,7 @@ const Footer = () => {
                 <div className="sb__footer-links">
                     <div className="sb__footer-links_div">
                         <h4>For Business</h4>
-                        <a href="/healthplan">
+                        <a href="/ContactUs">
                             <p>Contact us</p>
                         </a>
                         <a href="/individual">
