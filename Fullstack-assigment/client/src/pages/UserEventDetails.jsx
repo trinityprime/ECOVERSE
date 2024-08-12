@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Typography, Grid, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, Grid, Snackbar, Alert, Button } from "@mui/material";
 import dayjs from "dayjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserContext from "../contexts/UserContext"; // Adjust the import path if necessary
+import headerImage from '../assets/ContactUs.jpeg'; // Adjust the path if needed
 
 function EventDetails() {
     const { id } = useParams();
@@ -58,12 +59,48 @@ function EventDetails() {
     }
 
     return (
-        <Box sx={{ display: "flex" }}>
-            <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
-                <ToastContainer />
-                <Typography variant="h5" align="center" gutterBottom>
+        <Box>
+            {/* Header Section */}
+            <Box
+                sx={{
+                    width: "100%",
+                    height: "200px",
+                    backgroundImage: `url(${headerImage})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    mb: 2,
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}
+            >
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        background: "rgba(0, 0, 0, 0.3)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 1
+                    }}
+                />
+                <Typography
+                    variant="h5"
+                    align="center"
+                    color="white"
+                    sx={{ zIndex: 2 }}
+                >
                     Event Details, ID: {id}
                 </Typography>
+            </Box>
+
+            <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
+                <ToastContainer />
                 {event && (
                     <Box>
                         <Grid container spacing={2}>
@@ -127,12 +164,23 @@ function EventDetails() {
 
                             {event.eventStatus !== "Completed" && (
                                 <Grid item xs={12}>
-                                    <Typography
-                                        sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline', cursor: 'pointer' } }}
+                                    <Button
                                         onClick={handleSignUpClick}
+                                        variant="contained"
+                                        sx={{
+                                            backgroundColor: '#4caf50',
+                                            color: '#fff',
+                                            '&:hover': {
+                                                backgroundColor: '#45a049',
+                                            },
+                                            padding: '10px 20px',
+                                            textTransform: 'none',
+                                            fontSize: '16px',
+                                            boxShadow: 'none',
+                                        }}
                                     >
                                         Sign up event
-                                    </Typography>
+                                    </Button>
                                 </Grid>
                             )}
                         </Grid>
