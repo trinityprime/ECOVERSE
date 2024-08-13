@@ -57,7 +57,7 @@ function Login() {
           }
         })
         .catch((err) => {
-          console.error('Login error: Account is deactivated!'); 
+          toast.error('Login error: Account is deactivated!'); 
           const errorMessage = err.response?.data?.message || 'Login failed';
           toast.error(errorMessage);
         });

@@ -93,7 +93,7 @@ function Profile() {
         try {
             await http.put('/user/deactivate');
             toast.success("Your account has been deactivated.");
-            navigate("/login")
+            navigate("/login");
         } catch (err) {
             toast.error(`Failed to deactivate account: ${err.response?.data?.message || err.message}`);
         }

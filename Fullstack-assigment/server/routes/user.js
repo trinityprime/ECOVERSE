@@ -77,17 +77,17 @@ router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({ where: { email } });
 
-        if (!user) {
-            return res.status(400).json({ message: "Email or password is not correct." });
-        }
-
         if (user.status === 'deactivated') {
             return res.status(403).json({ message: "Account is deactivated." });
         }
 
+        if (!user) {
+            return res.status(400).json({ message: "Email or password is not correct." });
+        }
+
         const match = await bcrypt.compare(password, user.password);
 
-        if (!match) {
+        if  (!match) {
             return res.status(400).json({ message: "Email or password is not correct." });
         }
 
@@ -191,7 +191,7 @@ router.get("/signups", validateToken, async (req, res) => {
     }
 });
 
-// Deactivate User Route
+// deactivate in admin acc
 router.put("/:userId/deactivate", validateToken, isAdmin, async (req, res) => {
     try {
         const { userId } = req.params;
@@ -210,7 +210,7 @@ router.put("/:userId/deactivate", validateToken, isAdmin, async (req, res) => {
     }
 });
 
-// Reactivate User Route
+// reactivate in admin acc
 router.put("/:userId/reactivate", validateToken, isAdmin, async (req, res) => {
     try {
         const { userId } = req.params;
@@ -232,6 +232,31 @@ router.put("/:userId/reactivate", validateToken, isAdmin, async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+// deactivate in user acc
+router.put("/deactivate", validateToken, async (req, res) => {
+    try {
+        const { id } = req.user; // Get user ID from the token
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        if (user.status === 'deactivated') {
+            return res.status(400).json({ message: "Account is already deactivated." });
+        }
+
+        user.status = 'deactivated'; // Update user status to 'deactivated'
+        await user.save();
+
+        res.status(200).json({ message: "Account deactivated successfully." });
+    } catch (error) {
+        console.error("Error deactivating account:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 // get user info for update in admin acc
 router.get('/:userId', validateToken, isAdmin, async (req, res) => {
