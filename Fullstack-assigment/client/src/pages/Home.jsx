@@ -15,6 +15,7 @@ function Home() {
             <Link to="/AboutUs" style={{ textDecoration: 'none', color: 'inherit' }}>
               <button className="explore-button">About Us</button>
             </Link>
+           
           </div>
         </div>
       )}
