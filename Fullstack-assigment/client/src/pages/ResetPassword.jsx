@@ -1,53 +1,51 @@
 import React, { useState } from 'react';
+import { Button, TextField, Container, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import http from '../http';
 
-const ResetPassword = ({ email }) => {
-  const [newPassword, setNewPassword] = useState('');
+const ResetPassword = () => {
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleResetPassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setMessage('Passwords do not match.');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
       return;
     }
-
     try {
-      const response = await fetch('/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, newPassword }),
-      });
-
-      if (response.ok) {
-        setMessage('Password has been reset successfully.');
-      } else {
-        setMessage('Failed to reset password. Please try again.');
-      }
-    } catch (error) {
-      setMessage('An error occurred. Please try again.');
+      await http.post('/otp/reset-password', { password });
+      navigate('/login');
+    } catch (err) {
+      setError('Failed to reset password. Please try again.');
     }
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
-      <input
+    <Container>
+      <Typography variant="h4">Reset Password</Typography>
+      <TextField
+        label="New Password"
         type="password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="Enter new password"
-        required
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input
+      <TextField
+        label="Confirm Password"
         type="password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm new password"
-        required
+        fullWidth
+        margin="normal"
       />
-      <button onClick={handleResetPassword}>Reset Password</button>
-      {message && <p>{message}</p>}
-    </div>
+      {error && <Typography color="error">{error}</Typography>}
+      <Button onClick={handleResetPassword} variant="contained" color="primary">
+        Reset Password
+      </Button>
+    </Container>
   );
 };
 
