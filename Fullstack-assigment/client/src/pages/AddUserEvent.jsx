@@ -31,7 +31,7 @@ function AddEvent() {
             eventDescription: "",
             agreeTerms: false
         },
-        validationSchema: yup.object({
+        validationSchema: yup.object().shape({
             eventName: yup
                 .string()
                 .trim()
@@ -47,8 +47,9 @@ function AddEvent() {
             eventAddress: yup
                 .string()
                 .trim()
-                .min(3, 'Must be at least 3 characters')
-                .max(100, 'Must be 100 characters or less')
+                .min(3, 'Address must be at least 3 characters')
+                .max(100, 'Address must be 100 characters or less')
+                .matches(/^[a-zA-Z0-9\s,.'#-]+$/, 'Address contains invalid characters')
                 .required('Event address is required'),
             eventDate: yup.date()
                 .typeError('Incorrect format for Event Date')
@@ -107,6 +108,11 @@ function AddEvent() {
                         }
                     />
                 </Box>
+                {!formik.values.agreeTerms && formik.touched.agreeTerms && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        You must accept the terms and conditions to submit the event.
+                    </Typography>
+                )}
                 <Button
                     variant="contained"
                     type="submit"
@@ -192,7 +198,7 @@ function AddEvent() {
                 <DialogContent>
                     <Typography variant="body1" paragraph>
                         {/* Insert the terms of service and privacy policy content here */}
-                        Welcome to ECOVERSE . By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+                        Welcome to ECOVERSE. By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
 
                         By registering for an event, you agree to the event organizer’s terms and conditions, including payment and cancellation policies. All event fees must be paid in advance. We are not responsible for payment issues or disputes.
 

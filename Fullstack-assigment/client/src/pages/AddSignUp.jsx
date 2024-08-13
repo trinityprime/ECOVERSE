@@ -89,6 +89,11 @@ function AddSignUp() {
                         }
                     />
                 </Box>
+                {formik.touched.agreeTerms && !formik.values.agreeTerms && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        You must accept the terms and conditions to submit the form.
+                    </Typography>
+                )}
                 <Button
                     variant="contained"
                     type="submit"
@@ -190,7 +195,7 @@ function AddSignUp() {
                 <DialogContent>
                     <Typography variant="body1" paragraph>
                         {/* Insert the terms of service and privacy policy content here */}
-                        Welcome to ECOVERSE . By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+                        Welcome to ECOVERSE. By using our website, you agree to these Terms of Service. If you do not agree, do not use the website. You must be at least 18 years old to use this website. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
 
                         By registering for an event, you agree to the event organizer’s terms and conditions, including payment and cancellation policies. All event fees must be paid in advance. We are not responsible for payment issues or disputes.
 
