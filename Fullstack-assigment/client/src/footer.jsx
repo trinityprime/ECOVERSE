@@ -13,9 +13,6 @@ const Footer = () => {
                         <a href="/ContactUs">
                             <p>Contact us</p>
                         </a>
-                        <a href="/individual">
-                            <p>Individual</p>
-                        </a>
                     </div>
                     {/* <div className="sb__footer-links_div">
                         <h4>Resources</h4>
