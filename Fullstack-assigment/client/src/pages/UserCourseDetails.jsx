@@ -95,8 +95,8 @@ function CourseDetails() {
             <Box
                 sx={{
                     width: "100%",
-                    height: "200px",
-                    backgroundImage: `url(${ContactUsImage})`, // Add your header image URL
+                    height: "250px",  // Increased height for a more prominent header
+                    backgroundImage: `url(${ContactUsImage})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     mb: 2,
@@ -113,7 +113,7 @@ function CourseDetails() {
                         left: 0,
                         width: "100%",
                         height: "100%",
-                        background: "rgba(0, 0, 0, 0.3)",
+                        background: "rgba(0, 0, 0, 0.4)",  // Darker overlay for better text visibility
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -121,20 +121,20 @@ function CourseDetails() {
                     }}
                 />
                 <Typography
-                    variant="h5"
+                    variant="h4"  // Increased font size for the header text
                     align="center"
                     color="white"
-                    sx={{ zIndex: 2 }}
+                    sx={{ zIndex: 2, textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}  // Added text shadow for readability
                 >
                     Course Details, ID: {id}
                 </Typography>
             </Box>
-            <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
+            <Box sx={{ mx: "auto", p: 3, maxWidth: "900px" }}>  {/* Centering content with auto margins */}
                 <ToastContainer />
                 {course && (
-                    <Box>
+                    <Box sx={{ p: 2, borderRadius: 2, boxShadow: 3, backgroundColor: "#fff" }}> {/* Added card-like style */}
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} md={6}>  {/* Image on the left, taking up half the width on medium screens and up */}
                                 {course.imageFile ? (
                                     <Box
                                         className="aspect-ratio-container"
@@ -145,54 +145,51 @@ function CourseDetails() {
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${course.imageFile}`}
                                             style={{
                                                 maxWidth: "100%",
-                                                maxHeight: "400px",
-                                                objectFit: "contain"
+                                                maxHeight: "450px",  // Increased image height
+                                                objectFit: "cover",  // Fill the area while preserving aspect ratio
+                                                borderRadius: "8px",  // Added border radius for smoother edges
+                                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"  // Added slight shadow
                                             }}
                                         />
                                     </Box>
                                 ) : (
-                                    <div style={{ marginBottom: "1rem" }}>
-                                        <Typography variant="body1" color="textSecondary">
-                                            No image available for this course.
-                                        </Typography>
-                                    </div>
+                                    <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
+                                        No image available for this course.
+                                    </Typography>
                                 )}
-                                <Typography variant="body1">
+                            </Grid>
+                            <Grid item xs={12} md={6}>  {/* Text on the right */}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Course Name:</strong> {course.courseName}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Course Type:</strong> {course.courseType}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Course Dates: </strong>
-                                    {`${dayjs(course.courseStartDate).format('DD MMMM YYYY')} to ${dayjs(course.courseEndDate).format('DD MMMM YYYY')}`}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Course Dates:</strong> {`${dayjs(course.courseStartDate).format('DD MMMM YYYY')} to ${dayjs(course.courseEndDate).format('DD MMMM YYYY')}`}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Time:</strong> {course.courseTimeFrom} to{" "}
-                                    {course.courseTimeTo}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Time:</strong> {course.courseTimeFrom} to {course.courseTimeTo}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Location:</strong> {course.location}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Organizer Details:</strong> {course.organizerDetails}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Max Participants:</strong> {course.maxParticipants}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Description:</strong> {course.courseDescription}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Terms and Conditions:</strong>{" "}
-                                    {course.termsAndConditions}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Terms and Conditions:</strong> {course.termsAndConditions}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Status:</strong> {course.courseStatus}
                                 </Typography>
-                            </Grid>
-                            {course.courseStatus !== "Completed" && course.courseStatus !== "Cancelled" &&(
-                                <Grid item xs={12}>
+                                {course.courseStatus !== "Completed" && course.courseStatus !== "Cancelled" && (
                                     <Button
                                         onClick={handleSignUpClick}
                                         variant="contained"
@@ -202,16 +199,18 @@ function CourseDetails() {
                                             '&:hover': {
                                                 backgroundColor: '#45a049',
                                             },
-                                            padding: '10px 20px',
+                                            padding: '12px 24px',  // More padding for the button
                                             textTransform: 'none',
                                             fontSize: '16px',
                                             boxShadow: 'none',
+                                            transition: 'background-color 0.3s ease',  // Smooth transition on hover
+                                            mt: 2,  // Added margin on top for spacing
                                         }}
                                     >
                                         Sign up course
                                     </Button>
-                                </Grid>
-                            )}
+                                )}
+                            </Grid>
                         </Grid>
                     </Box>
                 )}
@@ -220,6 +219,7 @@ function CourseDetails() {
                 open={openSnackbar}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // Positioned snackbar at the top-center
             >
                 <Alert onClose={handleCloseSnackbar} severity="info">
                     Please log in to sign up for this course!

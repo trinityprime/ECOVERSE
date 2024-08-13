@@ -99,12 +99,12 @@ function EventDetails() {
                 </Typography>
             </Box>
 
-            <Box sx={{ ml: "300px", p: 2, width: "calc(100% - 240px)" }}>
+            <Box sx={{ mx: "auto", p: 3, maxWidth: "900px" }}> {/* Centering content with auto margins */}
                 <ToastContainer />
                 {event && (
-                    <Box>
+                    <Box sx={{ p: 2, borderRadius: 2, boxShadow: 3, backgroundColor: "#fff" }}> {/* Added card-like style */}
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} md={6}>  {/* Image on the left, taking up half the width on medium screens and up */}
                                 {event.imageFile ? (
                                     <Box
                                         className="aspect-ratio-container"
@@ -115,55 +115,51 @@ function EventDetails() {
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${event.imageFile}`}
                                             style={{
                                                 maxWidth: "100%",
-                                                maxHeight: "400px",
-                                                objectFit: "contain"
+                                                maxHeight: "450px",  // Increased image height
+                                                objectFit: "cover",  // Fill the area while preserving aspect ratio
+                                                borderRadius: "8px",  // Added border radius for smoother edges
+                                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"  // Added slight shadow
                                             }}
                                         />
                                     </Box>
                                 ) : (
-                                    <div style={{ marginBottom: "1rem" }}>
-                                        <Typography variant="body1" color="textSecondary">
-                                            No image available for this event.
-                                        </Typography>
-                                    </div>
+                                    <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
+                                        No image available for this event.
+                                    </Typography>
                                 )}
-                                <Typography variant="body1">
+                            </Grid>
+                            <Grid item xs={12} md={6}>  {/* Text on the right */}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Event Name:</strong> {event.eventName}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Event Type:</strong> {event.eventType}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Date:</strong>{" "}
-                                    {dayjs(event.eventDate).format("DD MMMM YYYY")}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Date:</strong> {dayjs(event.eventDate).format('DD MMMM YYYY')}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Time:</strong> {event.eventTimeFrom} to{" "}
-                                    {event.eventTimeTo}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Time:</strong> {event.eventTimeFrom} to {event.eventTimeTo}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Location:</strong> {event.location}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Organizer Details:</strong> {event.organizerDetails}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Max Participants:</strong> {event.maxParticipants}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Description:</strong> {event.eventDescription}
                                 </Typography>
-                                <Typography variant="body1">
-                                    <strong>Terms and Conditions:</strong>{" "}
-                                    {event.termsAndConditions}
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    <strong>Terms and Conditions:</strong> {event.termsAndConditions}
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                     <strong>Status:</strong> {event.eventStatus}
                                 </Typography>
-                            </Grid>
-
-                            {event.eventStatus !== "Completed" && event.eventStatus !== "Cancelled" && (
-                                <Grid item xs={12}>
+                                {event.eventStatus !== "Completed" && event.eventStatus !== "Cancelled" && (
                                     <Button
                                         onClick={handleSignUpClick}
                                         variant="contained"
@@ -173,16 +169,18 @@ function EventDetails() {
                                             '&:hover': {
                                                 backgroundColor: '#45a049',
                                             },
-                                            padding: '10px 20px',
+                                            padding: '12px 24px',  // More padding for the button
                                             textTransform: 'none',
                                             fontSize: '16px',
                                             boxShadow: 'none',
+                                            transition: 'background-color 0.3s ease',  // Smooth transition on hover
+                                            mt: 2,  // Added margin on top for spacing
                                         }}
                                     >
                                         Sign up event
                                     </Button>
-                                </Grid>
-                            )}
+                                )}
+                            </Grid>
                         </Grid>
                     </Box>
                 )}
@@ -191,6 +189,7 @@ function EventDetails() {
                 open={openSnackbar}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // Positioned snackbar at the top-center
             >
                 <Alert onClose={handleCloseSnackbar} severity="info">
                     Please log in to sign up for this event!
