@@ -139,33 +139,11 @@ function SignUps() {
                                 <TableCell>{signUp.specialRequirements}</TableCell>
                                 <TableCell>{signUp.eventCourseName}</TableCell>
                                 <TableCell>
-                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                        {user.status === 'deactivated' ? (
-                                            <Typography
-                                                color="primary"
-                                                onClick={() => handleReactivateUser(user.id)}
-                                                sx={{ cursor: 'pointer', textDecoration: 'underline' }}
-                                            >
-                                                REACTIVATE
-                                            </Typography>
-                                        ) : (
-                                            <>
-                                                {user.id !== 1 && (
-                                                    <IconButton
-                                                        color="secondary"
-                                                        onClick={() => handleDeactivateUser(user.id)}
-                                                    >
-                                                        <PowerSettingsNew />
-                                                    </IconButton>
-                                                )}
-                                                <Link to={`/edituser/${user.id}`}>
-                                                    <IconButton color="primary" sx={{ padding: '4px' }}>
-                                                        <Edit />
-                                                    </IconButton>
-                                                </Link>
-                                            </>
-                                        )}
-                                    </Grid>
+                                    <Link to={`/EditSignUp/${signUp.id}`}>
+                                        <IconButton color="primary">
+                                            <Edit />
+                                        </IconButton>
+                                    </Link>
                                 </TableCell>
                             </TableRow>
                         ))}
