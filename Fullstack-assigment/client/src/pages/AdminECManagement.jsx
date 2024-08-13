@@ -26,12 +26,10 @@ function AdminECManagement() {
     const [userPage, setUserPage] = useState(1);
     const [coursePage, setCoursePage] = useState(1);
     const [eventPage, setEventPage] = useState(1);
-    const [reportPage, setReportPage] = useState(1);
     const paginateUsers = (page) => setUserPage(page);
     const paginateCourses = (page) => setCoursePage(page);
     const paginateEvents = (page) => setEventPage(page);
-    const paginateReports = (page) => setReportPage(page);
-
+  
 
 
     // Get role to check if admin
@@ -163,7 +161,6 @@ function AdminECManagement() {
     const totalEventPages = Math.ceil(events.length / perPage);
     const totalCoursePages = Math.ceil(courses.length / perPage);
     const totalUserPages = Math.ceil(users.length / perPage);
-    const totalReportPages = Math.ceil(reports.length / perPage);
 
     // Filter events, courses, users, and reports to display based on their respective current pages
     const indexOfLastEvent = eventPage * perPage;
@@ -178,15 +175,13 @@ function AdminECManagement() {
     const indexOfFirstUser = indexOfLastUser - perPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-    const indexOfLastReport = userPage * perPage;
-    const indexOfFirstReport = indexOfLastReport - perPage;
-    const currentReports = reports.slice(indexOfFirstReport, indexOfLastReport);
+
 
     // scrolling
     const eventRef = useRef(null);
     const courseRef = useRef(null);
     const userRef = useRef(null);
-    const reportRef = useRef(null);
+
 
     const scrollToSection = (ref) => {
         if (ref.current) {
@@ -241,17 +236,7 @@ function AdminECManagement() {
                     >
                         Course Management
                     </Typography>
-                    <Typography
-                        variant="body1"
-                        gutterBottom
-                        onClick={() => scrollToSection(reportRef)}
-                        sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
-                    >
-                        Report Management
-                    </Typography>
-                    <Link to="/settings" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Typography variant="body1" gutterBottom></Typography>
-                    </Link>
+
                     <Typography
                         variant="body1"
                         gutterBottom
@@ -548,91 +533,6 @@ function AdminECManagement() {
                     </Box>
                 </Box>
 
-                {/* Report List */}
-                <Box ref={reportRef} sx={{ pt: 10 }}>
-                    <Typography variant="h5" align="left" gutterBottom>Report List</Typography>
-                    <Box sx={{ mb: 5 }}>
-                        {/* Header Row */}
-                        <Grid container spacing={0} sx={{ backgroundColor: '#f0f0f0', py: 1 }}>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Date</Typography>
-                            </Grid>
-                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Name</Typography>
-                            </Grid>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Title</Typography>
-                            </Grid>
-                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Type of Incident</Typography>
-                            </Grid>
-                            <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Description</Typography>
-                            </Grid>
-                            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Actions</Typography>
-                            </Grid>
-                        </Grid>
-
-                        {/* Data Rows */}
-                        {currentReports.length === 0 ? (
-                            <Grid container spacing={0} sx={{ backgroundColor: '#fff', py: 2 }}>
-                                <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                    <Typography variant="body1">No reports available</Typography>
-                                </Grid>
-                            </Grid>
-                        ) : (
-                            currentReports.map((report) => {
-                                return (
-                                    <Card key={report.id} sx={{ mb: 2 }}>
-                                        <CardContent>
-                                            <Grid container spacing={0} alignItems="center">
-                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                    <Typography>{report.id}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                    <Typography>{dayjs(report.startDate).format('DD MMMM YYYY')}</Typography>
-                                                </Grid>
-                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                    <Typography>{event.eventName}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3} sx={{ textAlign: 'center' }}>
-                                                    <Typography sx={{ color: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        {icon} {event.eventStatus}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={2} sx={{ textAlign: 'center' }}>
-                                                    <Typography sx={{ color: 'limegreen', '&:hover': { textDecoration: 'underline' } }}>
-                                                        <Link to={`/event-details/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                            View Details
-                                                        </Link>
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </CardContent>
-                                    </Card>
-                                );
-                            })
-                        )}
-
-
-                        {/* Pagination Controls for Reports */}
-                        <Box mt={2} sx={{ textAlign: 'center' }}>
-                            <Button onClick={() => paginateReports(reportPage - 1)} disabled={reportPage === 1} sx={{ mr: 1 }}>
-                                Previous
-                            </Button>
-                            {Array.from({ length: totalReportPages }).map((_, index) => (
-                                <Button key={index} onClick={() => paginateReports(index + 1)} variant={reportPage === index + 1 ? 'contained' : 'outlined'} sx={{ mx: 1 }}>
-                                    {index + 1}
-                                </Button>
-                            ))}
-                            <Button onClick={() => paginateReports(reportPage + 1)} disabled={reportPage === totalReportPages} sx={{ ml: 1 }}>
-                                Next
-                            </Button>
-                        </Box>
-                    </Box>
-
-                </Box>
 
                 {/* Event and Course Creation Form (Add Event and Add Course) */}
                 <Box mt={4} sx={{
