@@ -1,38 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // Example images array
 const images = [
-  'https://via.placeholder.com/600x400?text=Image+1',
-  'https://via.placeholder.com/600x400?text=Image+2',
-  'https://via.placeholder.com/600x400?text=Image+3',
-  'https://via.placeholder.com/600x400?text=Image+4',
-  'https://via.placeholder.com/600x400?text=Image+5',
-  'https://via.placeholder.com/600x400?text=Image+6',
-  'https://via.placeholder.com/600x400?text=Image+7',
-  'https://via.placeholder.com/600x400?text=Image+8',
-  'https://via.placeholder.com/600x400?text=Image+9',
-  'https://via.placeholder.com/600x400?text=Image+10'
+  'https://via.placeholder.com/400x300?text=Image+1',
+  'https://via.placeholder.com/400x300?text=Image+2',
+  'https://via.placeholder.com/400x300?text=Image+3',
+  'https://via.placeholder.com/400x300?text=Image+4',
+  'https://via.placeholder.com/400x300?text=Image+5',
+  'https://via.placeholder.com/400x300?text=Image+6',
+  'https://via.placeholder.com/400x300?text=Image+7',
+  'https://via.placeholder.com/400x300?text=Image+8',
+  'https://via.placeholder.com/400x300?text=Image+9',
+  'https://via.placeholder.com/400x300?text=Image+10'
 ];
 
 const styles = {
   carouselContainer: {
     position: 'relative',
-    width: '80%',
-    maxWidth: '1200px',
-    margin: '0 auto',
+    width: '60%',  // Adjusted width
+    maxWidth: '800px',  // Adjusted max-width
+    margin: '20px auto',
     overflow: 'hidden',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    marginTop: '20px', // Space between hero and carousel
+    padding: '10px',
+    backgroundColor: '#f5f5dc', // Beige color
   },
   carouselImages: {
     display: 'flex',
     transition: 'transform 0.5s ease-in-out',
   },
   carouselItem: {
-    minWidth: '50%',
+    minWidth: '100%', // Adjusted to show one image at a time
     boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center', // Center content horizontally
+    justifyContent: 'center', // Center content vertically
   },
   carouselItemImage: {
     width: '100%',
@@ -87,41 +92,56 @@ const styles = {
     cursor: 'pointer',
     borderRadius: '5px',
   },
+  carouselHeading: {
+    fontSize: '1.5em',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: '10px',
+  },
 };
 
 function Home() {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
 
   const imagesPerPage = 2;
-  const totalPages = Math.ceil(images.length / imagesPerPage);
+  const totalImages = images.length;
+  const totalPages = Math.ceil(totalImages / imagesPerPage);
 
-  const handlePrev = () => {
-    setCurrentPage((prevPage) => (prevPage > 0 ? prevPage - 1 : totalPages - 1));
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPage(prevPage => {
+        let newPage = prevPage + direction;
+        if (newPage >= totalPages) {
+          newPage = totalPages - 1;
+          setDirection(-1);
+        } else if (newPage < 0) {
+          newPage = 0;
+          setDirection(1);
+        }
+        return newPage;
+      });
+    }, 3000); // Change slide every 3 seconds
 
-  const handleNext = () => {
-    setCurrentPage((prevPage) => (prevPage < totalPages - 1 ? prevPage + 1 : 0));
-  };
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [direction, totalPages]);
 
   const startIndex = currentPage * imagesPerPage;
   const currentImages = images.slice(startIndex, startIndex + imagesPerPage);
 
   return (
     <>
-      {location.pathname === '/' && (
-        <div className='hero-container'>
-          <div className="text-container">
-            <h1 className="title">Welcome to EcoVerse</h1>
-            <p className="description">Empowering our community with sustainable living practices.</p>
-            <p>Click here to find out more!</p>
-            <Link to="/AboutUs" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <button className="explore-button">About Us</button>
-            </Link>
-          </div>
+      {location.pathname === '/' && (<div className='hero-container'> <div className="text-container"> <h1 className="title">Welcome to EcoVerse</h1> <p className="description">Empowering our community with sustainable living practices.</p> <p>Click here to find out more!</p> <Link to="/AboutUs" style={{ textDecoration: 'none', color: 'inherit' }}> <button className="explore-button">About Us</button> </Link> </div> </div>)}
+      <div style={styles.carouselContainer}>
+        <div style={styles.carouselHeading}>Recent Events and Courses</div>
+        <div style={{ ...styles.carouselImages, transform: `translateX(-${currentPage * 100}%)` }}>
+          {images.map((image, index) => (
+            <div key={index} style={styles.carouselItem}>
+              <img src={image} alt={`Slide ${index + 1}`} style={styles.carouselItemImage} />
+            </div>
+          ))}
         </div>
-        <button style={{ ...styles.carouselButton, ...styles.buttonLeft }} onClick={handlePrev}>◀</button>
-        <button style={{ ...styles.carouselButton, ...styles.buttonRight }} onClick={handleNext}>▶</button>
       </div>
     </>
   );
