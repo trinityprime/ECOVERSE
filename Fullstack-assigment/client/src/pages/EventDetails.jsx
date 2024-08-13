@@ -279,14 +279,7 @@ function EventDetails() {
                                 >
                                     Export
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ ml: 1 }}
-                                    onClick={() => setOpenModal(true)}
-                                >
-                                    View Additional Details
-                                </Button>
+                                
                             </Grid>
                         </Grid>
 
@@ -343,23 +336,7 @@ function EventDetails() {
                             </DialogActions>
                         </Dialog>
 
-                        <Dialog
-                            open={openModal}
-                            onClose={() => setOpenModal(false)}
-                            aria-labelledby="event-modal-title"
-                            aria-describedby="event-modal-description"
-                        >
-                            <DialogTitle id="event-modal-title">Additional Event Details</DialogTitle>
-                            <DialogContent>
-                                <Typography variant="body1">
-                                    {/* Replace this with additional event details as needed */}
-                                    Here you can include more information about the event.
-                                </Typography>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setOpenModal(false)}>Close</Button>
-                            </DialogActions>
-                        </Dialog>
+                        
                     </Box>
                 )}
             </Box>

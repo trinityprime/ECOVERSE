@@ -280,14 +280,7 @@ function CourseDetails() {
                                 >
                                     Export
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ ml: 1 }}
-                                    onClick={() => setOpenModal(true)}
-                                >
-                                    View Additional Details
-                                </Button>
+                                
                             </Grid>
                         </Grid>
 
@@ -344,23 +337,7 @@ function CourseDetails() {
                             </DialogActions>
                         </Dialog>
 
-                        <Dialog
-                            open={openModal}
-                            onClose={() => setOpenModal(false)}
-                            aria-labelledby="course-modal-title"
-                            aria-describedby="course-modal-description"
-                        >
-                            <DialogTitle id="course-modal-title">Additional Course Details</DialogTitle>
-                            <DialogContent>
-                                <Typography variant="body1">
-                                    {/* Replace this with additional course details as needed */}
-                                    Here you can include more information about the course.
-                                </Typography>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setOpenModal(false)}>Close</Button>
-                            </DialogActions>
-                        </Dialog>
+                        
                     </Box>
                 )}
             </Box>
