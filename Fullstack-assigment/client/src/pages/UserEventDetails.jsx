@@ -162,7 +162,7 @@ function EventDetails() {
                                 </Typography>
                             </Grid>
 
-                            {event.eventStatus !== "Completed" && (
+                            {event.eventStatus !== "Completed" && event.eventStatus !== "Cancelled" && (
                                 <Grid item xs={12}>
                                     <Button
                                         onClick={handleSignUpClick}

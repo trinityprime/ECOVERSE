@@ -191,7 +191,7 @@ function CourseDetails() {
                                     <strong>Status:</strong> {course.courseStatus}
                                 </Typography>
                             </Grid>
-                            {course.courseStatus !== "Completed" && (
+                            {course.courseStatus !== "Completed" && course.courseStatus !== "Cancelled" &&(
                                 <Grid item xs={12}>
                                     <Button
                                         onClick={handleSignUpClick}
