@@ -99,6 +99,22 @@ function CourseDetails() {
         }
     };
 
+    // scrolling
+    const eventRef = useRef(null);
+    const courseRef = useRef(null);
+    const userRef = useRef(null);
+
+    const scrollToSection = (ref) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const logout = () => {
+        localStorage.clear();
+        window.location = "/";
+    };
+
     if (loading) {
         return <p>Loading course details...</p>; // Display a loading spinner or message
     }
@@ -132,29 +148,46 @@ function CourseDetails() {
                             Dashboard
                         </Typography>
                     </Link>
-                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            course Management
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                        <Typography
+                            variant="body1"
+                            gutterBottom
+                            onClick={() => scrollToSection(eventRef)}
+                            sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                        >
+                            Event Management
                         </Typography>
                     </Link>
-                    <Link to="/course-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                        <Typography
+                            variant="body1"
+                            gutterBottom
+                            onClick={
+                                scrollToSection(courseRef)}
+                            sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                        >
                             Course Management
                         </Typography>
                     </Link>
 
-                    <Link to="/account-management" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
+                    <Link to="/AdminECManagement" style={{ textDecoration: "none", color: "inherit" }}>
+                        <Typography
+                            variant="body1"
+                            gutterBottom
+                            onClick={() => scrollToSection(userRef)}
+                            sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                        >
                             Account Management
                         </Typography>
                     </Link>
                 </Box>
-                <Box>
-                    <Link to="/logout" style={{ textDecoration: "none", color: "inherit" }}>
-                        <Typography variant="body1" gutterBottom>
-                            Sign-out
-                        </Typography>
-                    </Link>
+                <Box
+                    sx={{ cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
+                    onClick={logout}
+                >
+                    <Typography variant="body1" gutterBottom>
+                        Sign-out
+                    </Typography>
                 </Box>
             </Box>
 
