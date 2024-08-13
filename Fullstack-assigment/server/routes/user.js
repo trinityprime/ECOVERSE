@@ -71,15 +71,14 @@ router.post("/register", async (req, res) => {
 });
 
 
-// login to user acc
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
-    const errorMsg = "Email or password is not correct.";
 
     try {
         const user = await User.findOne({ where: { email } });
+
         if (!user) {
-            return res.status(400).json({ message: errorMsg });
+            return res.status(400).json({ message: "Email or password is not correct." });
         }
 
         if (user.status === 'deactivated') {
@@ -87,8 +86,9 @@ router.post("/login", async (req, res) => {
         }
 
         const match = await bcrypt.compare(password, user.password);
+
         if (!match) {
-            return res.status(400).json({ message: errorMsg });
+            return res.status(400).json({ message: "Email or password is not correct." });
         }
 
         const userInfo = {
@@ -114,6 +114,7 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
 
 //add user from admin acc
 router.post('/', validateToken, isAdmin, async (req, res) => {
@@ -190,12 +191,11 @@ router.get("/signups", validateToken, async (req, res) => {
     }
 });
 
-
-// deactivate in admin acc
-router.put("/deactivate", validateToken, async (req, res) => {
+// Deactivate User Route
+router.put("/:userId/deactivate", validateToken, isAdmin, async (req, res) => {
     try {
-        const { id } = req.user; // Get user ID from the token
-        const user = await User.findByPk(id);
+        const { userId } = req.params;
+        const user = await User.findByPk(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
@@ -210,33 +210,28 @@ router.put("/deactivate", validateToken, async (req, res) => {
     }
 });
 
-
-// Reactivate in admin acc
-router.put('/:userId/reactivate', validateToken, isAdmin, async (req, res) => {
-    const userId = req.params.userId;
-
+// Reactivate User Route
+router.put("/:userId/reactivate", validateToken, isAdmin, async (req, res) => {
     try {
+        const { userId } = req.params;
         const user = await User.findByPk(userId);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ message: "User not found." });
         }
 
-        // Check if the user is already activated
         if (user.status === 'activated') {
-            return res.status(400).json({ error: 'User is already activated' });
+            return res.status(400).json({ message: "User is already activated." });
         }
 
-        // Update the user's status to 'activated'
-        user.status = 'activated';
+        user.status = 'activated'; // Update user status to 'activated'
         await user.save();
 
-        res.json({ message: 'User reactivated successfully' });
+        res.status(200).json({ message: "User reactivated successfully." });
     } catch (error) {
-        console.error('Error reactivating user:', error);
-        res.status(500).json({ error: 'Failed to reactivate user' });
+        console.error("Error reactivating user:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
-
 
 // get user info for update in admin acc
 router.get('/:userId', validateToken, isAdmin, async (req, res) => {
