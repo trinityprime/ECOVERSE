@@ -8,11 +8,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import InputMask from 'react-input-mask';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import http from '../http'; 
+import http from '../http';
 
 function Register() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+
+    const checkEmailExists = async (email) => {
+        try {
+            const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`);
+            const result = await response.json();
+            return result.exists; 
+        } catch (error) {
+            console.error('Error checking email:', error);
+            return false; 
+        }
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -22,7 +33,7 @@ function Register() {
             confirmPassword: "",
             phoneNumber: "",
             dob: "",
-            role: "", 
+            role: "",
         },
         validationSchema: yup.object({
             name: yup.string().trim()
