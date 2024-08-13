@@ -44,9 +44,6 @@ app.use('/admin', adminRoute);
 
 const initializeAdminAccount = require('./initializeAdmin');
 
-const authRoutes = require('./routes/authRoutes');
-app.use('/auth', authRoutes);
-
 const fileRoute = require('./routes/file');
 app.use("/file", fileRoute);
 
