@@ -36,10 +36,10 @@ import AboutUs from './pages/AboutUs.jsx';
 import ContactUs from './pages/ContactUs';
 import Footer from './footer.jsx';
 import http from './http';
-
 import RequestOtp from './pages/RequestOtp';
 import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
+
 
 
 function App() {
@@ -110,14 +110,16 @@ function App() {
           <AppBar position="static" className='AppBar'>
             <Container>
               <Toolbar disableGutters={true}>
-                <Link to="/" onClick={() => window.location.href = "/"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <Container style={{ display: 'flex', alignItems: 'center' }} maxWidth="xl">
-                    <img src="../ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '50px', display: 'flex' }} />
+                    {/* Ensure the image path is correct */}
+                    <img src="/ECOV3.png" alt="Logo" style={{ marginRight: '5px', height: '50px', display: 'flex' }} />
                     <Typography variant="h6" component="div" style={{ display: 'flex', alignItems: 'center' }}>
                       ECOVERSE
                     </Typography>
                   </Container>
                 </Link>
+
 
 
                 <Box sx={{ flexGrow: 1 }}></Box>
@@ -200,11 +202,11 @@ function App() {
 
                   user && (
                     <>
-                     
-                  
+
+
                       {/* Separate Buttons in the NavBar with Hover Effect */}
-                     
-                  
+
+
                       <Button
                         component={Link}
                         to="/Courses"
@@ -219,7 +221,7 @@ function App() {
                       >
                         All Courses
                       </Button>
-                  
+
                       <Button
                         component={Link}
                         to="/events"
@@ -234,7 +236,7 @@ function App() {
                       >
                         All Events
                       </Button>
-                  
+
                       <Button
                         component={Link}
                         to="/AddReport"
@@ -288,12 +290,12 @@ function App() {
                           </Link>
                         </MenuItem>
                       </Menu>
-                  
+
                       <Button onClick={logout} style={{ marginLeft: '15px' }}>Logout</Button>
                     </>
                   )
-                  
-                  
+
+
                 )}
 
                 {!user && (
@@ -304,7 +306,7 @@ function App() {
                     <Link to="/Courses">
                       <Typography>All Courses</Typography>
                     </Link>
-                  
+
                     <Link to="/register">
                       <Typography>Register</Typography>
                     </Link>
@@ -313,8 +315,8 @@ function App() {
                     </Link>
                   </>
                 )}
-                
-                
+
+
               </Toolbar>
             </Container>
           </AppBar>
@@ -324,15 +326,16 @@ function App() {
                 <h1 className="title">Welcome to EcoVerse</h1>
                 <p className="description">Empowering our community with sustainable living practices.</p>
                 <p>Click here to find out more!</p>
-                <Link to="/AboutUs">
+                <Link to="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <button className="explore-button">About Us</button>
                 </Link>
+
 
               </div>
             </div>
           )}
 
-          
+
 
           <Container>
             <Routes>
@@ -369,6 +372,7 @@ function App() {
               <Route path="/request-otp" element={<RequestOtp />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+             
             </Routes>
           </Container>
           <Footer />

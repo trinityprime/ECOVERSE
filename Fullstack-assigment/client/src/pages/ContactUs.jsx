@@ -1,5 +1,5 @@
 import React from "react";
-import '../home.css';
+
 import HeroSection from '../hero.jsx';
 import '../ContactUs.css';
 import ContactUsImage from '../assets/ContactUs.jpeg'; // Adjust the path as needed
