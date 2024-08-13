@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
+import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Grid } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import http from '../http';
@@ -139,11 +139,33 @@ function SignUps() {
                                 <TableCell>{signUp.specialRequirements}</TableCell>
                                 <TableCell>{signUp.eventCourseName}</TableCell>
                                 <TableCell>
-                                    <Link to={`/EditSignUp/${signUp.id}`}>
-                                        <IconButton color="primary">
-                                            <Edit />
-                                        </IconButton>
-                                    </Link>
+                                    <Grid item xs={2} sx={{ textAlign: 'center' }}>
+                                        {user.status === 'deactivated' ? (
+                                            <Typography
+                                                color="primary"
+                                                onClick={() => handleReactivateUser(user.id)}
+                                                sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                REACTIVATE
+                                            </Typography>
+                                        ) : (
+                                            <>
+                                                {user.id !== 1 && (
+                                                    <IconButton
+                                                        color="secondary"
+                                                        onClick={() => handleDeactivateUser(user.id)}
+                                                    >
+                                                        <PowerSettingsNew />
+                                                    </IconButton>
+                                                )}
+                                                <Link to={`/edituser/${user.id}`}>
+                                                    <IconButton color="primary" sx={{ padding: '4px' }}>
+                                                        <Edit />
+                                                    </IconButton>
+                                                </Link>
+                                            </>
+                                        )}
+                                    </Grid>
                                 </TableCell>
                             </TableRow>
                         ))}
