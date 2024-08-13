@@ -320,20 +320,7 @@ function App() {
               </Toolbar>
             </Container>
           </AppBar>
-          {location.pathname === '/' && (
-            <div className='hero-container'>
-              <div className="text-container">
-                <h1 className="title">Welcome to EcoVerse</h1>
-                <p className="description">Empowering our community with sustainable living practices.</p>
-                <p>Click here to find out more!</p>
-                <Link to="/aboutus" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <button className="explore-button">About Us</button>
-                </Link>
-
-
-              </div>
-            </div>
-          )}
+        
 
 
 
@@ -372,7 +359,7 @@ function App() {
               <Route path="/request-otp" element={<RequestOtp />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-             
+
             </Routes>
           </Container>
           <Footer />
