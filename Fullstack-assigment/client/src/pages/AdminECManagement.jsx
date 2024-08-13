@@ -55,7 +55,6 @@ function AdminECManagement() {
         }
     };
 
-
     const handleDeactivateUser = (userId) => {
         if (window.confirm("Are you sure you want to deactivate this user?")) {
             http.put(`/user/${userId}/deactivate`)
@@ -69,7 +68,7 @@ function AdminECManagement() {
                 });
         }
     };
-    
+
     const handleReactivateUser = (userId) => {
         if (window.confirm("Are you sure you want to reactivate this user?")) {
             http.put(`/user/${userId}/reactivate`)
@@ -82,7 +81,7 @@ function AdminECManagement() {
                 });
         }
     };
-    
+
 
     const logout = () => {
         localStorage.clear();

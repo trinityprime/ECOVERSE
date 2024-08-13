@@ -36,10 +36,6 @@ import AboutUs from './pages/AboutUs.jsx';
 import ContactUs from './pages/ContactUs';
 import Footer from './footer.jsx';
 import http from './http';
-import RequestOtp from './pages/RequestOtp';
-import VerifyOtp from './pages/VerifyOtp';
-import ResetPassword from './pages/ResetPassword';
-
 
 
 function App() {
@@ -356,10 +352,6 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/AboutUs" element={<AboutUs />} />
               <Route path="/ContactUs" element={<ContactUs />} />
-              <Route path="/request-otp" element={<RequestOtp />} />
-              <Route path="/verify-otp" element={<VerifyOtp />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-
             </Routes>
           </Container>
           <Footer />

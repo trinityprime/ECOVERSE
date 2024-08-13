@@ -110,14 +110,15 @@ function Home() {
   return (
     <>
       {location.pathname === '/' && (
-        <div className='hero-container'> <div className="text-container"> <h1 className="title">Welcome to EcoVerse</h1> <p className="description">Empowering our community with sustainable living practices.</p> <p>Click here to find out more!</p> <Link to="/AboutUs" style={{ textDecoration: 'none', color: 'inherit' }}> <button className="explore-button">About Us</button> </Link> </div> </div>)}
-      <div style={styles.carouselContainer}>
-        <div style={styles.carouselImages}>
-          {currentImages.map((image, index) => (
-            <div key={index} style={styles.carouselItem}>
-              <img src={image} alt={`Slide ${index}`} style={styles.carouselItemImage} />
-            </div>
-          ))}
+        <div className='hero-container'>
+          <div className="text-container">
+            <h1 className="title">Welcome to EcoVerse</h1>
+            <p className="description">Empowering our community with sustainable living practices.</p>
+            <p>Click here to find out more!</p>
+            <Link to="/AboutUs" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <button className="explore-button">About Us</button>
+            </Link>
+          </div>
         </div>
         <button style={{ ...styles.carouselButton, ...styles.buttonLeft }} onClick={handlePrev}>◀</button>
         <button style={{ ...styles.carouselButton, ...styles.buttonRight }} onClick={handleNext}>▶</button>
