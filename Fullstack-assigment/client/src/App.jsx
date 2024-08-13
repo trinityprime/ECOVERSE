@@ -37,8 +37,6 @@ import ContactUs from './pages/ContactUs';
 import Footer from './footer.jsx';
 import http from './http';
 
-import CustomCarousel from './pages/Carousel';
-
 import RequestOtp from './pages/RequestOtp';
 import VerifyOtp from './pages/VerifyOtp';
 import ResetPassword from './pages/ResetPassword';
