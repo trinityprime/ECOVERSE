@@ -300,6 +300,13 @@ function App() {
 
                 {!user && (
                   <>
+                    <Link to="/Events">
+                      <Typography>All Events</Typography>
+                    </Link>
+                    <Link to="/Courses">
+                      <Typography>All Courses</Typography>
+                    </Link>
+                  
                     <Link to="/register">
                       <Typography>Register</Typography>
                     </Link>
@@ -308,7 +315,8 @@ function App() {
                     </Link>
                   </>
                 )}
-
+                
+                
               </Toolbar>
             </Container>
           </AppBar>
@@ -326,12 +334,7 @@ function App() {
             </div>
           )}
 
-          <div>
-            {location.pathname === '/' && (
-              <CustomCarousel />
-            )}
-            {/* Other components */}
-          </div>
+          
 
           <Container>
             <Routes>
